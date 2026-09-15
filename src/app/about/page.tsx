@@ -34,7 +34,7 @@ export default function AboutPage() {
           <SectionWrapper className="bg-gradient-to-br from-brand-50 via-white to-brand-100">
             <div className="mx-auto max-w-3xl text-center">
               <h1 className="text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl">
-                About DoonPortal
+                About LALogix
               </h1>
               <p className="mt-6 text-lg leading-relaxed text-neutral-600">
                 {mission.description}

@@ -661,36 +661,36 @@ describe('Property 15: SEO and routing preservation', () => {
   // Snapshot of expected SEO data — these values must not change after modernization
   const expectedSEO: Record<string, { title: string; description: string }> = {
     home: {
-      title: 'DoonPortal — Automation Software for Schools, Retail & Dairy',
+      title: 'LALogix Enterprises — Automation Software for Schools, Retail & Dairy',
       description: 'Automation software for schools and businesses. Manage operations with School ERP, Inventory POS, and Dairy Management systems. 15+ years of expertise.',
     },
     solutions: {
-      title: 'Solutions — School, Retail & Dairy Software | DoonPortal',
-      description: "Explore DoonPortal's automation solutions: School Management System, Inventory POS, Dairy Management, and custom automation services.",
+      title: 'Solutions — School, Retail & Dairy Software | LALogix Enterprises',
+      description: "Explore LALogix Enterprises' automation solutions: School Management System, Inventory POS, Dairy Management, and custom automation services.",
     },
     about: {
-      title: 'About DoonPortal — 15+ Years of Automation Expertise',
-      description: "Learn about DoonPortal's mission, history, and team. Over 15 years of experience building automation software for schools, retail, and agriculture.",
+      title: 'About LALogix Enterprises — 15+ Years of Automation Expertise',
+      description: "Learn about LALogix Enterprises' mission, history, and team. Over 15 years of experience building automation software for schools, retail, and agriculture.",
     },
     blog: {
-      title: 'Blog — Insights on Business Automation | DoonPortal',
-      description: 'Read articles and insights on school management, retail automation, dairy farm technology, and business process optimization from DoonPortal.',
+      title: 'Blog — Insights on Business Automation | LALogix Enterprises',
+      description: 'Read articles and insights on school management, retail automation, dairy farm technology, and business process optimization from LALogix Enterprises.',
     },
     contact: {
-      title: 'Contact DoonPortal — Get in Touch',
-      description: "Contact DoonPortal for inquiries about our automation software, custom solutions, or partnership opportunities. We're based in Dehradun, India.",
+      title: 'Contact LALogix Enterprises — Get in Touch',
+      description: "Contact LALogix Enterprises for inquiries about our automation software, custom solutions, or partnership opportunities. We're based in Dehradun, India.",
     },
     bookDemo: {
-      title: 'Book a Demo — See DoonPortal in Action',
-      description: "Schedule a free demo of DoonPortal's automation software. See how our school management, inventory POS, or dairy management systems can transform your operations.",
+      title: 'Book a Demo — See LALogix Enterprises in Action',
+      description: "Schedule a free demo of LALogix Enterprises' automation software. See how our school management, inventory POS, or dairy management systems can transform your operations.",
     },
     customAutomation: {
-      title: 'Custom Automation Solutions | DoonPortal',
-      description: 'DoonPortal builds custom automation solutions including business process automation, custom ERP development, workflow automation, and system integrations.',
+      title: 'Custom Automation Solutions | LALogix Enterprises',
+      description: 'LALogix Enterprises builds custom automation solutions including business process automation, custom ERP development, workflow automation, and system integrations.',
     },
     thankYou: {
-      title: 'Thank You — DoonPortal',
-      description: 'Thank you for your interest in DoonPortal. Our team will get back to you shortly.',
+      title: 'Thank You — LALogix Enterprises',
+      description: 'Thank you for your interest in LALogix Enterprises. Our team will get back to you shortly.',
     },
   };
 

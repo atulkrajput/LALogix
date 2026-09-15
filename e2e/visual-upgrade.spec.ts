@@ -81,8 +81,8 @@ test.describe('Visual Upgrade Verification', () => {
     const productsHeading = page.getByRole('heading', { name: 'Our Products' });
     await expect(productsHeading).toBeVisible();
 
-    // Verify the "Why Choose DoonPortal" section is present
-    const whyChooseHeading = page.getByRole('heading', { name: 'Why Choose DoonPortal' });
+    // Verify the "Why Choose LALogix Enterprises" section is present
+    const whyChooseHeading = page.getByRole('heading', { name: 'Why Choose LALogix Enterprises' });
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight / 2));
     await page.waitForTimeout(1000);
     await expect(whyChooseHeading).toBeVisible();

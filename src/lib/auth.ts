@@ -45,16 +45,16 @@ export async function getSessionUser(): Promise<AuthUser | null> {
 }
 
 export async function seedAdmin() {
-  const existing = await prisma.user.findUnique({ where: { email: 'admin@doonportal.com' } });
+  const existing = await prisma.user.findUnique({ where: { email: 'admin@lalogix.com' } });
   if (!existing) {
     await prisma.user.create({
       data: {
         name: 'Admin',
-        email: 'admin@doonportal.com',
+        email: 'admin@lalogix.com',
         password: await hashPassword('admin123'),
         role: 'admin',
       },
     });
-    console.log('[Auth] Default admin created: admin@doonportal.com / admin123');
+    console.log('[Auth] Default admin created: admin@lalogix.com / admin123');
   }
 }

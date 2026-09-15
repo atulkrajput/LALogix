@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/api/', '/admin/', '/private/', '/test/', '/_next/'],
       },
     ],
-    sitemap: 'https://doonportal.com/sitemap.xml',
+    sitemap: 'https://lalogix.com/sitemap.xml',
   };
 }

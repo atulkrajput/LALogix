@@ -84,7 +84,7 @@ describe('Property 9: Target keywords in product page metadata', () => {
  * **Validates: Requirements 14.5**
  */
 describe('Property 10: Sitemap contains all public routes', () => {
-  const SITE_URL = 'https://doonportal.com';
+  const SITE_URL = 'https://lalogix.com';
   const publicRoutes = [
     '',
     '/solutions',
@@ -106,7 +106,7 @@ describe('Property 10: Sitemap contains all public routes', () => {
           const route = publicRoutes[idx];
           const expectedUrl = `${SITE_URL}${route}`;
           expect(publicRoutes).toContain(route);
-          expect(expectedUrl).toMatch(/^https:\/\/doonportal\.com/);
+          expect(expectedUrl).toMatch(/^https:\/\/lalogix\.com/);
         }
       ),
       { numRuns: 100 }

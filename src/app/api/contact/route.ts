@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    const salesEmail = process.env.SALES_EMAIL || 'sales@doonportal.com';
+    const salesEmail = process.env.SALES_EMAIL || 'sales@lalogix.com';
     await sendEmail({
       to: salesEmail,
       subject: `Contact Form: ${name}`,

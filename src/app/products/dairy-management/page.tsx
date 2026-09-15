@@ -20,7 +20,7 @@ import {
 } from '@/data/seo';
 
 const SLUG = 'dairy-management';
-const SITE_URL = 'https://doonportal.com';
+const SITE_URL = 'https://lalogix.com';
 
 export async function generateMetadata(): Promise<Metadata> {
   const product = getProductBySlug(SLUG);

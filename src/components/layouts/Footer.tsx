@@ -18,7 +18,7 @@ export default function Footer() {
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-5">
           {/* Company info */}
           <div className="lg:col-span-2">
-            <Link href="/" aria-label="DoonPortal Home">
+            <Link href="/" aria-label="LALogix Home">
               <Image
                 src={logo.src}
                 alt={logo.alt}
@@ -29,7 +29,7 @@ export default function Footer() {
               />
             </Link>
             <p className="mt-4 max-w-sm text-body-sm text-neutral-400">
-              DoonPortal builds automation platforms for schools, retail
+              LALogix builds automation platforms for schools, retail
               businesses, and dairy farms. 15+ years of expertise in
               industry-specific software solutions.
             </p>
@@ -43,7 +43,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-neutral-800 text-neutral-400 transition-all duration-200 hover:scale-110 hover:-translate-y-0.5 hover:text-brand-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-900"
-                  aria-label={`Follow DoonPortal on ${social.platform}`}
+                  aria-label={`Follow LALogix on ${social.platform}`}
                 >
                   <SocialIcon name={social.icon} />
                 </a>
@@ -85,7 +85,7 @@ export default function Footer() {
               </a>
             </div>
             <p className="text-body-sm text-neutral-500">
-              &copy; {currentYear} DoonPortal. All rights reserved.
+              &copy; {currentYear} LALogix. All rights reserved.
             </p>
           </div>
         </div>

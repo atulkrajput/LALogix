@@ -90,7 +90,7 @@ export default function Navbar() {
       <div className="mx-auto max-w-8xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between md:h-18">
           {/* Logo */}
-          <Link href="/" className="flex-shrink-0" aria-label="DoonPortal Home">
+          <Link href="/" className="flex-shrink-0" aria-label="LALogix Home">
             <Image
               src={logo.src}
               alt={logo.alt}

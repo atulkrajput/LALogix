@@ -76,12 +76,12 @@ export default function HomePage() {
           <IndustrySection industries={industries} />
         </AnimatedSection>
 
-        {/* Why Choose DoonPortal */}
+        {/* Why Choose LALogix */}
         <AnimatedSection variant="fade-in-up">
           <FeatureGrid
             features={differentiators}
             columns={3}
-            title="Why Choose DoonPortal"
+            title="Why Choose LALogix"
             subtitle="What sets us apart from the rest."
           />
         </AnimatedSection>
@@ -95,7 +95,7 @@ export default function HomePage() {
                   Request a Demo
                 </h2>
                 <p className="mt-4 text-lg text-neutral-600">
-                  See how DoonPortal can automate your business. Fill out the form and our team will schedule a personalized demo.
+                  See how LALogix can automate your business. Fill out the form and our team will schedule a personalized demo.
                 </p>
               </div>
               <div className="mt-8">

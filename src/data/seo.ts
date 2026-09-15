@@ -1,11 +1,11 @@
 import type { SEOMetadata } from '@/types';
 
-const SITE_URL = 'https://doonportal.com';
-const SITE_NAME = 'DoonPortal';
+const SITE_URL = 'https://lalogix.com';
+const SITE_NAME = 'LALogix Enterprises';
 
 export const pageSEO: Record<string, SEOMetadata> = {
   home: {
-    title: 'DoonPortal — Automation Software for Schools, Retail & Dairy',
+    title: 'LALogix Enterprises — Automation Software for Schools, Retail & Dairy',
     description:
       'Automation software for schools and businesses. Manage operations with School ERP, Inventory POS, and Dairy Management systems. 15+ years of expertise.',
     keywords: [
@@ -27,7 +27,7 @@ export const pageSEO: Record<string, SEOMetadata> = {
         url: SITE_URL,
         logo: `${SITE_URL}/doonportal.png`,
         description:
-          'DoonPortal is an automation software company building platforms for schools, retail businesses, and dairy farms.',
+          'LALogix Enterprises is an automation software company building platforms for schools, retail businesses, and dairy farms.',
         address: {
           '@type': 'PostalAddress',
           addressLocality: 'Dehradun',
@@ -36,21 +36,21 @@ export const pageSEO: Record<string, SEOMetadata> = {
         },
         contactPoint: {
           '@type': 'ContactPoint',
-          email: 'info@doonportal.com',
+          email: 'info@lalogix.com',
           contactType: 'sales',
         },
         sameAs: [
-          'https://linkedin.com/company/doonportal',
-          'https://twitter.com/doonportal',
-          'https://facebook.com/doonportal',
+          'https://linkedin.com/company/lalogix',
+          'https://twitter.com/lalogix',
+          'https://facebook.com/lalogix',
         ],
       },
     ],
   },
   solutions: {
-    title: 'Solutions — School, Retail & Dairy Software | DoonPortal',
+    title: 'Solutions — School, Retail & Dairy Software | LALogix Enterprises',
     description:
-      'Explore DoonPortal\'s automation solutions: School Management System, Inventory POS, Dairy Management, and custom automation services.',
+      'Explore LALogix Enterprises\' automation solutions: School Management System, Inventory POS, Dairy Management, and custom automation services.',
     keywords: [
       'business automation solutions',
       'school ERP',
@@ -68,11 +68,11 @@ export const pageSEO: Record<string, SEOMetadata> = {
     ],
   },
   about: {
-    title: 'About DoonPortal — 15+ Years of Automation Expertise',
+    title: 'About LALogix Enterprises — 15+ Years of Automation Expertise',
     description:
-      'Learn about DoonPortal\'s mission, history, and team. Over 15 years of experience building automation software for schools, retail, and agriculture.',
+      'Learn about LALogix Enterprises\' mission, history, and team. Over 15 years of experience building automation software for schools, retail, and agriculture.',
     keywords: [
-      'about DoonPortal',
+      'about LALogix Enterprises',
       'automation software company',
       'software company Dehradun',
       'business automation India',
@@ -88,7 +88,7 @@ export const pageSEO: Record<string, SEOMetadata> = {
         logo: `${SITE_URL}/doonportal.png`,
         foundingDate: '2008',
         description:
-          'DoonPortal is an automation software company with 15+ years of experience building platforms for schools, retail businesses, and dairy farms.',
+          'LALogix Enterprises is an automation software company with 15+ years of experience building platforms for schools, retail businesses, and dairy farms.',
         address: {
           '@type': 'PostalAddress',
           addressLocality: 'Dehradun',
@@ -102,9 +102,9 @@ export const pageSEO: Record<string, SEOMetadata> = {
     ],
   },
   blog: {
-    title: 'Blog — Insights on Business Automation | DoonPortal',
+    title: 'Blog — Insights on Business Automation | LALogix Enterprises',
     description:
-      'Read articles and insights on school management, retail automation, dairy farm technology, and business process optimization from DoonPortal.',
+      'Read articles and insights on school management, retail automation, dairy farm technology, and business process optimization from LALogix Enterprises.',
     keywords: [
       'business automation blog',
       'school management tips',
@@ -121,11 +121,11 @@ export const pageSEO: Record<string, SEOMetadata> = {
     ],
   },
   contact: {
-    title: 'Contact DoonPortal — Get in Touch',
+    title: 'Contact LALogix Enterprises — Get in Touch',
     description:
-      'Contact DoonPortal for inquiries about our automation software, custom solutions, or partnership opportunities. We\'re based in Dehradun, India.',
+      'Contact LALogix Enterprises for inquiries about our automation software, custom solutions, or partnership opportunities. We\'re based in Dehradun, India.',
     keywords: [
-      'contact DoonPortal',
+      'contact LALogix Enterprises',
       'automation software inquiry',
       'business software consultation',
     ],
@@ -139,9 +139,9 @@ export const pageSEO: Record<string, SEOMetadata> = {
     ],
   },
   bookDemo: {
-    title: 'Book a Demo — See DoonPortal in Action',
+    title: 'Book a Demo — See LALogix Enterprises in Action',
     description:
-      'Schedule a free demo of DoonPortal\'s automation software. See how our school management, inventory POS, or dairy management systems can transform your operations.',
+      'Schedule a free demo of LALogix Enterprises\' automation software. See how our school management, inventory POS, or dairy management systems can transform your operations.',
     keywords: [
       'book demo',
       'free software demo',
@@ -159,9 +159,9 @@ export const pageSEO: Record<string, SEOMetadata> = {
     ],
   },
   customAutomation: {
-    title: 'Custom Automation Solutions | DoonPortal',
+    title: 'Custom Automation Solutions | LALogix Enterprises',
     description:
-      'DoonPortal builds custom automation solutions including business process automation, custom ERP development, workflow automation, and system integrations.',
+      'LALogix Enterprises builds custom automation solutions including business process automation, custom ERP development, workflow automation, and system integrations.',
     keywords: [
       'custom automation solutions',
       'custom ERP development',
@@ -178,8 +178,8 @@ export const pageSEO: Record<string, SEOMetadata> = {
     ],
   },
   thankYou: {
-    title: 'Thank You — DoonPortal',
-    description: 'Thank you for your interest in DoonPortal. Our team will get back to you shortly.',
+    title: 'Thank You — LALogix Enterprises',
+    description: 'Thank you for your interest in LALogix Enterprises. Our team will get back to you shortly.',
     canonical: `${SITE_URL}/thank-you`,
   },
 };

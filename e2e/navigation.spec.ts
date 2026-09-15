@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Site Navigation', () => {
   test('homepage loads with correct title', async ({ page }) => {
     await page.goto('/');
-    await expect(page).toHaveTitle(/DoonPortal/);
+    await expect(page).toHaveTitle(/LALogix Enterprises/);
   });
 
   test('navigate to Solutions page via navbar', async ({ page }) => {

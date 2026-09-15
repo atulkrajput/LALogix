@@ -5,19 +5,19 @@ import { usePathname } from 'next/navigation';
 const WHATSAPP_NUMBER = '917252811555';
 
 const pageMessages: Record<string, string> = {
-  '/': 'Hi, I visited your website and I\'m interested in DoonPortal solutions.',
+  '/': 'Hi, I visited your website and I\'m interested in LALogix solutions.',
   '/products/school-management': 'Hi, I\'m interested in your School Management Software. Can you share more details?',
   '/products/inventory-pos': 'Hi, I\'m interested in your Inventory POS Software. Can you share more details?',
   '/products/dairy-management': 'Hi, I\'m interested in your Dairy Management Software. Can you share more details?',
-  '/solutions': 'Hi, I\'d like to learn more about DoonPortal solutions for my business.',
+  '/solutions': 'Hi, I\'d like to learn more about LALogix solutions for my business.',
   '/custom-automation': 'Hi, I\'m looking for custom automation solutions. Can we discuss my requirements?',
-  '/about': 'Hi, I\'d like to know more about DoonPortal and your services.',
-  '/contact': 'Hi, I\'d like to get in touch with the DoonPortal team.',
-  '/book-demo': 'Hi, I\'d like to book a demo of DoonPortal software.',
+  '/about': 'Hi, I\'d like to know more about LALogix and your services.',
+  '/contact': 'Hi, I\'d like to get in touch with the LALogix team.',
+  '/book-demo': 'Hi, I\'d like to book a demo of LALogix software.',
   '/blog': 'Hi, I was reading your blog and have a question about your solutions.',
 };
 
-const DEFAULT_MESSAGE = 'Hi, I\'m interested in DoonPortal solutions. Can you help me?';
+const DEFAULT_MESSAGE = 'Hi, I\'m interested in LALogix solutions. Can you help me?';
 
 export default function WhatsAppFloat() {
   const pathname = usePathname();

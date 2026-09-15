@@ -44,7 +44,7 @@ export async function sendEmail(options: EmailOptions): Promise<EmailResult> {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: process.env.EMAIL_FROM || 'noreply@doonportal.com',
+          from: process.env.EMAIL_FROM || 'noreply@lalogix.com',
           to,
           subject,
           html,

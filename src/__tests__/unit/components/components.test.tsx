@@ -209,7 +209,7 @@ import Footer from '@/components/layouts/Footer';
 describe('Footer', () => {
   it('renders company description', () => {
     render(<Footer />);
-    expect(screen.getByText(/DoonPortal builds automation platforms/)).toBeInTheDocument();
+    expect(screen.getByText(/LALogix Enterprises builds automation platforms/)).toBeInTheDocument();
   });
 
   it('renders footer link groups', () => {
@@ -221,14 +221,14 @@ describe('Footer', () => {
 
   it('renders social media links', () => {
     render(<Footer />);
-    expect(screen.getByLabelText(/Follow DoonPortal on LinkedIn/)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Follow DoonPortal on Twitter/)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Follow DoonPortal on Facebook/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Follow LALogix Enterprises on LinkedIn/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Follow LALogix Enterprises on Twitter/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Follow LALogix Enterprises on Facebook/)).toBeInTheDocument();
   });
 
   it('renders contact info', () => {
     render(<Footer />);
-    expect(screen.getByText('info@doonportal.com')).toBeInTheDocument();
+    expect(screen.getByText('info@lalogix.com')).toBeInTheDocument();
   });
 });
 
@@ -238,7 +238,7 @@ import Navbar from '@/components/layouts/Navbar';
 describe('Navbar', () => {
   it('renders the logo', () => {
     render(<Navbar />);
-    expect(screen.getByAltText('DoonPortal')).toBeInTheDocument();
+    expect(screen.getByAltText('LALogix Enterprises')).toBeInTheDocument();
   });
 
   it('renders navigation links', () => {

@@ -12,10 +12,10 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://doonportal.com'),
+  metadataBase: new URL('https://lalogix.com'),
   title: {
-    default: 'DoonPortal - Automation Software for Schools, Retail & Dairy',
-    template: '%s | DoonPortal Automation Software',
+    default: 'LALogix - Automation Software for Schools, Retail & Dairy',
+    template: '%s | LALogix Automation Software',
   },
   description:
     'Automation software for schools and businesses. Manage operations with School ERP, Inventory POS, and Dairy Management systems.',
@@ -27,15 +27,15 @@ export const metadata: Metadata = {
     'dairy management software',
     'business automation India',
   ],
-  authors: [{ name: 'DoonPortal' }],
-  creator: 'DoonPortal',
-  publisher: 'DoonPortal',
+  authors: [{ name: 'LALogix' }],
+  creator: 'LALogix',
+  publisher: 'LALogix',
   openGraph: {
     type: 'website',
     locale: 'en_IN',
-    url: 'https://doonportal.com',
-    siteName: 'DoonPortal',
-    title: 'DoonPortal - Automation Software for Schools, Retail & Dairy',
+    url: 'https://lalogix.com',
+    siteName: 'LALogix',
+    title: 'LALogix - Automation Software for Schools, Retail & Dairy',
     description:
       'Automation software for schools and businesses. Manage operations with School ERP, Inventory POS, and Dairy Management systems.',
     images: [
@@ -43,15 +43,15 @@ export const metadata: Metadata = {
         url: '/images/og/home.png',
         width: 1200,
         height: 630,
-        alt: 'DoonPortal Automation Software',
+        alt: 'LALogix Automation Software',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    site: '@doonportal',
-    creator: '@doonportal',
-    title: 'DoonPortal - Automation Software for Schools, Retail & Dairy',
+    site: '@lalogix',
+    creator: '@lalogix',
+    title: 'LALogix - Automation Software for Schools, Retail & Dairy',
     description:
       'Automation software for schools and businesses. Manage operations with School ERP, Inventory POS, and Dairy Management systems.',
     images: ['/images/og/home.png'],
@@ -68,7 +68,7 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: 'https://doonportal.com',
+    canonical: 'https://lalogix.com',
   },
 };
 

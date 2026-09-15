@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 import { getAllSlugs } from '@/lib/blog';
 
-const SITE_URL = 'https://doonportal.com';
+const SITE_URL = 'https://lalogix.com';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticRoutes: { route: string; priority: number; changeFreq: 'weekly' | 'monthly' | 'daily' }[] = [

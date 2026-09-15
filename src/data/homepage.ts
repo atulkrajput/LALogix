@@ -3,7 +3,7 @@ import type { Feature } from '@/types';
 export const heroContent = {
   headline: 'Automation Software That Powers Your Business',
   subheadline:
-    'DoonPortal builds industry-specific platforms for schools, retail businesses, and dairy farms. Streamline operations, reduce costs, and grow with confidence.',
+    'LALogix Enterprises builds industry-specific platforms for schools, retail businesses, and dairy farms. Streamline operations, reduce costs, and grow with confidence.',
   ctaButtons: [
     { label: 'Explore Solutions', href: '/solutions', variant: 'primary' as const },
     { label: 'Book a Demo', href: '/book-demo', variant: 'secondary' as const },
@@ -74,13 +74,13 @@ export const founderInfo = {
   name: 'Founder Name',
   title: 'Founder & CEO',
   description:
-    'With over 15 years of experience in software development and business automation, our founder started DoonPortal with a simple mission — to make powerful automation accessible to businesses of all sizes. Based in Dehradun, India, DoonPortal has grown from a small team to a trusted technology partner for schools, retailers, and dairy farms across the country.',
+    'With over 15 years of experience in software development and business automation, our founder started LALogix Enterprises with a simple mission — to make powerful automation accessible to businesses of all sizes. Based in Dehradun, India, LALogix Enterprises has grown from a small team to a trusted technology partner for schools, retailers, and dairy farms across the country.',
   image: '/images/founder.png',
 };
 
 export const ctaContent = {
   headline: 'Ready to Automate Your Business?',
   subheadline:
-    'Join hundreds of organizations that trust DoonPortal to streamline their operations. Book a free demo today.',
+    'Join hundreds of organizations that trust LALogix Enterprises to streamline their operations. Book a free demo today.',
   ctaButton: { label: 'Book a Free Demo', href: '/book-demo' },
 };

@@ -20,7 +20,7 @@ import {
 } from '@/data/seo';
 
 const SLUG = 'school-management';
-const SITE_URL = 'https://doonportal.com';
+const SITE_URL = 'https://lalogix.com';
 
 export async function generateMetadata(): Promise<Metadata> {
   const product = getProductBySlug(SLUG);
@@ -190,7 +190,7 @@ export default function SchoolManagementPage() {
 
         <CTASection
           headline="Automate Your School Today"
-          subheadline="Join hundreds of schools that trust DoonPortal to streamline their administration."
+          subheadline="Join hundreds of schools that trust LALogix Enterprises to streamline their administration."
           ctaButton={{ label: 'Book Free Demo', href: `/book-demo?product=${SLUG}` }}
           variant="gradient"
         />

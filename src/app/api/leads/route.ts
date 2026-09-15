@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     });
 
     // Email notification to admin
-    const salesEmail = process.env.SALES_EMAIL || 'sales@doonportal.com';
+    const salesEmail = process.env.SALES_EMAIL || 'sales@lalogix.com';
     await sendEmail({
       to: salesEmail,
       subject: `New Lead: ${name} — ${product_interest || 'General'}`,

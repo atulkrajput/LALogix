@@ -15,7 +15,7 @@ export const vision = {
 export const history = {
   title: 'Our Story',
   description:
-    'DoonPortal was founded over 15 years ago in Dehradun, India, with a clear purpose — to bridge the technology gap for businesses that needed powerful automation but lacked access to enterprise-grade solutions. What started as custom software projects for local schools has grown into a full product suite serving education, retail, and agriculture sectors. Over the years, we have built deep domain expertise, refined our platforms through real-world feedback, and earned the trust of hundreds of organizations across India.',
+    'LALogix Enterprises was founded over 15 years ago in Dehradun, India, with a clear purpose — to bridge the technology gap for businesses that needed powerful automation but lacked access to enterprise-grade solutions. What started as custom software projects for local schools has grown into a full product suite serving education, retail, and agriculture sectors. Over the years, we have built deep domain expertise, refined our platforms through real-world feedback, and earned the trust of hundreds of organizations across India.',
   milestones: [
     { year: '2008', event: 'Founded in Dehradun with a focus on school automation' },
     { year: '2012', event: 'Launched the first version of School Management System' },
@@ -57,11 +57,11 @@ export const team = {
     image: '/images/team/founder.png',
   },
   description:
-    'Our team combines deep technical expertise with industry knowledge. From developers and designers to support specialists, every member of the DoonPortal team is committed to delivering exceptional software and service.',
+    'Our team combines deep technical expertise with industry knowledge. From developers and designers to support specialists, every member of the LALogix Enterprises team is committed to delivering exceptional software and service.',
 };
 
 export const ctaContent = {
   headline: 'Want to Learn More?',
-  subheadline: 'Get in touch with our team or explore our solutions to see how DoonPortal can help your organization.',
+  subheadline: 'Get in touch with our team or explore our solutions to see how LALogix Enterprises can help your organization.',
   ctaButton: { label: 'Contact Us', href: '/contact' },
 };

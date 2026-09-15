@@ -36,7 +36,7 @@ export default function SolutionsPage() {
                 Our Solutions
               </h1>
               <p className="mt-6 text-lg leading-relaxed text-neutral-600">
-                DoonPortal offers industry-specific automation platforms designed to streamline
+                LALogix offers industry-specific automation platforms designed to streamline
                 operations, reduce costs, and drive growth. Explore our products or learn about
                 our custom automation services.
               </p>

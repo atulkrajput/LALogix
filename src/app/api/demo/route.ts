@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Email notification
-    const salesEmail = process.env.SALES_EMAIL || 'sales@doonportal.com';
+    const salesEmail = process.env.SALES_EMAIL || 'sales@lalogix.com';
     await sendEmail({
       to: salesEmail,
       subject: `Demo Request: ${name} — ${organization || 'N/A'}`,

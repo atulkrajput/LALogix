@@ -2,7 +2,7 @@ import type { NavLink } from '@/types';
 
 export const logo = {
   src: '/doonportal.png',
-  alt: 'DoonPortal',
+  alt: 'LALogix',
 };
 
 export const mainLinks: NavLink[] = [
@@ -56,23 +56,23 @@ export const footerLinkGroups = [
 export const socialLinks = [
   {
     platform: 'LinkedIn',
-    url: 'https://linkedin.com/company/doonportal',
+    url: 'https://linkedin.com/company/lalogix',
     icon: 'linkedin',
   },
   {
     platform: 'Twitter',
-    url: 'https://twitter.com/doonportal',
+    url: 'https://twitter.com/lalogix',
     icon: 'twitter',
   },
   {
     platform: 'Facebook',
-    url: 'https://facebook.com/doonportal',
+    url: 'https://facebook.com/lalogix',
     icon: 'facebook',
   },
 ];
 
 export const contactInfo = {
-  email: 'info@doonportal.com',
+  email: 'info@lalogix.com',
   phone: '+91-XXXXXXXXXX',
   address: 'Dehradun, India',
 };
