@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   const post = getPostBySlug(slug);
   if (!post) return {};
   return {
-    title: `${post.title} | LALogix Blog`,
+    title: `${post.title} | LALogix Insights`,
     description: post.excerpt,
     openGraph: {
       title: post.title,
@@ -57,7 +57,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   if (!post) return notFound();
 
   const seo = {
-    title: `${post.title} | LALogix Blog`,
+    title: `${post.title} | LALogix Insights`,
     description: post.excerpt,
     canonical: `${SITE_URL}/blog/${slug}`,
     jsonLd: [
@@ -71,7 +71,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       }),
       buildBreadcrumbJsonLd([
         { name: 'Home', url: SITE_URL },
-        { name: 'Blog', url: `${SITE_URL}/blog` },
+        { name: 'Insights', url: `${SITE_URL}/blog` },
         { name: post.title, url: `${SITE_URL}/blog/${slug}` },
       ]),
     ],
@@ -103,7 +103,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm text-neutral-400">
               <Link href="/" className="hover:text-brand-600 transition-colors">Home</Link>
               <span>/</span>
-              <Link href="/blog" className="hover:text-brand-600 transition-colors">Blog</Link>
+              <Link href="/blog" className="hover:text-brand-600 transition-colors">Insights</Link>
               <span>/</span>
               <span className="text-neutral-600 truncate max-w-[200px]">{post.title}</span>
             </nav>
@@ -321,7 +321,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </section>
           )}
 
-          {/* Back to blog */}
+          {/* Back to insights */}
           <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
             <Link href="/blog" className="group inline-flex items-center gap-2 text-sm font-medium text-brand-600 hover:text-brand-800 transition-colors">
               <span className="inline-block transition-transform duration-200 group-hover:-translate-x-1">←</span>

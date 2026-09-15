@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { logo } from '@/data/navigation';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -36,6 +38,15 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-sm">
         <div className="rounded-2xl border border-neutral-200 bg-white p-8 shadow-card">
           <div className="mb-6 text-center">
+            <Image
+              src={logo.src}
+              alt={logo.alt}
+              width={2172}
+              height={724}
+              sizes="162px"
+              priority
+              className="mx-auto h-[54px] w-auto"
+            />
             <h1 className="text-2xl font-bold text-neutral-900">LALogix CRM</h1>
             <p className="mt-1 text-sm text-neutral-500">Sign in to admin dashboard</p>
           </div>

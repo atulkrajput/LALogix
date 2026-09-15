@@ -102,7 +102,7 @@ export const pageSEO: Record<string, SEOMetadata> = {
     ],
   },
   blog: {
-    title: 'Blog — Insights on Business Automation | LALogix Enterprises',
+    title: 'Insights on Business Automation | LALogix Enterprises',
     description:
       'Read articles and insights on school management, retail automation, dairy farm technology, and business process optimization from LALogix Enterprises.',
     keywords: [
@@ -116,7 +116,7 @@ export const pageSEO: Record<string, SEOMetadata> = {
     jsonLd: [
       buildBreadcrumbJsonLd([
         { name: 'Home', url: SITE_URL },
-        { name: 'Blog', url: `${SITE_URL}/blog` },
+        { name: 'Insights', url: `${SITE_URL}/blog` },
       ]),
     ],
   },
