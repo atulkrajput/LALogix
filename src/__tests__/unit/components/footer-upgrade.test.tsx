@@ -37,7 +37,7 @@ describe('Footer Upgrade', () => {
     const { container } = render(<Footer />);
     const description = container.querySelector('p.text-neutral-400');
     expect(description).toBeInTheDocument();
-    expect(description?.textContent).toContain('LALogix Enterprises');
+    expect(description?.textContent).toContain('LALogix');
   });
 
   it('renders section headings in neutral-200 (light text)', () => {
@@ -68,7 +68,7 @@ describe('Footer Upgrade', () => {
 
   it('renders social icons with hover:scale-110 and hover:text-brand-400', () => {
     const { container } = render(<Footer />);
-    const socialLinks = container.querySelectorAll('a[aria-label*="Follow LALogix Enterprises"]');
+    const socialLinks = container.querySelectorAll('a[aria-label*="Follow LALogix"]');
     expect(socialLinks.length).toBe(3); // LinkedIn, Twitter, Facebook
     socialLinks.forEach((link) => {
       expect(link.className).toContain('hover:scale-110');
@@ -78,7 +78,7 @@ describe('Footer Upgrade', () => {
 
   it('renders social icons with transition-all duration-200', () => {
     const { container } = render(<Footer />);
-    const socialLinks = container.querySelectorAll('a[aria-label*="Follow LALogix Enterprises"]');
+    const socialLinks = container.querySelectorAll('a[aria-label*="Follow LALogix"]');
     socialLinks.forEach((link) => {
       expect(link.className).toContain('transition-all');
       expect(link.className).toContain('duration-200');
@@ -97,7 +97,7 @@ describe('Footer Upgrade', () => {
     const { container } = render(<Footer />);
     const copyright = container.querySelector('.text-neutral-500');
     expect(copyright).toBeInTheDocument();
-    expect(copyright?.textContent).toContain('LALogix Enterprises');
+    expect(copyright?.textContent).toContain('LALogix');
     expect(copyright?.textContent).toContain('All rights reserved');
   });
 

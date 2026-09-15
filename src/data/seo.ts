@@ -25,9 +25,9 @@ export const pageSEO: Record<string, SEOMetadata> = {
         '@type': 'Organization',
         name: SITE_NAME,
         url: SITE_URL,
-        logo: `${SITE_URL}/doonportal.png`,
+        logo: `${SITE_URL}/logo.png`,
         description:
-          'LALogix Enterprises is an automation software company building platforms for schools, retail businesses, and dairy farms.',
+          'LALogix is an automation software company building platforms for schools, retail businesses, and dairy farms.',
         address: {
           '@type': 'PostalAddress',
           addressLocality: 'Dehradun',
@@ -50,7 +50,7 @@ export const pageSEO: Record<string, SEOMetadata> = {
   solutions: {
     title: 'Solutions — School, Retail & Dairy Software | LALogix Enterprises',
     description:
-      'Explore LALogix Enterprises\' automation solutions: School Management System, Inventory POS, Dairy Management, and custom automation services.',
+      'Explore LALogix Enterprises automation solutions: School Management System, Inventory POS, Dairy Management, and custom automation services.',
     keywords: [
       'business automation solutions',
       'school ERP',
@@ -85,10 +85,10 @@ export const pageSEO: Record<string, SEOMetadata> = {
         '@type': 'Organization',
         name: SITE_NAME,
         url: SITE_URL,
-        logo: `${SITE_URL}/doonportal.png`,
+        logo: `${SITE_URL}/logo.png`,
         foundingDate: '2008',
         description:
-          'LALogix Enterprises is an automation software company with 15+ years of experience building platforms for schools, retail businesses, and dairy farms.',
+          'LALogix is an automation software company with 15+ years of experience building platforms for schools, retail businesses, and dairy farms.',
         address: {
           '@type': 'PostalAddress',
           addressLocality: 'Dehradun',
@@ -141,7 +141,7 @@ export const pageSEO: Record<string, SEOMetadata> = {
   bookDemo: {
     title: 'Book a Demo — See LALogix Enterprises in Action',
     description:
-      'Schedule a free demo of LALogix Enterprises\' automation software. See how our school management, inventory POS, or dairy management systems can transform your operations.',
+      'Schedule a free demo of LALogix Enterprises automation software. See how our school management, inventory POS, or dairy management systems can transform your operations.',
     keywords: [
       'book demo',
       'free software demo',
@@ -278,7 +278,7 @@ export function buildBlogPostingJsonLd(post: {
       name: SITE_NAME,
       logo: {
         '@type': 'ImageObject',
-        url: `${SITE_URL}/doonportal.png`,
+        url: `${SITE_URL}/logo.png`,
       },
     },
   };
@@ -309,7 +309,7 @@ export function buildTechArticleJsonLd(article: {
       name: SITE_NAME,
       logo: {
         '@type': 'ImageObject',
-        url: `${SITE_URL}/doonportal.png`,
+        url: `${SITE_URL}/logo.png`,
       },
     },
   };

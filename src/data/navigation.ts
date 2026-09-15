@@ -1,7 +1,7 @@
 import type { NavLink } from '@/types';
 
 export const logo = {
-  src: '/doonportal.png',
+  src: '/logo.png',
   alt: 'LALogix',
 };
 

@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   const post = getPostBySlug(slug);
   if (!post) return {};
   return {
-    title: `${post.title} | LALogix Enterprises Blog`,
+    title: `${post.title} | LALogix Blog`,
     description: post.excerpt,
     openGraph: {
       title: post.title,
@@ -57,7 +57,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   if (!post) return notFound();
 
   const seo = {
-    title: `${post.title} | LALogix Enterprises Blog`,
+    title: `${post.title} | LALogix Blog`,
     description: post.excerpt,
     canonical: `${SITE_URL}/blog/${slug}`,
     jsonLd: [
@@ -240,7 +240,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                     <p className="text-xs font-semibold uppercase tracking-wider text-neutral-400">Written by</p>
                     <p className="mt-0.5 text-lg font-bold text-neutral-900">{post.author}</p>
                     <p className="mt-1 text-sm leading-relaxed text-neutral-500">
-                      Sharing insights on business automation, school management, and technology solutions at LALogix Enterprises.
+                      Sharing insights on business automation, school management, and technology solutions at LALogix.
                     </p>
                   </div>
                 </div>
@@ -249,7 +249,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 <div className="mt-12 rounded-2xl bg-gradient-to-br from-brand-600 to-brand-800 p-8 text-center shadow-xl sm:p-10">
                   <h2 className="text-2xl font-extrabold text-white sm:text-3xl">Ready to Get Started?</h2>
                   <p className="mx-auto mt-3 max-w-md text-brand-100">
-                    See how LALogix Enterprises can automate your operations with a free, personalized demo.
+                    See how LALogix can automate your operations with a free, personalized demo.
                   </p>
                   <div className="mt-7 flex flex-wrap justify-center gap-3">
                     <Button href="/book-demo" variant="secondary" size="lg">

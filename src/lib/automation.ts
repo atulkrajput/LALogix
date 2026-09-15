@@ -18,7 +18,7 @@ export async function runAutomation(trigger: string, leadId: number) {
       switch (rule.action) {
         case 'send_email': {
           let subject = `Follow-up: ${lead.name}`;
-          let body = `<p>Hi ${lead.name},</p><p>Thank you for your interest in LALogix Enterprises.</p>`;
+          let body = `<p>Hi ${lead.name},</p><p>Thank you for your interest in LALogix.</p>`;
 
           if (rule.templateId) {
             const template = await prisma.emailTemplate.findUnique({ where: { id: rule.templateId } });
@@ -49,7 +49,7 @@ export async function runAutomation(trigger: string, leadId: number) {
         }
 
         case 'send_whatsapp': {
-          const message = `Hi ${lead.name}, thank you for your interest in LALogix Enterprises. We'd love to schedule a demo for you.`;
+          const message = `Hi ${lead.name}, thank you for your interest in LALogix. We'd love to schedule a demo for you.`;
           await prisma.whatsappLog.create({
             data: { leadId: lead.id, message, status: 'sent' },
           });

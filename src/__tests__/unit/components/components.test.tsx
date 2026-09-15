@@ -209,7 +209,7 @@ import Footer from '@/components/layouts/Footer';
 describe('Footer', () => {
   it('renders company description', () => {
     render(<Footer />);
-    expect(screen.getByText(/LALogix Enterprises builds automation platforms/)).toBeInTheDocument();
+    expect(screen.getByText(/LALogix builds automation platforms/)).toBeInTheDocument();
   });
 
   it('renders footer link groups', () => {
@@ -221,9 +221,9 @@ describe('Footer', () => {
 
   it('renders social media links', () => {
     render(<Footer />);
-    expect(screen.getByLabelText(/Follow LALogix Enterprises on LinkedIn/)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Follow LALogix Enterprises on Twitter/)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Follow LALogix Enterprises on Facebook/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Follow LALogix on LinkedIn/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Follow LALogix on Twitter/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Follow LALogix on Facebook/)).toBeInTheDocument();
   });
 
   it('renders contact info', () => {
@@ -238,7 +238,7 @@ import Navbar from '@/components/layouts/Navbar';
 describe('Navbar', () => {
   it('renders the logo', () => {
     render(<Navbar />);
-    expect(screen.getByAltText('LALogix Enterprises')).toBeInTheDocument();
+    expect(screen.getByAltText('LALogix')).toBeInTheDocument();
   });
 
   it('renders navigation links', () => {

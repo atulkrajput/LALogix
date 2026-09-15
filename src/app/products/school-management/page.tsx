@@ -190,7 +190,7 @@ export default function SchoolManagementPage() {
 
         <CTASection
           headline="Automate Your School Today"
-          subheadline="Join hundreds of schools that trust LALogix Enterprises to streamline their administration."
+          subheadline="Join hundreds of schools that trust LALogix to streamline their administration."
           ctaButton={{ label: 'Book Free Demo', href: `/book-demo?product=${SLUG}` }}
           variant="gradient"
         />

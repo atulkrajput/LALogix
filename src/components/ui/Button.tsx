@@ -17,7 +17,7 @@ export interface ButtonProps {
 
 const variantStyles: Record<string, string> = {
   primary:
-    'bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800',
+    'bg-brand-500 text-white hover:bg-brand-400 active:bg-brand-600',
   secondary:
     'bg-brand-100 text-brand-700 hover:bg-brand-200 active:bg-brand-300',
   outline:
@@ -62,7 +62,7 @@ export default function Button({
 
   const glowStyle =
     variant === 'primary' && effectiveHover
-      ? '0 0 20px rgba(26,138,214,0.15), 0 0 40px rgba(26,138,214,0.08)'
+      ? '0 0 20px rgba(200,155,60,0.18), 0 0 40px rgba(200,155,60,0.08)'
       : undefined;
 
   const interactionStyle: React.CSSProperties = {

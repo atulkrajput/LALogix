@@ -34,7 +34,7 @@ export const products: Product[] = [
     solution: {
       title: 'One Platform for Everything',
       description:
-        'LALogix Enterprises School Management System unifies student records, attendance, fees, exams, library, transport, and parent communication into a single, easy-to-use platform. Automate repetitive tasks, eliminate paper, and give every stakeholder real-time access to the information they need.',
+        'LALogix School Management System unifies student records, attendance, fees, exams, library, transport, and parent communication into a single, easy-to-use platform. Automate repetitive tasks, eliminate paper, and give every stakeholder real-time access to the information they need.',
     },
     features: [
       { icon: '👨‍🎓', title: 'Student Management', description: 'Complete student profiles with enrollment, personal details, academic history, and document management.' },
@@ -61,7 +61,7 @@ export const products: Product[] = [
       { title: 'Better Decision Making', description: 'Data-driven insights help school leaders make informed decisions.' },
     ],
     seo: {
-      title: 'School Management Software — School ERP System | LALogix Enterprises',
+      title: 'School Management Software — School ERP System | LALogix',
       description: 'Best school management software in India. Complete school ERP with student management, attendance tracking, fee management, exams, parent app, and school automation system.',
       keywords: [
         'school management software',
@@ -105,7 +105,7 @@ export const products: Product[] = [
     solution: {
       title: 'Sell Smarter, Stock Better',
       description:
-        'LALogix Enterprises Inventory POS System combines fast billing with intelligent inventory management. Scan barcodes, process sales instantly, track every item in real-time, and get actionable reports to grow your business.',
+        'LALogix Inventory POS System combines fast billing with intelligent inventory management. Scan barcodes, process sales instantly, track every item in real-time, and get actionable reports to grow your business.',
     },
     features: [
       { icon: '🧾', title: 'POS Billing', description: 'Fast, accurate billing with barcode scanning, multiple payment modes, and customizable invoices.' },
@@ -129,7 +129,7 @@ export const products: Product[] = [
       { title: 'Scale with Confidence', description: 'Multi-location support and cloud access let you grow without limits.' },
     ],
     seo: {
-      title: 'Inventory POS Software — Retail Inventory Management | LALogix Enterprises',
+      title: 'Inventory POS Software — Retail Inventory Management | LALogix',
       description: 'Smart inventory management system and POS software for retail. Barcode scanning, stock tracking, purchase management, and sales reports for retail inventory software.',
       keywords: [
         'inventory management system',
@@ -172,7 +172,7 @@ export const products: Product[] = [
     solution: {
       title: 'Digitize Your Dairy Operations',
       description:
-        'LALogix Enterprises Dairy Management System automates every aspect of dairy farm operations. Record cattle data, track milk production, manage vendor purchases with fat/SNF calculations, and generate financial reports — all from one platform.',
+        'LALogix Dairy Management System automates every aspect of dairy farm operations. Record cattle data, track milk production, manage vendor purchases with fat/SNF calculations, and generate financial reports — all from one platform.',
     },
     features: [
       { icon: '🐮', title: 'Cattle Records', description: 'Complete cattle profiles with breed, health records, vaccination schedules, and breeding history.' },
@@ -195,7 +195,7 @@ export const products: Product[] = [
       { title: 'Grow Profitably', description: 'Financial reports give clear visibility into farm profitability and growth areas.' },
     ],
     seo: {
-      title: 'Dairy Farm Management Software — Cattle & Milk Management | LALogix Enterprises',
+      title: 'Dairy Farm Management Software — Cattle & Milk Management | LALogix',
       description: 'Complete dairy farm management software with cattle management, milk production management system, vendor tracking, fat/SNF calculations, and financial reports.',
       keywords: [
         'dairy farm management software',

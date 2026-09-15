@@ -1,10 +1,10 @@
-# LALogix Website
+# LALogix Enterprises Website
 
-Modern marketing and lead-generation website for LALogix built with Next.js, TypeScript, Tailwind CSS, Prisma, and Vitest.
+Modern marketing and lead-generation website for LALogix Enterprises built with Next.js, TypeScript, Tailwind CSS, Prisma, and Vitest.
 
 ## Overview
 
-This project is a redesigned company website for LALogix, showcasing:
+This project is a redesigned company website for LALogix Enterprises, showcasing:
 
 - school management software
 - inventory POS software
@@ -91,7 +91,7 @@ content/
 
 ## Branding
 
-The site is branded for LALogix Enterprises and uses the new company identity instead of the previous DoonPortal branding.
+The site is branded for LALogix and uses the new company identity instead of the previous DoonPortal branding.
 
 ## Notes
 

@@ -14,8 +14,8 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL('https://lalogix.com'),
   title: {
-    default: 'LALogix - Automation Software for Schools, Retail & Dairy',
-    template: '%s | LALogix Automation Software',
+    default: 'LALogix Enterprises - Automation Software for Schools, Retail & Dairy',
+    template: '%s | LALogix Enterprises Automation Software',
   },
   description:
     'Automation software for schools and businesses. Manage operations with School ERP, Inventory POS, and Dairy Management systems.',
@@ -27,15 +27,15 @@ export const metadata: Metadata = {
     'dairy management software',
     'business automation India',
   ],
-  authors: [{ name: 'LALogix' }],
-  creator: 'LALogix',
-  publisher: 'LALogix',
+  authors: [{ name: 'LALogix Enterprises' }],
+  creator: 'LALogix Enterprises',
+  publisher: 'LALogix Enterprises',
   openGraph: {
     type: 'website',
     locale: 'en_IN',
     url: 'https://lalogix.com',
-    siteName: 'LALogix',
-    title: 'LALogix - Automation Software for Schools, Retail & Dairy',
+    siteName: 'LALogix Enterprises',
+    title: 'LALogix Enterprises - Automation Software for Schools, Retail & Dairy',
     description:
       'Automation software for schools and businesses. Manage operations with School ERP, Inventory POS, and Dairy Management systems.',
     images: [
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
         url: '/images/og/home.png',
         width: 1200,
         height: 630,
-        alt: 'LALogix Automation Software',
+        alt: 'LALogix Enterprises Automation Software',
       },
     ],
   },
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     site: '@lalogix',
     creator: '@lalogix',
-    title: 'LALogix - Automation Software for Schools, Retail & Dairy',
+    title: 'LALogix Enterprises - Automation Software for Schools, Retail & Dairy',
     description:
       'Automation software for schools and businesses. Manage operations with School ERP, Inventory POS, and Dairy Management systems.',
     images: ['/images/og/home.png'],
@@ -69,6 +69,11 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: 'https://lalogix.com',
+  },
+  icons: {
+    icon: '/icon.png',
+    shortcut: '/icon.png',
+    apple: '/icon.png',
   },
 };
 

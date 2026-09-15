@@ -58,7 +58,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Sidebar */}
       <aside className={`fixed inset-y-0 left-0 z-40 w-64 transform bg-white border-r border-neutral-200 transition-transform lg:static lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex h-16 items-center gap-2 border-b border-neutral-200 px-6">
-          <span className="text-xl font-bold text-brand-600">LALogix Enterprises</span>
+          <span className="text-xl font-bold text-brand-600">LALogix</span>
           <span className="rounded bg-brand-100 px-2 py-0.5 text-xs font-medium text-brand-700">CRM</span>
         </div>
         <nav className="mt-4 space-y-1 px-3">

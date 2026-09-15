@@ -6,8 +6,8 @@ import Button from '@/components/ui/Button';
 import { pageSEO } from '@/data/seo';
 
 export const metadata: Metadata = {
-  title: 'Thank You — LALogix Enterprises',
-  description: 'Thank you for your interest in LALogix Enterprises. Our team will get back to you shortly.',
+  title: 'Thank You — LALogix',
+  description: 'Thank you for your interest in LALogix. Our team will get back to you shortly.',
   robots: { index: false, follow: false },
 };
 
