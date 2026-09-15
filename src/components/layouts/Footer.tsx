@@ -24,7 +24,7 @@ export default function Footer() {
                 alt={logo.alt}
                 width={40}
                 height={40}
-                className="h-8 w-8 brightness-0 invert"
+                className="h-[54px] w-auto brightness-0 invert"
                 loading="lazy"
               />
             </Link>
