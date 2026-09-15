@@ -22,8 +22,9 @@ export default function Footer() {
               <Image
                 src={logo.src}
                 alt={logo.alt}
-                width={40}
-                height={40}
+                width={2172}
+                height={724}
+                sizes="162px"
                 className="h-[54px] w-auto brightness-0 invert"
                 loading="lazy"
               />

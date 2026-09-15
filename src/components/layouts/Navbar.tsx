@@ -94,8 +94,9 @@ export default function Navbar() {
             <Image
               src={logo.src}
               alt={logo.alt}
-              width={40}
-              height={40}
+              width={2172}
+              height={724}
+              sizes="162px"
               priority
               className="h-[54px] w-auto"
             />
