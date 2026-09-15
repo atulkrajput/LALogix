@@ -47,7 +47,6 @@ export default function AdminLoginPage() {
               priority
               className="mx-auto h-[54px] w-auto"
             />
-            <h1 className="text-2xl font-bold text-neutral-900">LALogix CRM</h1>
             <p className="mt-1 text-sm text-neutral-500">Sign in to admin dashboard</p>
           </div>
 
