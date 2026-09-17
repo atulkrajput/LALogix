@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import '@/styles/globals.css';
 import AnalyticsProvider from '@/components/analytics/AnalyticsProvider';
 import SiteShell from '@/components/layouts/SiteShell';
@@ -87,6 +88,7 @@ export default function RootLayout({
       <body className="font-sans antialiased">
         <AnalyticsProvider />
         <SiteShell>{children}</SiteShell>
+        <SpeedInsights />
       </body>
     </html>
   );
