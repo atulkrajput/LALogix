@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { verifyPassword, signToken, seedAdmin } from '@/lib/auth';
+import { verifyPassword, signToken } from '@/lib/auth';
+
+function isDatabaseUnavailable(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false;
+  const code = 'code' in error ? error.code : undefined;
+  return typeof code === 'string' && /^P100[1-3]$|^P1010$|^P1011$/.test(code);
+}
 
 export async function POST(req: NextRequest) {
   try {
-    // Ensure default admin exists
-    await seedAdmin();
-
     const { email, password } = await req.json();
     if (!email || !password) {
       return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
@@ -35,6 +38,12 @@ export async function POST(req: NextRequest) {
     return response;
   } catch (error) {
     console.error('[API] POST /api/auth/login error:', error);
+    if (isDatabaseUnavailable(error)) {
+      return NextResponse.json(
+        { error: 'Authentication service is temporarily unavailable' },
+        { status: 503 }
+      );
+    }
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
