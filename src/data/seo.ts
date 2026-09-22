@@ -112,11 +112,11 @@ export const pageSEO: Record<string, SEOMetadata> = {
       'dairy farm automation',
     ],
     ogImage: '/images/og/blog.png',
-    canonical: `${SITE_URL}/blog`,
+    canonical: `${SITE_URL}/insights`,
     jsonLd: [
       buildBreadcrumbJsonLd([
         { name: 'Home', url: SITE_URL },
-        { name: 'Insights', url: `${SITE_URL}/blog` },
+        { name: 'Insights', url: `${SITE_URL}/insights` },
       ]),
     ],
   },

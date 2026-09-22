@@ -6,11 +6,11 @@ import PageLayout from '@/components/layouts/PageLayout';
 import Button from '@/components/ui/Button';
 import { getPostBySlug, getAllSlugs, getAllPosts } from '@/lib/blog';
 import { buildBlogPostingJsonLd, buildBreadcrumbJsonLd } from '@/data/seo';
-import BlogContent from './BlogContent';
+import BlogContent from '../blog/BlogContent';
 
 const SITE_URL = 'https://lalogix.com';
 
-interface BlogPostPageProps {
+interface InsightsPostPageProps {
   params: Promise<{ slug: string }>;
 }
 
@@ -19,7 +19,7 @@ export async function generateStaticParams() {
   return slugs.map((slug) => ({ slug }));
 }
 
-export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: InsightsPostPageProps): Promise<Metadata> {
   const { slug } = await params;
   const post = getPostBySlug(slug);
   if (!post) return {};
@@ -51,7 +51,7 @@ function estimateReadingTime(content: string): number {
   return Math.max(1, Math.ceil(words / 220));
 }
 
-export default async function BlogPostPage({ params }: BlogPostPageProps) {
+export default async function InsightsPostPage({ params }: InsightsPostPageProps) {
   const { slug } = await params;
   const post = getPostBySlug(slug);
   if (!post) return notFound();
@@ -86,7 +86,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     day: 'numeric',
   });
 
-  // Related posts: same tags, exclude current
   const allPosts = getAllPosts();
   const relatedPosts = allPosts
     .filter((p) => p.slug !== slug && p.tags?.some((t) => post.tags?.includes(t)))
@@ -98,7 +97,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     <PageLayout seo={seo}>
       <BlogContent>
         <article>
-          {/* Breadcrumb — pt-24 md:pt-28 clears the fixed navbar */}
           <div className="mx-auto max-w-4xl px-4 pt-24 md:pt-28 sm:px-6 lg:px-8">
             <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm text-neutral-400">
               <Link href="/" className="hover:text-brand-600 transition-colors">Home</Link>
@@ -109,9 +107,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </nav>
           </div>
 
-          {/* Hero */}
           <header className="mx-auto max-w-4xl px-4 pb-8 pt-10 sm:px-6 lg:px-8">
-            {/* Tags */}
             {post.tags && post.tags.length > 0 && (
               <div className="mb-5 flex flex-wrap gap-2">
                 {post.tags.map((tag) => (
@@ -133,12 +129,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               {post.excerpt}
             </p>
 
-            {/* Meta row */}
             <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3 border-b border-neutral-200 pb-6">
-              {/* Author */}
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-sm font-bold text-white">
-                  {post.author.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                  {post.author.split(' ').map((n) => n[0]).join('').slice(0, 2)}
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-neutral-900">{post.author}</p>
@@ -150,7 +144,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
               <span className="hidden sm:block h-5 w-px bg-neutral-200" />
 
-              {/* Reading time */}
               <span className="flex items-center gap-1.5 text-sm text-neutral-400">
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2m6-2a10 10 0 11-20 0 10 10 0 0120 0z" />
@@ -158,7 +151,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
                 {readingTime} min read
               </span>
 
-              {/* Share */}
               <div className="ml-auto flex items-center gap-2">
                 <span className="text-xs font-medium uppercase tracking-wider text-neutral-400">Share</span>
                 <a
@@ -192,7 +184,6 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </div>
           </header>
 
-          {/* Featured Image */}
           {post.featuredImage && (
             <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
               <div className="relative aspect-[21/9] overflow-hidden rounded-2xl bg-neutral-100 shadow-lg ring-1 ring-neutral-900/5">
@@ -208,219 +199,109 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </div>
           )}
 
-          {/* Body */}
           <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
             <div className="lg:grid lg:grid-cols-[1fr_220px] lg:gap-12">
-              {/* Main content */}
               <div className="min-w-0">
                 <div
                   className="
                     prose prose-lg prose-neutral max-w-none
                     prose-headings:scroll-mt-24 prose-headings:font-extrabold prose-headings:tracking-tight
                     prose-h2:mt-14 prose-h2:mb-5 prose-h2:text-2xl prose-h2:border-b prose-h2:border-neutral-200 prose-h2:pb-3
-                    prose-h3:mt-10 prose-h3:mb-4 prose-h3:text-xl
-                    prose-p:leading-[1.8] prose-p:text-neutral-600
-                    prose-a:text-brand-600 prose-a:font-medium prose-a:no-underline hover:prose-a:underline prose-a:decoration-brand-300
-                    prose-strong:text-neutral-900
-                    prose-li:text-neutral-600 prose-li:leading-[1.8]
-                    prose-ul:my-6 prose-ol:my-6
-                    prose-blockquote:border-l-brand-500 prose-blockquote:bg-brand-50/50 prose-blockquote:py-1 prose-blockquote:px-6 prose-blockquote:rounded-r-lg prose-blockquote:not-italic prose-blockquote:text-neutral-700
-                    prose-img:rounded-xl prose-img:shadow-md
-                    prose-hr:my-10 prose-hr:border-neutral-200
+                    prose-p:leading-8 prose-p:text-neutral-700
+                    prose-a:text-brand-600 prose-a:no-underline hover:prose-a:text-brand-700
+                    prose-strong:text-neutral-900 prose-blockquote:border-brand-200 prose-blockquote:text-neutral-700
+                    prose-ol:mt-5 prose-ul:mt-5 prose-li:leading-7 prose-li:text-neutral-700
                   "
                   dangerouslySetInnerHTML={{ __html: htmlContent }}
                 />
-
-                {/* Author card */}
-                <div className="mt-14 flex items-start gap-4 rounded-2xl border border-neutral-200 bg-gradient-to-br from-neutral-50 to-white p-6">
-                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-lg font-bold text-white">
-                    {post.author.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                  </div>
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-wider text-neutral-400">Written by</p>
-                    <p className="mt-0.5 text-lg font-bold text-neutral-900">{post.author}</p>
-                    <p className="mt-1 text-sm leading-relaxed text-neutral-500">
-                      Sharing insights on business automation, school management, and technology solutions at LALogix.
-                    </p>
-                  </div>
-                </div>
-
-                {/* CTA */}
-                <div className="mt-12 rounded-2xl bg-gradient-to-br from-brand-600 to-brand-800 p-8 text-center shadow-xl sm:p-10">
-                  <h2 className="text-2xl font-extrabold text-white sm:text-3xl">Ready to Get Started?</h2>
-                  <p className="mx-auto mt-3 max-w-md text-brand-100">
-                    See how LALogix can automate your operations with a free, personalized demo.
-                  </p>
-                  <div className="mt-7 flex flex-wrap justify-center gap-3">
-                    <Button href="/book-demo" variant="secondary" size="lg">
-                      Book Free Demo
-                    </Button>
-                    <Button href="/solutions" variant="ghost" size="lg" className="text-white hover:bg-white/10">
-                      Explore Solutions
-                    </Button>
-                  </div>
-                </div>
               </div>
 
-              {/* Sidebar — TOC (sticky on desktop) */}
-              {headings.length > 2 && (
-                <aside className="hidden lg:block">
-                  <div className="sticky top-28">
-                    <nav aria-label="Table of contents" className="rounded-xl border border-neutral-200 bg-white p-5">
-                      <h2 className="mb-3 text-xs font-bold uppercase tracking-wider text-neutral-400">On this page</h2>
-                      <ul className="space-y-2">
-                        {headings.map((heading) => (
-                          <li key={heading.id}>
-                            <a
-                              href={`#${heading.id}`}
-                              className={`block text-[13px] leading-snug transition-colors hover:text-brand-600 ${
-                                heading.level === 3
-                                  ? 'pl-3 text-neutral-400 hover:text-brand-500'
-                                  : 'font-medium text-neutral-600'
-                              }`}
-                            >
-                              {heading.text}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    </nav>
-                  </div>
-                </aside>
-              )}
+              <aside className="mt-10 lg:mt-0">
+                <div className="sticky top-24 rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm">
+                  <h3 className="text-sm font-semibold uppercase tracking-[0.12em] text-neutral-500">On this page</h3>
+                  <ul className="mt-4 space-y-2 text-sm text-neutral-600">
+                    {headings.map((heading) => (
+                      <li key={heading.id} className={heading.depth === 2 ? 'ml-0' : 'ml-3'}>
+                        <a href={`#${heading.id}`} className="hover:text-brand-600 transition-colors">
+                          {heading.text}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </aside>
             </div>
           </div>
+        </article>
 
-          {/* Related Posts */}
+        <div className="mx-auto max-w-5xl px-4 pb-16 sm:px-6 lg:px-8">
           {relatedPosts.length > 0 && (
-            <section className="border-t border-neutral-200 bg-neutral-50">
-              <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
-                <h2 className="text-center text-xs font-bold uppercase tracking-wider text-neutral-400">Related Articles</h2>
-                <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                  {relatedPosts.map((rp) => (
-                    <Link key={rp.slug} href={`/insights/${rp.slug}`} className="group block">
-                      <div className="overflow-hidden rounded-xl border border-neutral-200 bg-white transition-shadow hover:shadow-lg">
-                        {rp.featuredImage && (
-                          <div className="relative aspect-video bg-neutral-100">
-                            <Image src={rp.featuredImage} alt={rp.title} fill className="object-cover transition-transform duration-300 group-hover:scale-105" sizes="(max-width: 640px) 100vw, 33vw" loading="lazy" />
-                          </div>
-                        )}
-                        <div className="p-4">
-                          <p className="text-xs text-neutral-400">
-                            {new Date(rp.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                          </p>
-                          <h3 className="mt-1 text-sm font-semibold leading-snug text-neutral-900 line-clamp-2 group-hover:text-brand-600 transition-colors">
-                            {rp.title}
-                          </h3>
-                        </div>
+            <div className="mt-8">
+              <h2 className="text-2xl font-bold tracking-tight text-neutral-900">Related Insights</h2>
+              <div className="mt-6 grid gap-6 md:grid-cols-3">
+                {relatedPosts.map((rp) => (
+                  <Link key={rp.slug} href={`/insights/${rp.slug}`} className="group block">
+                    <Card hover className="h-full">
+                      <div className="mb-4 overflow-hidden rounded-lg">
+                        <Image
+                          src={rp.featuredImage}
+                          alt={rp.title}
+                          width={600}
+                          height={300}
+                          className="h-40 w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
                       </div>
-                    </Link>
-                  ))}
-                </div>
+                      <p className="text-sm text-neutral-500">{new Date(rp.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+                      <h3 className="mt-2 text-lg font-semibold text-neutral-900">{rp.title}</h3>
+                    </Card>
+                  </Link>
+                ))}
               </div>
-            </section>
+            </div>
           )}
 
-          {/* Back to insights */}
-          <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-            <Link href="/insights" className="group inline-flex items-center gap-2 text-sm font-medium text-brand-600 hover:text-brand-800 transition-colors">
-              <span className="inline-block transition-transform duration-200 group-hover:-translate-x-1">←</span>
-              All articles
-            </Link>
+          <div className="mt-12 flex justify-center">
+            <Button href="/insights" className="group inline-flex items-center gap-2 text-sm font-medium text-brand-600 hover:text-brand-800 transition-colors">
+              <span>←</span>
+              Back to Insights
+            </Button>
           </div>
-        </article>
+        </div>
       </BlogContent>
     </PageLayout>
   );
 }
 
-/** Extract headings from markdown for table of contents */
-function extractHeadings(markdown: string): { id: string; text: string; level: number }[] {
-  const headings: { id: string; text: string; level: number }[] = [];
-  const lines = markdown.split('\n');
-  for (const line of lines) {
-    const match = line.match(/^(#{2,3})\s+(.+)$/);
-    if (match) {
-      const text = match[2].trim();
-      const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-      headings.push({ id, text, level: match[1].length });
-    }
-  }
-  return headings;
+function markdownToHtml(markdown: string): string {
+  const escaped = markdown
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  return escaped
+    .replace(/^### (.*)$/gm, '<h3>$1</h3>')
+    .replace(/^## (.*)$/gm, '<h2>$1</h2>')
+    .replace(/^# (.*)$/gm, '<h1>$1</h1>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/`(.*?)`/g, '<code>$1</code>')
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/\n/g, '<br />');
 }
 
-/** Markdown to HTML converter with heading IDs, lists, blockquotes, code, images, and hr */
-function markdownToHtml(markdown: string): string {
-  let html = markdown
-    // Headings with IDs
-    .replace(/^### (.+)$/gm, (_m, text) => {
-      const id = text.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-      return `<h3 id="${id}">${text}</h3>`;
-    })
-    .replace(/^## (.+)$/gm, (_m, text) => {
-      const id = text.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-      return `<h2 id="${id}">${text}</h2>`;
-    })
-    .replace(/^# (.+)$/gm, (_m, text) => {
-      const id = text.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-      return `<h2 id="${id}">${text}</h2>`;
-    })
-    // Horizontal rules
-    .replace(/^---$/gm, '<hr />')
-    // Images
-    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" loading="lazy" />')
-    // Bold & italic
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    // Inline code
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    // Links
-    .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2">$1</a>');
+function extractHeadings(markdown: string): Array<{ id: string; text: string; depth: number }> {
+  const headings: Array<{ id: string; text: string; depth: number }> = [];
+  const lines = markdown.split('\n');
 
-  // Process blocks
-  const blocks = html.split(/\n\n+/);
-  const processed: string[] = [];
+  lines.forEach((line) => {
+    const match = line.match(/^(#{1,3})\s+(.*)$/);
+    if (!match) return;
 
-  for (let i = 0; i < blocks.length; i++) {
-    const block = blocks[i].trim();
-    if (!block) continue;
+    const depth = match[1].length;
+    const text = match[2].trim();
+    const id = text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    headings.push({ id, text, depth });
+  });
 
-    // Already an HTML element
-    if (block.startsWith('<h') || block.startsWith('<hr')) {
-      processed.push(block);
-      continue;
-    }
-
-    // Blockquote
-    if (block.startsWith('&gt;') || block.startsWith('>')) {
-      const text = block.replace(/^(?:&gt;|>)\s?/gm, '');
-      processed.push(`<blockquote><p>${text}</p></blockquote>`);
-      continue;
-    }
-
-    // Ordered list
-    if (/^\d+\.\s/.test(block)) {
-      const items = block.split('\n').map(line => {
-        const m = line.match(/^\d+\.\s+(.+)$/);
-        return m ? `<li>${m[1]}</li>` : '';
-      }).join('');
-      processed.push(`<ol>${items}</ol>`);
-      continue;
-    }
-
-    // Unordered list
-    if (block.startsWith('- ') || block.startsWith('* ')) {
-      const items = block.split('\n').map(line => {
-        const m = line.match(/^[-*]\s+(.+)$/);
-        return m ? `<li>${m[1]}</li>` : '';
-      }).join('');
-      processed.push(`<ul>${items}</ul>`);
-      continue;
-    }
-
-    // Paragraph
-    processed.push(`<p>${block.replace(/\n/g, '<br />')}</p>`);
-  }
-
-  return processed.join('\n');
+  return headings;
 }

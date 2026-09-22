@@ -93,14 +93,14 @@ describe('Property 3: Blog post data contains all required fields', () => {
  * **Validates: Requirements 10.2**
  */
 describe('Property 4: Blog card links to correct post', () => {
-  it('blog card href equals /blog/{slug} for any slug', () => {
+  it('blog card href equals /insights/{slug} for any slug', () => {
     fc.assert(
       fc.property(
         fc.stringMatching(/^[a-z][a-z0-9-]{2,30}$/),
         (slug) => {
-          const expectedHref = `/blog/${slug}`;
-          expect(expectedHref).toBe(`/blog/${slug}`);
-          expect(expectedHref).toMatch(/^\/blog\/[a-z][a-z0-9-]+$/);
+          const expectedHref = `/insights/${slug}`;
+          expect(expectedHref).toBe(`/insights/${slug}`);
+          expect(expectedHref).toMatch(/^\/insights\/[a-z][a-z0-9-]+$/);
         }
       ),
       { numRuns: 100 }

@@ -141,10 +141,10 @@ export default function DairyManagementPage() {
             <div className="mx-auto max-w-3xl text-center">
               <h2 className="text-2xl font-bold text-neutral-900">Related Resources</h2>
               <div className="mt-6 flex flex-wrap justify-center gap-4">
-                <Button href="/blog/digital-transformation-dairy-farming" variant="outline" size="sm">
+                <Button href="/insights/digital-transformation-dairy-farming" variant="outline" size="sm">
                   Digital Transformation in Dairy
                 </Button>
-                <Button href="/blog/dairy-farm-automation-guide" variant="outline" size="sm">
+                <Button href="/insights/dairy-farm-automation-guide" variant="outline" size="sm">
                   Dairy Farm Automation Guide
                 </Button>
                 <Button href="/solutions" variant="outline" size="sm">

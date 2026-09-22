@@ -12,7 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { route: '/products/dairy-management', priority: 0.9, changeFreq: 'monthly' },
     { route: '/custom-automation', priority: 0.8, changeFreq: 'monthly' },
     { route: '/about', priority: 0.7, changeFreq: 'monthly' },
-    { route: '/blog', priority: 0.8, changeFreq: 'weekly' },
+    { route: '/insights', priority: 0.8, changeFreq: 'weekly' },
     { route: '/contact', priority: 0.7, changeFreq: 'monthly' },
     { route: '/book-demo', priority: 0.85, changeFreq: 'monthly' },
   ];
@@ -26,7 +26,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const blogSlugs = getAllSlugs();
   const blogEntries: MetadataRoute.Sitemap = blogSlugs.map((slug) => ({
-    url: `${SITE_URL}/blog/${slug}`,
+    url: `${SITE_URL}/insights/${slug}`,
     lastModified: new Date(),
     changeFrequency: 'monthly',
     priority: 0.6,

@@ -2,7 +2,7 @@
 
 import { usePathname } from 'next/navigation';
 
-const WHATSAPP_NUMBER = '917252811555';
+const WHATSAPP_NUMBER = '918755587185';
 
 const pageMessages: Record<string, string> = {
   '/': 'Hi, I visited your website and I\'m interested in LALogix solutions.',
@@ -14,7 +14,7 @@ const pageMessages: Record<string, string> = {
   '/about': 'Hi, I\'d like to know more about LALogix and your services.',
   '/contact': 'Hi, I\'d like to get in touch with the LALogix team.',
   '/book-demo': 'Hi, I\'d like to book a demo of LALogix software.',
-  '/blog': 'Hi, I was reading your insights and have a question about your solutions.',
+  '/insights': 'Hi, I was reading your insights and have a question about your solutions.',
 };
 
 const DEFAULT_MESSAGE = 'Hi, I\'m interested in LALogix solutions. Can you help me?';

@@ -18,10 +18,10 @@ test.describe('Site Navigation', () => {
     await expect(page).toHaveURL('/about');
   });
 
-  test('navigate to Blog page via navbar', async ({ page }) => {
+  test('navigate to Insights page via navbar', async ({ page }) => {
     await page.goto('/');
-    await page.getByRole('link', { name: 'Blog' }).first().click();
-    await expect(page).toHaveURL('/blog');
+    await page.getByRole('link', { name: 'Insights' }).first().click();
+    await expect(page).toHaveURL('/insights');
   });
 
   test('navigate to Contact page via navbar', async ({ page }) => {

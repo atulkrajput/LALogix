@@ -155,10 +155,10 @@ export default function SchoolManagementPage() {
               <h2 className="text-2xl font-bold text-neutral-900">Related Resources</h2>
               <p className="mt-2 text-neutral-600">Learn more about school automation and management.</p>
               <div className="mt-6 flex flex-wrap justify-center gap-4">
-                <Button href="/blog/why-schools-need-erp-software" variant="outline" size="sm">
+                <Button href="/insights/why-schools-need-erp-software" variant="outline" size="sm">
                   Why Schools Need ERP Software
                 </Button>
-                <Button href="/blog/best-school-management-software-india" variant="outline" size="sm">
+                <Button href="/insights/best-school-management-software-india" variant="outline" size="sm">
                   Best School Management Software
                 </Button>
                 <Button href="/solutions" variant="outline" size="sm">

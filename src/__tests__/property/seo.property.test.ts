@@ -89,7 +89,7 @@ describe('Property 10: Sitemap contains all public routes', () => {
     '',
     '/solutions',
     '/about',
-    '/blog',
+    '/insights',
     '/contact',
     '/book-demo',
     '/custom-automation',

@@ -48,7 +48,7 @@ export default function BlogPage() {
               <>
                 <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
                   {posts.map((post) => (
-                    <Link key={post.slug} href={`/blog/${post.slug}`} className="group block">
+                    <Link key={post.slug} href={`/insights/${post.slug}`} className="group block">
                       <Card hover className="h-full">
                         <div className="relative mb-4 aspect-video overflow-hidden rounded-lg bg-neutral-100">
                           <Image
