@@ -27,6 +27,8 @@ npm run dev
 
 Open http://localhost:8000 — admin CRM at http://localhost:8000/admin. Change the seeded admin password after the first login.
 
+> **Windows tip:** keep `npm run dev` running alongside `php artisan serve`. PHP's built-in server on Windows can stall or reset connections when the browser loads many built JS chunks at once (pages then stay blank). With Vite running, assets are served by Node and the problem goes away. Apache/XAMPP serving `public/` is not affected.
+
 Production build: `npm run build` (outputs to `public/build`), then point the web server at `public/`.
 
 ## Where things are
