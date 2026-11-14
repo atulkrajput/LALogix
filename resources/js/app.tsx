@@ -6,6 +6,7 @@ import { createRoot } from 'react-dom/client';
 import SiteShell from '@/components/layouts/SiteShell';
 import AdminLayout from '@/components/layouts/AdminLayout';
 import PageTitle from '@/components/layouts/PageTitle';
+import { captureAttribution } from '@/lib/attribution';
 
 type PageModule = {
     default: React.ComponentType & { layout?: (page: ReactNode) => ReactNode };
@@ -43,6 +44,8 @@ createInertiaApp({
         return page;
     },
     setup({ el, App, props }) {
+        // Remember which ad / campaign brought this visitor (sent with lead forms).
+        if (!window.location.pathname.startsWith('/admin')) captureAttribution();
         createRoot(el).render(<App {...props} />);
     },
     progress: {

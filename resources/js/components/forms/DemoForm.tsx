@@ -1,5 +1,6 @@
 
 import apiFetch from '@/lib/api';
+import { getAttribution } from '@/lib/attribution';
 import { useState } from 'react';
 import { useRouter } from '@/lib/navigation';
 import { useForm } from 'react-hook-form';
@@ -50,7 +51,7 @@ export default function DemoForm({ productContext }: DemoFormProps) {
       const response = await apiFetch('/api/demo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...data, product_interest }),
+        body: JSON.stringify({ ...data, product_interest, attribution: getAttribution() }),
       });
 
       if (!response.ok) {

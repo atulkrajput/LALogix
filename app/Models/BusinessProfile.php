@@ -10,7 +10,19 @@ class BusinessProfile extends Model
     protected $casts = [
         'payment_terms_days' => 'integer',
         'round_off_total' => 'boolean',
+        'meta_access_token' => 'encrypted',
+        'meta_synced_at' => 'datetime',
     ];
+
+    protected $hidden = ['meta_access_token'];
+
+    protected $appends = ['has_meta_token'];
+
+    /** A Meta Marketing API token is saved (the token itself never leaves the server). */
+    public function getHasMetaTokenAttribute(): bool
+    {
+        return ! empty($this->attributes['meta_access_token'] ?? null);
+    }
 
     public static function current(): self
     {

@@ -49,6 +49,13 @@ interface LeadDetail {
   followupStatus: string | null;
   createdAt: string;
   updatedAt: string;
+  utmSource?: string | null;
+  utmMedium?: string | null;
+  utmCampaign?: string | null;
+  utmContent?: string | null;
+  clickId?: string | null;
+  landingPage?: string | null;
+  referrer?: string | null;
   activities: Activity[];
   demoBookings: DemoBooking[];
   tags: Tag[];
@@ -154,6 +161,15 @@ export default function LeadDetailPage({ id }: { id: number }) {
     await fetchLead();
   };
 
+  // Billing client for this lead (keeps the link + the campaign that brought it, for Marketing)
+  const createClient = async () => {
+    setSaving(true);
+    const res = await apiFetch(`/api/billing/clients/from-lead/${id}`, { method: 'POST' });
+    const data = await res.json().catch(() => ({}));
+    setSaving(false);
+    if (res.ok && data.client) router.push(`/admin/billing/clients/${data.client.id}`);
+  };
+
   const markFollowupDone = async () => {
     await apiFetch(`/api/leads/${id}/followup`, {
       method: 'PUT',
@@ -176,7 +192,11 @@ export default function LeadDetailPage({ id }: { id: number }) {
             <h2 className="text-xl font-bold text-neutral-900">{lead.name}</h2>
             <p className="text-sm text-neutral-500">{lead.organization || 'No organization'} · {lead.city || 'No city'}{lead.state ? `, ${lead.state}` : ''}</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <button onClick={createClient} disabled={saving} className="rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 disabled:opacity-50"
+              title="Create (or open) the billing client for this lead, to invoice it">
+              🧾 Billing client
+            </button>
             <span className="rounded-full bg-brand-50 px-3 py-1 text-sm font-bold text-brand-700">Score: {lead.score}</span>
             <span className={`rounded-full px-3 py-1 text-sm font-medium capitalize ${STATUS_COLORS[lead.status] || ''}`}>
               {lead.status.replace('_', ' ')}
@@ -192,6 +212,20 @@ export default function LeadDetailPage({ id }: { id: number }) {
           <div><span className="text-xs text-neutral-400">Created</span><p className="text-sm">{new Date(lead.createdAt).toLocaleString()}</p></div>
           <div><span className="text-xs text-neutral-400">Updated</span><p className="text-sm">{new Date(lead.updatedAt).toLocaleString()}</p></div>
         </div>
+
+        {(lead.utmSource || lead.utmCampaign || lead.clickId || lead.referrer) && (
+          <div className="mt-4 rounded-lg bg-neutral-50 p-3 text-sm">
+            <div className="mb-1 text-xs font-medium text-neutral-500">Came from</div>
+            <div className="grid gap-x-6 gap-y-1 sm:grid-cols-2 lg:grid-cols-3">
+              {lead.utmSource && <div><span className="text-neutral-400">Source:</span> {lead.utmSource}{lead.utmMedium ? ` / ${lead.utmMedium}` : ''}</div>}
+              {lead.utmCampaign && <div><span className="text-neutral-400">Campaign:</span> {lead.utmCampaign}</div>}
+              {lead.utmContent && <div><span className="text-neutral-400">Ad:</span> {lead.utmContent}</div>}
+              {lead.clickId && <div><span className="text-neutral-400">Ad click:</span> tracked</div>}
+              {lead.landingPage && <div className="truncate"><span className="text-neutral-400">Landing page:</span> {lead.landingPage}</div>}
+              {lead.referrer && <div className="truncate"><span className="text-neutral-400">Referrer:</span> {lead.referrer}</div>}
+            </div>
+          </div>
+        )}
 
         {lead.message && (
           <div className="mt-4 rounded-lg bg-neutral-50 p-3">

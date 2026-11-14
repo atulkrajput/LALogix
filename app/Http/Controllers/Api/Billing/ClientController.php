@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Billing;
 use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\Invoice;
+use App\Models\Lead;
 use App\Support\Gstin;
 use App\Support\GstStates;
 use Illuminate\Http\JsonResponse;
@@ -56,6 +57,44 @@ class ClientController extends Controller
         $client = Client::create($this->validated($request));
 
         return response()->json(['client' => $client->fresh()], 201);
+    }
+
+    /**
+     * Turn a CRM lead into a billing client (keeps the link and the ad campaign that
+     * brought the lead, for the Marketing report). Returns the existing client if there is one.
+     */
+    public function fromLead(int $leadId): JsonResponse
+    {
+        $lead = Lead::findOrFail($leadId);
+        $existing = Client::where('lead_id', $lead->id)->first()
+            ?? ($lead->email ? Client::whereRaw('LOWER(email) = ?', [mb_strtolower($lead->email)])->first() : null);
+        if ($existing) {
+            $existing->fill(array_filter([
+                'lead_id' => $existing->lead_id ?: $lead->id,
+                'utm_source' => $existing->utm_source ?: $lead->utm_source,
+                'utm_campaign' => $existing->utm_campaign ?: $lead->utm_campaign,
+            ]))->save();
+
+            return response()->json(['client' => $existing->fresh(), 'created' => false]);
+        }
+
+        $client = Client::create([
+            'name' => $lead->name,
+            'company' => $lead->organization,
+            'email' => $lead->email,
+            'phone' => $lead->phone,
+            'city' => $lead->city,
+            'country' => 'India',
+            'notes' => $lead->state ? "State from lead: {$lead->state}" : null,
+            'lead_id' => $lead->id,
+            'utm_source' => $lead->utm_source,
+            'utm_campaign' => $lead->utm_campaign,
+        ]);
+        if (! in_array($lead->status, ['converted', 'lost'], true)) {
+            $lead->update(['status' => 'converted']);
+        }
+
+        return response()->json(['client' => $client->fresh(), 'created' => true], 201);
     }
 
     public function update(Request $request, int $id): JsonResponse

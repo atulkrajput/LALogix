@@ -1,5 +1,6 @@
 
 import apiFetch from '@/lib/api';
+import { getAttribution } from '@/lib/attribution';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -35,7 +36,7 @@ export default function ContactForm() {
       const response = await apiFetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, attribution: getAttribution() }),
       });
 
       if (!response.ok) {
