@@ -34,6 +34,11 @@ class AdminController extends Controller
         return $this->render('Dashboard');
     }
 
+    public function growth(): Response
+    {
+        return $this->render('Growth');
+    }
+
     public function leads(): Response
     {
         return $this->render('Leads/Index');
