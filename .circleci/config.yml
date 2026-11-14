@@ -1,0 +1,92 @@
+version: 2.1
+
+# Builds the Laravel + React app and deploys it to the hosting server.
+# Deploy runs only on `master`. All server details come from CircleCI
+# project environment variables (see README.md → "Deployment (CircleCI)").
+
+executors:
+  php-node:
+    docker:
+      - image: cimg/php:8.2-node
+    resource_class: medium
+
+jobs:
+  build:
+    executor: php-node
+    steps:
+      - checkout
+
+      # PHP dependencies (with dev packages, for the tests)
+      - restore_cache:
+          keys:
+            - composer-v1-{{ checksum "composer.lock" }}
+            - composer-v1-
+      - run:
+          name: Composer install
+          command: composer install --no-interaction --prefer-dist --no-progress
+      - save_cache:
+          key: composer-v1-{{ checksum "composer.lock" }}
+          paths:
+            - ~/.cache/composer
+
+      # Frontend
+      - restore_cache:
+          keys:
+            - npm-v1-{{ checksum "package-lock.json" }}
+            - npm-v1-
+      - run:
+          name: npm ci
+          command: npm ci --no-audit --no-fund
+      - save_cache:
+          key: npm-v1-{{ checksum "package-lock.json" }}
+          paths:
+            - ~/.npm
+      - run:
+          name: Type check
+          command: npm run typecheck
+      - run:
+          name: Build assets
+          command: npm run build
+
+      # Tests (in-memory SQLite, see phpunit.xml)
+      - run:
+          name: Run tests
+          command: |
+            cp .env.example .env
+            php artisan key:generate
+            php artisan test
+            rm .env
+
+      # Production vendor folder
+      - run:
+          name: Composer install (production)
+          command: composer install --no-interaction --prefer-dist --no-progress --no-dev --optimize-autoloader
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+
+  deploy:
+    executor: php-node
+    steps:
+      - attach_workspace:
+          at: .
+      - add_ssh_keys
+      - run:
+          name: Install rsync and lftp
+          command: sudo apt-get update -qq && sudo apt-get install -y -qq rsync lftp openssh-client
+      - run:
+          name: Deploy
+          command: bash .circleci/deploy.sh
+
+workflows:
+  build-and-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
