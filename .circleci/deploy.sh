@@ -110,6 +110,21 @@ deploy_ftp() {
     mkdirs="${mkdirs}mkdir -p -f \"$target/$dir\""$'\n'
   done
 
+  # Optional certificate pinning: trust exactly this server certificate (the
+  # SHA-1 fingerprint lftp prints in its "Certificate verification" error)
+  # even if its name doesn't match FTP_HOST. Any other certificate still fails.
+  local cert_pin=""
+  if [ -n "${FTP_CERT_FINGERPRINT:-}" ]; then
+    local fp
+    fp="$(printf '%s' "$FTP_CERT_FINGERPRINT" | tr -d '[:space:]' | tr '[:lower:]' '[:upper:]')"
+    if ! [[ "$fp" =~ ^([0-9A-F]{2}:){19}[0-9A-F]{2}$ ]]; then
+      echo "FTP_CERT_FINGERPRINT must be a SHA-1 fingerprint like 4E:46:DA:...:45 (20 hex pairs separated by colons)." >&2
+      exit 1
+    fi
+    cert_pin="set ssl:verify-certificate/$fp no"
+    echo "→ Trusting pinned certificate $fp"
+  fi
+
   echo "→ Uploading to $protocol://$FTP_HOST (folder: $target) with lftp"
   export LFTP_PASSWORD="$FTP_PASSWORD"
   lftp <<EOF
@@ -118,6 +133,7 @@ set net:max-retries 3
 set net:timeout 30
 set ftp:ssl-allow ${FTP_SSL:-yes}
 set ssl:verify-certificate ${FTP_VERIFY_CERT:-yes}
+$cert_pin
 set sftp:auto-confirm yes
 open $port_opt --env-password -u "$FTP_USER" $protocol://$FTP_HOST
 $mkdirs
