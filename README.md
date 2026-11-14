@@ -53,7 +53,8 @@ Set these in CircleCI → Project Settings → Environment Variables.
 | `SSH_HOST`, `SSH_USER`, `DEPLOY_PATH` | rsync | Server, login user, absolute path of the app folder (the one containing `artisan`) |
 | `SSH_PORT` | rsync | Optional, default `22` |
 | `PHP_BIN` | rsync | Optional PHP CLI path on the server, default `php` (e.g. `/usr/local/bin/php82`) |
-| `FTP_HOST`, `FTP_USER`, `FTP_PASSWORD`, `FTP_PATH` | ftp | FTP server, login, and app folder path as seen by the FTP user |
+| `FTP_HOST`, `FTP_USER`, `FTP_PASSWORD` | ftp | FTP server and login. Files go into the folder the FTP account opens in |
+| `FTP_PATH` | ftp | Optional subfolder to upload into instead (e.g. `laravel`) |
 | `FTP_PROTOCOL` | ftp | Optional: `ftp` (default, uses TLS when offered), `ftps` or `sftp` |
 | `FTP_PORT` | ftp | Optional, protocol default otherwise |
 | `FTP_SSL` | ftp | Optional, `no` to turn off TLS for plain `ftp` |

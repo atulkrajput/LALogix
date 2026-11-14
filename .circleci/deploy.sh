@@ -61,9 +61,12 @@ EOF
 }
 
 deploy_ftp() {
-  require FTP_HOST FTP_USER FTP_PASSWORD FTP_PATH
+  require FTP_HOST FTP_USER FTP_PASSWORD
   local protocol="${FTP_PROTOCOL:-ftp}"   # ftp | ftps | sftp
-  local target="${FTP_PATH%/}"
+  # Upload into the FTP user's home folder unless FTP_PATH names a subfolder.
+  local target="${FTP_PATH:-.}"
+  target="${target%/}"
+  [ -z "$target" ] && target="/"
   local port_opt=""
   [ -n "${FTP_PORT:-}" ] && port_opt="-p $FTP_PORT"
 
@@ -86,7 +89,7 @@ deploy_ftp() {
     mkdirs="${mkdirs}mkdir -p -f \"$target/$dir\""$'\n'
   done
 
-  echo "→ Uploading to $protocol://$FTP_HOST$target with lftp"
+  echo "→ Uploading to $protocol://$FTP_HOST (folder: $target) with lftp"
   export LFTP_PASSWORD="$FTP_PASSWORD"
   lftp <<EOF
 set cmd:fail-exit yes
@@ -100,7 +103,7 @@ $mkdirs
 mirror --reverse --delete --parallel=4 --verbose=1 $excludes ./ "$target"
 bye
 EOF
-  echo "✓ Uploaded to $FTP_HOST:$target"
+  echo "✓ Uploaded to $FTP_HOST (folder: $target)"
   echo "  FTP cannot run commands: run 'php artisan migrate --force' and 'php artisan optimize' on the server after schema changes."
 }
 
