@@ -150,6 +150,10 @@ class InvoiceService
             if (strlen($number) > 16) {
                 throw ValidationException::withMessages(['product' => "Invoice number {$number} is longer than GST's 16-character limit; use a shorter prefix."]);
             }
+            if (Invoice::where('number', $number)->exists()) {
+                // e.g. the product's own system already sent this number through the ingest API.
+                throw ValidationException::withMessages(['product' => "Number {$number} already exists (sent by the product's own system?). Use a different prefix for invoices issued here."]);
+            }
             $sequence->update(['last_number' => $next]);
 
             $invoice->update([

@@ -185,12 +185,12 @@ class BillingTest extends TestCase
             ->assertJsonPath('error', 'Add your GSTIN in Billing → Business profile before issuing.');
 
         $this->setUpProfile('29');
-        $bivk = $this->postJson('/api/billing/invoices', [
-            'product_id' => 2, 'client_id' => $clientId, 'invoice_date' => '2026-11-15', // BIVK.in has no prefix yet
+        $vivk = $this->postJson('/api/billing/invoices', [
+            'product_id' => 2, 'client_id' => $clientId, 'invoice_date' => '2026-11-15', // VIVK.in has no prefix yet
             'items' => [['description' => 'Subscription', 'quantity' => 1, 'rate' => 999, 'gst_rate' => 18]],
         ])->json('invoice');
-        $this->postJson("/api/billing/invoices/{$bivk['id']}/issue")->assertStatus(422)
-            ->assertJsonPath('error', 'Set the invoice prefix for BIVK.in in Billing → Products first.');
+        $this->postJson("/api/billing/invoices/{$vivk['id']}/issue")->assertStatus(422)
+            ->assertJsonPath('error', 'Set the invoice prefix for VIVK.in in Billing → Products first.');
         $this->assertSame(0, Invoice::whereNotNull('number')->count());
     }
 

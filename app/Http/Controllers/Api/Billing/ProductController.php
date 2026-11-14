@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Billing;
 
 use App\Http\Controllers\Controller;
+use App\Models\IngestLog;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -52,6 +53,41 @@ class ProductController extends Controller
         $product->delete();
 
         return response()->json(['success' => true]);
+    }
+
+    /** Create (or replace) the product's ingest API key. The key is returned once and only its hash is kept. */
+    public function generateKey(int $id): JsonResponse
+    {
+        $product = Product::findOrFail($id);
+        $key = 'lxk_'.Str::random(40);
+        $product->forceFill([
+            'api_key_hash' => hash('sha256', $key),
+            'api_key_hint' => '…'.substr($key, -4),
+            'api_key_created_at' => now(),
+        ])->save();
+
+        return response()->json(['key' => $key, 'product' => $product->fresh()]);
+    }
+
+    public function revokeKey(int $id): JsonResponse
+    {
+        $product = Product::findOrFail($id);
+        $product->forceFill(['api_key_hash' => null, 'api_key_hint' => null, 'api_key_created_at' => null])->save();
+
+        return response()->json(['product' => $product->fresh()]);
+    }
+
+    public function logs(int $id): JsonResponse
+    {
+        $product = Product::findOrFail($id);
+
+        return response()->json([
+            'logs' => IngestLog::where('product_id', $product->id)->latest('id')->limit(100)->get(),
+            'synced' => [
+                'invoices' => $product->invoices()->where('type', 'invoice')->whereIn('source', ['api', 'import'])->count(),
+                'credit_notes' => $product->invoices()->where('type', 'credit_note')->whereIn('source', ['api', 'import'])->count(),
+            ],
+        ]);
     }
 
     /** @return array<string, mixed> */

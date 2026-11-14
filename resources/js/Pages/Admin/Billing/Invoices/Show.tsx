@@ -23,6 +23,7 @@ export default function InvoiceShow({ id }: { id: number }) {
   if (!invoice) return <div className="text-sm text-neutral-400">{error ?? 'Loading…'}</div>;
 
   const isCn = invoice.type === 'credit_note';
+  const external = invoice.source !== 'manual';
   const label = isCn ? 'credit note' : 'invoice';
   const intra = invoice.supplyType === 'intra';
 
@@ -77,6 +78,14 @@ export default function InvoiceShow({ id }: { id: number }) {
           </h2>
           <div className="text-sm text-neutral-500">{invoice.product?.name} · {formatDate(invoice.invoiceDate)}</div>
         </div>
+        {external ? (
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-lg bg-blue-50 px-3 py-2 text-sm text-blue-700">
+              Issued by {invoice.product?.name} ({invoice.source === 'api' ? 'synced via API' : 'imported from CSV'}) · ref {invoice.externalId}
+            </span>
+            {!isCn && invoice.status === 'issued' && invoice.balanceDue > 0 && <button onClick={() => setDialog('payment')} className={btnPrimary}>Record payment</button>}
+          </div>
+        ) : (
         <div className="flex flex-wrap gap-2">
           {invoice.status === 'draft' && (
             <>
@@ -101,6 +110,7 @@ export default function InvoiceShow({ id }: { id: number }) {
             </>
           )}
         </div>
+        )}
       </div>
 
       <ErrorBanner message={error} onClose={() => setError(null)} />

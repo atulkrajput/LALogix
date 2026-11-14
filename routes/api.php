@@ -78,6 +78,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/products', [Billing\ProductController::class, 'store']);
         Route::put('/products/{id}', [Billing\ProductController::class, 'update'])->whereNumber('id');
         Route::delete('/products/{id}', [Billing\ProductController::class, 'destroy'])->whereNumber('id');
+        Route::post('/products/{id}/api-key', [Billing\ProductController::class, 'generateKey'])->whereNumber('id');
+        Route::delete('/products/{id}/api-key', [Billing\ProductController::class, 'revokeKey'])->whereNumber('id');
+        Route::get('/products/{id}/logs', [Billing\ProductController::class, 'logs'])->whereNumber('id');
+        Route::post('/import', [Billing\ImportController::class, 'store']);
 
         Route::get('/clients', [Billing\ClientController::class, 'index']);
         Route::post('/clients', [Billing\ClientController::class, 'store']);

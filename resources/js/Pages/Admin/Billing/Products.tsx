@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { api, btnPrimary, btnSecondary, inputCls, type Product } from '@/lib/billing';
 import { ErrorBanner, Field, Modal } from '@/components/billing/ui';
+import ConnectProduct from '@/components/billing/ConnectProduct';
 
 const KINDS = { services: 'Services', saas: 'SaaS', ecommerce: 'E-commerce' } as const;
 const GST_RATES = [0, 5, 12, 18, 28];
@@ -11,6 +12,7 @@ const emptyForm = { name: '', kind: 'saas', website: '', invoice_prefix: '', cre
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [editing, setEditing] = useState<Product | 'new' | null>(null);
+  const [connecting, setConnecting] = useState<Product | null>(null);
   const [form, setForm] = useState<typeof emptyForm>(emptyForm);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -68,7 +70,7 @@ export default function ProductsPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-neutral-200 bg-neutral-50 text-left">
-              {['Product', 'Type', 'Invoice series', 'Credit note series', 'Default SAC / GST', 'Invoices', 'Status', ''].map(h => (
+              {['Product', 'Type', 'Invoice series', 'Credit note series', 'Default SAC / GST', 'Invoices', 'Connection', 'Status', ''].map(h => (
                 <th key={h} className="px-4 py-3 font-medium text-neutral-600">{h}</th>
               ))}
             </tr>
@@ -86,6 +88,12 @@ export default function ProductsPage() {
                 <td className="px-4 py-3 text-neutral-600">{p.defaultSac || '—'} · {p.defaultGstRate}%</td>
                 <td className="px-4 py-3 text-neutral-600">{p._count?.invoices ?? 0}</td>
                 <td className="px-4 py-3">
+                  <button onClick={() => setConnecting(p)} className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${p.isConnected ? 'bg-blue-100 text-blue-700' : 'bg-neutral-100 text-neutral-500 hover:bg-neutral-200'}`}>
+                    {p.isConnected ? 'API connected' : 'Connect'}
+                  </button>
+                  {p.isConnected && p.lastSyncedAt && <div className="mt-1 text-xs text-neutral-400">synced {new Date(p.lastSyncedAt).toLocaleDateString('en-IN')}</div>}
+                </td>
+                <td className="px-4 py-3">
                   <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${p.isActive ? 'bg-green-100 text-green-700' : 'bg-neutral-100 text-neutral-500'}`}>{p.isActive ? 'Active' : 'Inactive'}</span>
                 </td>
                 <td className="whitespace-nowrap px-4 py-3 text-right">
@@ -97,6 +105,8 @@ export default function ProductsPage() {
           </tbody>
         </table>
       </div>
+
+      {connecting && <ConnectProduct product={connecting} onClose={() => setConnecting(null)} onChanged={load} />}
 
       {editing && (
         <Modal title={editing === 'new' ? 'Add product' : `Edit ${editing.name}`} onClose={() => setEditing(null)}>
@@ -111,10 +121,10 @@ export default function ProductsPage() {
               </Field>
               <Field label="Website" className="sm:col-span-2"><input value={form.website} onChange={set('website')} className={inputCls} placeholder="https://" /></Field>
               <Field label="Invoice prefix" hint="1-5 letters/digits. Can't change once used.">
-                <input value={form.invoice_prefix} onChange={set('invoice_prefix')} maxLength={5} className={`${inputCls} font-mono`} placeholder="BIVK" />
+                <input value={form.invoice_prefix} onChange={set('invoice_prefix')} maxLength={5} className={`${inputCls} font-mono`} placeholder="VIVK" />
               </Field>
               <Field label="Credit note prefix" hint="Must differ from every invoice prefix.">
-                <input value={form.credit_note_prefix} onChange={set('credit_note_prefix')} maxLength={5} className={`${inputCls} font-mono`} placeholder="BIVCN" />
+                <input value={form.credit_note_prefix} onChange={set('credit_note_prefix')} maxLength={5} className={`${inputCls} font-mono`} placeholder="VIVCN" />
               </Field>
               <Field label="Default SAC/HSN" hint="998313 consulting · 998314 software dev · 998315 hosting">
                 <input value={form.default_sac} onChange={set('default_sac')} maxLength={8} className={inputCls} />

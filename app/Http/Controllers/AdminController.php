@@ -113,6 +113,8 @@ class AdminController extends Controller
     public function invoicePdf(Request $request, int $id): HttpResponse
     {
         $invoice = Invoice::findOrFail($id);
+        // Product-issued invoices have their own PDF in that product; ours would differ from what the customer got.
+        abort_if($invoice->source !== 'manual', 404);
         $disposition = $request->boolean('download') ? 'attachment' : 'inline';
 
         return response(InvoicePdf::render($invoice), 200, [
@@ -149,5 +151,10 @@ class AdminController extends Controller
     public function gstReports(): Response
     {
         return $this->render('Billing/Reports');
+    }
+
+    public function billingImport(): Response
+    {
+        return $this->render('Billing/Import', ['ingestUrl' => url('/api/ingest/v1')]);
     }
 }
