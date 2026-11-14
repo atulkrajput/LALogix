@@ -115,12 +115,26 @@ deploy_ftp() {
   # even if its name doesn't match FTP_HOST. Any other certificate still fails.
   local cert_pin=""
   if [ -n "${FTP_CERT_FINGERPRINT:-}" ]; then
-    local fp
-    fp="$(printf '%s' "$FTP_CERT_FINGERPRINT" | tr -d '[:space:]' | tr '[:lower:]' '[:upper:]')"
-    if ! [[ "$fp" =~ ^([0-9A-F]{2}:){19}[0-9A-F]{2}$ ]]; then
-      echo "FTP_CERT_FINGERPRINT must be a SHA-1 fingerprint like 4E:46:DA:...:45 (20 hex pairs separated by colons)." >&2
-      exit 1
-    fi
+    # Accept it however it was pasted: any case, with or without colons/dashes/
+    # spaces, wrapped in quotes or the (...) from lftp's error message.
+    local raw hex fp=""
+    raw="$(printf '%s' "$FTP_CERT_FINGERPRINT" | tr '[:lower:]' '[:upper:]' | tr -d '[:space:]')"
+    # Longest run of hex digits, allowing ':' or '-' between them.
+    hex="$(printf '%s' "$raw" | grep -oE '[0-9A-F]+([:-][0-9A-F]+)*' | awk '{ if (length($0) > length(m)) m = $0 } END { print m }' | tr -d ':-')"
+    case "${#hex}" in
+      40)
+        local i
+        for ((i = 0; i < 40; i += 2)); do fp="${fp:+$fp:}${hex:i:2}"; done
+        ;;
+      64)
+        echo "FTP_CERT_FINGERPRINT looks like a SHA-256 fingerprint. lftp needs the SHA-1 one: copy the 20 pairs shown in brackets in the deploy's 'Certificate verification' error." >&2
+        exit 1
+        ;;
+      *)
+        echo "FTP_CERT_FINGERPRINT must be the SHA-1 fingerprint from the deploy error, 20 hex pairs like 4E:46:DA:...:45 (found ${#hex} hex digits, need 40)." >&2
+        exit 1
+        ;;
+    esac
     cert_pin="set ssl:verify-certificate/$fp no"
     echo "→ Trusting pinned certificate $fp"
   fi
