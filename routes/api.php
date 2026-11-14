@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\Billing;
 use App\Http\Controllers\Api\CampaignController;
 use App\Http\Controllers\Api\CrmController;
 use App\Http\Controllers\Api\FormController;
@@ -67,4 +68,39 @@ Route::middleware('auth')->group(function () {
     Route::post('/outreach/email', [OutreachController::class, 'email']);
     Route::post('/outreach/whatsapp', [OutreachController::class, 'whatsapp']);
     Route::get('/outreach/whatsapp', [OutreachController::class, 'whatsappLogs']);
+
+    // ---- GST billing ------------------------------------------------------
+    Route::prefix('billing')->group(function () {
+        Route::get('/settings', [Billing\SettingsController::class, 'show']);
+        Route::put('/settings', [Billing\SettingsController::class, 'update']);
+
+        Route::get('/products', [Billing\ProductController::class, 'index']);
+        Route::post('/products', [Billing\ProductController::class, 'store']);
+        Route::put('/products/{id}', [Billing\ProductController::class, 'update'])->whereNumber('id');
+        Route::delete('/products/{id}', [Billing\ProductController::class, 'destroy'])->whereNumber('id');
+
+        Route::get('/clients', [Billing\ClientController::class, 'index']);
+        Route::post('/clients', [Billing\ClientController::class, 'store']);
+        Route::get('/clients/{id}', [Billing\ClientController::class, 'show'])->whereNumber('id');
+        Route::put('/clients/{id}', [Billing\ClientController::class, 'update'])->whereNumber('id');
+        Route::delete('/clients/{id}', [Billing\ClientController::class, 'destroy'])->whereNumber('id');
+
+        Route::get('/work', [Billing\WorkItemController::class, 'index']);
+        Route::post('/work', [Billing\WorkItemController::class, 'store']);
+        Route::put('/work/{id}', [Billing\WorkItemController::class, 'update'])->whereNumber('id');
+        Route::delete('/work/{id}', [Billing\WorkItemController::class, 'destroy'])->whereNumber('id');
+
+        Route::get('/invoices/meta', [Billing\InvoiceController::class, 'meta']);
+        Route::get('/invoices', [Billing\InvoiceController::class, 'index']);
+        Route::post('/invoices', [Billing\InvoiceController::class, 'store']);
+        Route::get('/invoices/{id}', [Billing\InvoiceController::class, 'show'])->whereNumber('id');
+        Route::put('/invoices/{id}', [Billing\InvoiceController::class, 'update'])->whereNumber('id');
+        Route::delete('/invoices/{id}', [Billing\InvoiceController::class, 'destroy'])->whereNumber('id');
+        Route::post('/invoices/{id}/issue', [Billing\InvoiceController::class, 'issue'])->whereNumber('id');
+        Route::post('/invoices/{id}/cancel', [Billing\InvoiceController::class, 'cancel'])->whereNumber('id');
+        Route::post('/invoices/{id}/credit-note', [Billing\InvoiceController::class, 'creditNote'])->whereNumber('id');
+        Route::post('/invoices/{id}/email', [Billing\InvoiceController::class, 'email'])->whereNumber('id');
+        Route::post('/invoices/{id}/payments', [Billing\InvoiceController::class, 'storePayment'])->whereNumber('id');
+        Route::delete('/invoices/{id}/payments/{paymentId}', [Billing\InvoiceController::class, 'destroyPayment'])->whereNumber(['id', 'paymentId']);
+    });
 });

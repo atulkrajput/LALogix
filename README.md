@@ -65,6 +65,18 @@ For **rsync**, add the private key of a deploy SSH key pair in CircleCI → Proj
 
 For **FTP**, commands can't run on the server. After a deploy that changes the database schema, run `php artisan migrate --force` (and `php artisan optimize` if you use it) from the host's SSH or terminal tool.
 
+## GST billing (admin → Billing)
+
+One GSTIN, many business lines. Each **product** (LALogix Services, BIVK.in, ISO, Amritix, Ayurved Dhara, …) has its own invoice and credit-note series, numbered `PREFIX/26-27/0001` per financial year (max 16 characters, as GST requires).
+
+1. **Business profile**: legal name, GSTIN, GST state (decides CGST+SGST vs IGST), bank/UPI, LUT number for exports, logo and signature.
+2. **Products**: set an invoice prefix (and credit-note prefix) before issuing documents for that product.
+3. **Clients**: GSTIN is validated (check digit) and fills in the state and PAN; clients outside India are billed as exports.
+4. **Work log**: record billable work, then tick entries and click *Create invoice*.
+5. **Invoices**: drafts are editable and unnumbered; *Issue* assigns the next number and freezes the invoice. Then download/e-mail the PDF, record payments (with TDS), raise credit notes, or cancel (the number stays used and is reported as cancelled).
+
+After deploying a version with new migrations, run `php artisan migrate --force` on the server. The FTP deploy can't run it for you.
+
 ## Where things are
 
 | Area | Location |
@@ -76,6 +88,8 @@ For **FTP**, commands can't run on the server. After a deploy that changes the d
 | JSON API (`/api/*`) | `routes/api.php` → `app/Http/Controllers/Api/*` |
 | Models | `app/Models` (JSON output keeps the old camelCase / `_count` shape) |
 | E-mail, automation rules, blog | `app/Services` |
+| GST billing (tax maths, numbering, PDF) | `app/Services/Billing`, `app/Support/{Gstin,GstStates,AmountInWords}.php`, `resources/views/billing/invoice-pdf.blade.php` |
+| Billing API / admin pages | `app/Http/Controllers/Api/Billing/*`, `resources/js/Pages/Admin/Billing/**` |
 | SEO meta tags + JSON-LD (server-rendered) | `app/Support/Seo.php`, `resources/views/app.blade.php` |
 | Database schema | `database/migrations/2026_09_16_000000_create_lalogix_tables.php` |
 | Insight (blog) posts | Markdown with YAML front matter in `content/blog/*.md` (needs `title` and `date`) |

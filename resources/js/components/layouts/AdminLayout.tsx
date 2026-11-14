@@ -31,6 +31,34 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: '/admin/automation', label: 'Automation', icon: '⚡' },
     { href: '/admin/activities', label: 'Activities', icon: '📝' },
   ];
+  const billingItems = [
+    { href: '/admin/billing/invoices', label: 'Invoices', icon: '🧾' },
+    { href: '/admin/billing/credit-notes', label: 'Credit Notes', icon: '↩️' },
+    { href: '/admin/billing/clients', label: 'Clients', icon: '🏢' },
+    { href: '/admin/billing/work', label: 'Work Log', icon: '🛠️' },
+    { href: '/admin/billing/products', label: 'Products', icon: '📦' },
+    { href: '/admin/billing/settings', label: 'Business Profile', icon: '⚙️' },
+  ];
+  // Highlight the deepest matching section (e.g. /admin/billing/invoices/12 → Invoices).
+  const active = [...navItems, ...billingItems]
+    .filter(i => pathname === i.href || (i.href !== '/admin' && pathname.startsWith(`${i.href}/`)))
+    .sort((a, b) => b.href.length - a.href.length)[0];
+
+  const navLink = (item: { href: string; label: string; icon: string }) => (
+    <Link
+      key={item.href}
+      href={item.href}
+      onClick={() => setSidebarOpen(false)}
+      className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+        active?.href === item.href
+          ? 'bg-brand-50 text-brand-700'
+          : 'text-neutral-600 hover:bg-neutral-100'
+      }`}
+    >
+      <span>{item.icon}</span>
+      {item.label}
+    </Link>
+  );
 
   const handleLogout = async () => {
     await apiFetch('/api/auth/logout', { method: 'POST' });
@@ -48,22 +76,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <span className="text-xl font-bold text-brand-600">LALogix</span>
           <span className="rounded bg-brand-100 px-2 py-0.5 text-xs font-medium text-brand-700">CRM</span>
         </div>
-        <nav className="mt-4 space-y-1 px-3">
-          {navItems.map(item => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setSidebarOpen(false)}
-              className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                pathname === item.href
-                  ? 'bg-brand-50 text-brand-700'
-                  : 'text-neutral-600 hover:bg-neutral-100'
-              }`}
-            >
-              <span>{item.icon}</span>
-              {item.label}
-            </Link>
-          ))}
+        <nav className="absolute bottom-28 left-0 right-0 top-16 space-y-1 overflow-y-auto px-3 pt-4">
+          {navItems.map(navLink)}
+          <div className="px-3 pb-1 pt-4 text-xs font-semibold uppercase tracking-wide text-neutral-400">Billing</div>
+          {billingItems.map(navLink)}
         </nav>
         <div className="absolute bottom-0 left-0 right-0 border-t border-neutral-200 p-4">
           <div className="text-sm text-neutral-600">{user.name}</div>
@@ -79,7 +95,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
           </button>
           <h1 className="text-lg font-semibold text-neutral-900">
-            {navItems.find(i => i.href === pathname)?.label || 'Admin'}
+            {active?.label || 'Admin'}
           </h1>
         </header>
         <main className="flex-1 overflow-y-auto p-6">{children}</main>

@@ -38,6 +38,12 @@ return Application::configure(basePath: dirname(__DIR__))
                 return null;
             }
 
+            if ($e instanceof \Illuminate\Validation\ValidationException) {
+                $errors = $e->errors();
+
+                return response()->json(['error' => collect($errors)->flatten()->first() ?: 'Invalid data', 'errors' => $errors], 422);
+            }
+
             $status = match (true) {
                 $e instanceof \Illuminate\Auth\AuthenticationException => 401,
                 $e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException => 404,
