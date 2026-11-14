@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 # Uploads the built app (vendor/ and public/build/ included) to the server.
 #
-#   DEPLOY_METHOD=rsync (default)  rsync over SSH, then runs migrations + caches
-#   DEPLOY_METHOD=ftp              mirror over FTP/FTPS/SFTP with lftp (no remote commands)
+#   rsync  rsync over SSH, then runs migrations + caches   (used when SSH_HOST is set)
+#   ftp    mirror over FTP/FTPS/SFTP with lftp, no commands (used when FTP_HOST is set)
+# Set DEPLOY_METHOD=rsync|ftp only to force one when both are configured.
 #
 # Paths in .circleci/deploy-exclude.txt are never uploaded or deleted on the
 # server (.env, storage/, ...). Configure the variables in CircleCI →
@@ -12,7 +13,27 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 EXCLUDE_FILE=.circleci/deploy-exclude.txt
-METHOD="${DEPLOY_METHOD:-rsync}"
+# Only master is ever deployed (the workflow filter does this too; this is a second guard).
+if [ -n "${CIRCLE_BRANCH:-}" ] && [ "$CIRCLE_BRANCH" != "master" ]; then
+  echo "Branch '$CIRCLE_BRANCH' is not master. Skipping deploy."
+  exit 0
+fi
+
+# DEPLOY_METHOD wins; otherwise pick from whichever server details are set.
+if [ -n "${DEPLOY_METHOD:-}" ]; then
+  METHOD="$DEPLOY_METHOD"
+elif [ -n "${FTP_HOST:-}" ]; then
+  METHOD=ftp
+elif [ -n "${SSH_HOST:-}" ]; then
+  METHOD=rsync
+else
+  echo "No deploy target configured. In CircleCI → Project Settings → Environment Variables set either" >&2
+  echo "  FTP_HOST, FTP_USER, FTP_PASSWORD           (FTP upload), or" >&2
+  echo "  SSH_HOST, SSH_USER, DEPLOY_PATH            (rsync over SSH)." >&2
+  echo "If you added them in a Context instead, the deploy job must use that context." >&2
+  exit 1
+fi
+echo "Deploy method: $METHOD"
 
 require() {
   for name in "$@"; do

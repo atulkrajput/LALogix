@@ -49,7 +49,7 @@ Set these in CircleCI → Project Settings → Environment Variables.
 
 | Variable | Needed for | Purpose |
 | --- | --- | --- |
-| `DEPLOY_METHOD` | both | `rsync` (default) or `ftp` |
+| `DEPLOY_METHOD` | both | Optional. FTP is used when `FTP_HOST` is set, rsync when `SSH_HOST` is set; set `rsync` or `ftp` only to choose when both are set |
 | `SSH_HOST`, `SSH_USER`, `DEPLOY_PATH` | rsync | Server, login user, absolute path of the app folder (the one containing `artisan`) |
 | `SSH_PORT` | rsync | Optional, default `22` |
 | `PHP_BIN` | rsync | Optional PHP CLI path on the server, default `php` (e.g. `/usr/local/bin/php82`) |
