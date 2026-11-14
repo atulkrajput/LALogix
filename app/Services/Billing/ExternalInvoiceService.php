@@ -155,10 +155,10 @@ class ExternalInvoiceService
             $customer['gstin'] = Gstin::normalize($customer['gstin'] ?? null);
             $indian = strcasecmp(trim($customer['country'] ?? 'India') ?: 'India', 'India') === 0;
             $state = $customer['gstin'] ? Gstin::stateCode($customer['gstin']) : ($customer['state_code'] ?? null);
-            $pos = $data['place_of_supply'] ?? null ?: ($indian ? $state : GstStates::OUTSIDE_INDIA);
-            if (! $pos) {
-                throw ValidationException::withMessages(['place_of_supply' => 'Send place_of_supply, or customer.state_code / customer.gstin so it can be worked out.']);
-            }
+            // Indian customer with no state on record (e.g. a SaaS sign-up with only name + email):
+            // for services the place of supply is then the supplier's location
+            // (IGST Act s.12(2)(b)(ii)), i.e. an intra-state sale.
+            $pos = $data['place_of_supply'] ?? null ?: ($indian ? ($state ?: $profile->state_code) : GstStates::OUTSIDE_INDIA);
             $exportWithLut = $pos === GstStates::OUTSIDE_INDIA && (bool) ($data['export_with_lut'] ?? (bool) $profile->lut_number);
             $client = $this->client($product, $customer, $indian, $state);
             $buyer = [

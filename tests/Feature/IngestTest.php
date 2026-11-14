@@ -114,11 +114,24 @@ class IngestTest extends TestCase
         $this->assertEqualsWithDelta(0.18, $inv->round_off, 0.001);
     }
 
-    public function test_b2c_customer_needs_a_state_and_number_must_be_unique(): void
+    public function test_b2c_customer_without_state_is_intra_state_and_number_must_be_unique(): void
     {
-        $b2c = ['customer' => ['name' => 'Priya', 'gstin' => null, 'company' => null, 'email' => 'priya@example.com']];
-        $this->ingest('/invoices', array_replace_recursive($this->payload($b2c), ['customer' => ['gstin' => null]]))->assertStatus(422)
-            ->assertJsonPath('error', fn ($e) => str_contains($e, 'place_of_supply'));
+        // What VIVK.in sends today: only name + email, price GST-inclusive (₹999 split as 846.61 + 152.39).
+        $vivk = [
+            'external_id' => 'pay_vivk_1', 'number' => 'VIVK/26-27/00001', 'date' => '2026-11-13',
+            'customer' => ['name' => 'Priya', 'email' => 'priya@example.com'],
+            'items' => [['description' => 'VIVK Pro – monthly', 'sac' => '998431', 'quantity' => 1, 'rate' => 846.61, 'gst_rate' => 18]],
+            'total' => 999.00,
+        ];
+        $res = $this->ingest('/invoices', $vivk)->assertCreated();
+        $this->assertSame('intra', $res->json('supply_type'));          // place of supply = supplier's state (29)
+        $inv = Invoice::find($res->json('id'));
+        $this->assertSame('29', $inv->place_of_supply);
+        $this->assertSame('VIVK', $inv->series);
+        $this->assertSame(1, $inv->sequence);
+        $this->assertEqualsWithDelta(76.19, $inv->cgst_total, 0.001);
+        $this->assertEqualsWithDelta(999.00, $inv->grand_total, 0.001);  // matches what the customer paid
+        $this->assertEqualsWithDelta(0.01, $inv->round_off, 0.001);
 
         $res = $this->ingest('/invoices', $this->payload(['external_id' => 'ord_2', 'customer' => ['gstin' => null, 'state_code' => '29'], 'total' => null]))->assertCreated();
         $this->assertSame('intra', $res->json('supply_type'));
@@ -186,8 +199,9 @@ class IngestTest extends TestCase
 
         $res = $this->post('/api/billing/import', ['product_id' => $this->vivk->id, 'file' => $file], ['Accept' => 'application/json'])->assertOk();
         // Two lines → one invoice; the stated total only covered the first line, so 0101 is rejected for the mismatch.
-        $this->assertSame(1, $res->json('created'));
-        $this->assertSame(3, $res->json('rejected'));
+        // 0104 has no state: intra-state at the supplier's location.
+        $this->assertSame(2, $res->json('created'));
+        $this->assertSame(2, $res->json('rejected'));
         $byNumber = collect($res->json('results'))->keyBy('number');
         $this->assertStringContainsString('does not match', $byNumber['VIVK/26-27/0101']['message']);
         $this->assertSame('created', $byNumber['VIVK/26-27/0102']['outcome']);
@@ -197,7 +211,8 @@ class IngestTest extends TestCase
 
         // Re-importing is safe.
         $again = $this->post('/api/billing/import', ['product_id' => $this->vivk->id, 'file' => UploadedFile::fake()->createWithContent('vivk.csv', $csv)], ['Accept' => 'application/json']);
-        $this->assertSame(1, $again->json('unchanged'));
+        $this->assertSame(2, $again->json('unchanged'));
+        $this->assertSame('29', Invoice::where('number', 'VIVK/26-27/0104')->value('place_of_supply'));
 
         $this->get('/admin/billing/import/template')->assertOk()->assertHeader('Content-Type', 'text/csv; charset=UTF-8');
     }

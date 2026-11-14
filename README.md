@@ -79,7 +79,7 @@ One GSTIN, many business lines. Each **product** (LALogix Services, VIVK.in, ISO
 
 7. **Connecting products** (VIVK.in, ISO, Amritix, Ayurved Dhara): invoices those products issue themselves are synced in, so the GST reports are consolidated.
    - **API (recommended)**: *Products → Connect* creates the product's key (shown once; only its SHA-256 is stored). The product then calls, with `Authorization: Bearer <key>`:
-     - `POST /api/ingest/v1/invoices`: `external_id`, `number` (its own series, ≤16 chars), `date`, `customer {name, company, gstin, email, state_code, country…}`, `items [{description, sac, quantity, rate, discount, gst_rate}]`, optional `total` (must match the lines within ₹1), `place_of_supply` and `payment {date, amount, method, reference}`.
+     - `POST /api/ingest/v1/invoices`: `external_id`, `number` (its own series, ≤16 chars), `date`, `customer {name, company, gstin, email, state_code, country…}`, `items [{description, sac, quantity, rate, discount, gst_rate}]`, optional `total` (must match the lines within ₹1), `place_of_supply` and `payment {date, amount, method, reference}`. An Indian customer with no GSTIN or state (e.g. VIVK.in sign-ups, which only have name + e-mail) is billed at your own GST state, intra-state.
      - `POST /api/ingest/v1/credit-notes` (with `invoice_external_id`, `reason`), `POST /api/ingest/v1/invoices/{external_id}/cancel`, `POST /api/ingest/v1/credit-notes/{external_id}/cancel`, `GET /api/ingest/v1/ping`.
      - Responses: `201` created, `200` unchanged (retries are safe), `422 {error, errors}` with the reason; every call is listed in the product's *Recent activity*.
    - **CSV**: *Billing → Import* for back-filling past months or products without the API (template on the page).

@@ -105,7 +105,7 @@ export default function ImportPage({ ingestUrl }: { ingestUrl: string }) {
             ['customer_name *', 'Customer / contact name'],
             ['customer_company, customer_gstin', 'GSTIN makes it a B2B invoice (state is taken from it)'],
             ['customer_email, customer_phone, customer_address, customer_city, customer_pincode', 'Optional'],
-            ['customer_state', '"29", "29-Karnataka" or "Karnataka" (needed without GSTIN)'],
+            ['customer_state', '"29", "29-Karnataka" or "Karnataka". Without GSTIN or state, your own state is used (intra-state)'],
             ['customer_country', 'Defaults to India; any other country = export'],
             ['place_of_supply', 'Optional override (state code, 96 = outside India)'],
             ['description *, sac, quantity, unit', 'One line of the invoice'],
