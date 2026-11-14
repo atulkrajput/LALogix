@@ -1,0 +1,158 @@
+:root {
+  /* Inter is loaded from Google Fonts in app.blade.php */
+  --font-inter: 'Inter';
+  --lalogix-primary: #C89B3C;
+  --lalogix-gold-hover: #E2B95E;
+  --lalogix-deep-gold: #9A6F20;
+  --lalogix-obsidian: #0B0D10;
+  --lalogix-dark-surface: #14171C;
+  --lalogix-secondary-surface: #1C2027;
+  --lalogix-ivory: #F7F5F0;
+  --lalogix-white: #FFFFFF;
+  --lalogix-text: #111318;
+  --lalogix-muted: #5F6673;
+  --lalogix-border: #E5E7EB;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply font-sans text-neutral-900 bg-[var(--lalogix-ivory)];
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading tracking-tight;
+  }
+
+  h1 {
+    @apply text-display-lg md:text-display-xl font-bold;
+    letter-spacing: -0.02em;
+  }
+
+  h2 {
+    @apply text-heading-xl md:text-display font-semibold;
+  }
+
+  h3 {
+    @apply text-heading-lg md:text-heading-xl font-semibold;
+  }
+
+  h4 {
+    @apply text-heading md:text-heading-lg;
+  }
+
+  p {
+    @apply text-body text-neutral-600;
+  }
+
+  a {
+    @apply text-brand-600 hover:text-brand-400 transition-colors;
+  }
+
+  /* Focus visible styles for accessibility */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-500;
+  }
+
+  /* Remove default focus outline, rely on focus-visible */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+}
+
+@layer utilities {
+  /* Glassmorphism utility classes */
+  .glass {
+    @apply bg-white/80 backdrop-blur-lg border border-white/20;
+  }
+
+  .glass-dark {
+    @apply bg-[var(--lalogix-dark-surface)]/80 backdrop-blur-lg border border-[var(--lalogix-border)]/30;
+  }
+
+  /* Gradient preset utilities */
+  .gradient-hero {
+    @apply bg-gradient-to-br from-brand-600 via-brand-500 to-brand-300;
+  }
+
+  .gradient-cta {
+    @apply bg-gradient-to-r from-[var(--lalogix-obsidian)] via-[var(--lalogix-dark-surface)] to-[var(--lalogix-secondary-surface)];
+  }
+
+  .gradient-card {
+    @apply bg-gradient-to-br from-brand-50 to-white;
+  }
+
+  .gradient-section {
+    @apply bg-gradient-to-b from-white via-brand-50/40 to-white;
+  }
+}
+
+/* Gradient background animation keyframes (8s+ cycle) */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradientShift 8s ease infinite;
+  will-change: background-position;
+}
+
+/* Floating orb animation for HeroAnimation */
+@keyframes floatOrb {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(15px, -20px) scale(1.05);
+  }
+  66% {
+    transform: translate(-10px, 10px) scale(0.95);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+.animate-float-orb {
+  animation: floatOrb 8s ease-in-out infinite;
+  will-change: transform;
+}
+
+/*
+ * Touch device graceful degradation
+ * Hover-based animations only apply on devices that support hover.
+ * On touch devices, all content remains visible and accessible without hover.
+ */
+@media (hover: none) {
+  /* Disable scale/shadow/border hover transitions on touch devices to prevent stuck states */
+  .touch-hover-safe:hover {
+    transform: none !important;
+    box-shadow: inherit !important;
+  }
+}

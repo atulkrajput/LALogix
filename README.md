@@ -1,100 +1,65 @@
 # LALogix Enterprises Website
 
-Modern marketing and lead-generation website for LALogix Enterprises built with Next.js, TypeScript, Tailwind CSS, Prisma, and Vitest.
+Marketing website + lead-management CRM for LALogix Enterprises.
 
-## Overview
+- **Backend:** Laravel 12 (PHP 8.2+), MySQL/MariaDB
+- **Frontend:** React 18 + TypeScript via [Inertia.js](https://inertiajs.com), Tailwind CSS 3, Framer Motion, Vite
 
-This project is a redesigned company website for LALogix Enterprises, showcasing:
+The previous Next.js + Prisma version is kept, untouched, in [`old/`](old/) for reference.
 
-- school management software
-- inventory POS software
-- dairy management software
-- custom automation services
-- blog content and SEO metadata
-- contact and demo lead capture flows
-
-## Tech Stack
-
-- Next.js 16 (App Router)
-- React 18
-- TypeScript
-- Tailwind CSS
-- Prisma ORM
-- PostgreSQL / SQLite-compatible Prisma setup
-- Vitest + Testing Library
-- Playwright for E2E testing
-
-## Getting Started
-
-### Install dependencies
+## Setup (XAMPP / local)
 
 ```bash
+composer install
 npm install
+cp .env.example .env        # then edit DB_* and the LALogix settings
+php artisan key:generate
+php artisan migrate
+php artisan db:seed          # creates the default admin user (see database/seeders/DatabaseSeeder.php)
 ```
 
-### Run the development server
+Run in development (two terminals):
 
 ```bash
+php artisan serve
 npm run dev
 ```
 
-Open http://localhost:3000
+Open http://localhost:8000 — admin CRM at http://localhost:8000/admin. Change the seeded admin password after the first login.
 
-### Build for production
+> **Windows tip:** keep `npm run dev` running alongside `php artisan serve`. PHP's built-in server on Windows can stall or reset connections when the browser loads many built JS chunks at once (pages then stay blank). With Vite running, assets are served by Node and the problem goes away. Apache/XAMPP serving `public/` is not affected.
 
-```bash
-npm run build
-```
+Production build: `npm run build` (outputs to `public/build`), then point the web server at `public/`.
 
-### Run tests
+## Where things are
 
-```bash
-npm test
-```
+| Area | Location |
+| --- | --- |
+| Website pages (React) | `resources/js/Pages/*.tsx`, `resources/js/Pages/Products`, `resources/js/Pages/Insights` |
+| Admin CRM pages (React) | `resources/js/Pages/Admin/**` + `resources/js/components/layouts/AdminLayout.tsx` |
+| Shared components / content data | `resources/js/components`, `resources/js/data` |
+| Page routes | `routes/web.php` → `app/Http/Controllers/PageController.php`, `AdminController.php` |
+| JSON API (`/api/*`) | `routes/api.php` → `app/Http/Controllers/Api/*` |
+| Models | `app/Models` (JSON output keeps the old camelCase / `_count` shape) |
+| E-mail, automation rules, blog | `app/Services` |
+| SEO meta tags + JSON-LD (server-rendered) | `app/Support/Seo.php`, `resources/views/app.blade.php` |
+| Database schema | `database/migrations/2026_09_16_000000_create_lalogix_tables.php` |
+| Insight (blog) posts | Markdown with YAML front matter in `content/blog/*.md` (needs `title` and `date`) |
 
-### Run Playwright E2E tests
+## Configuration (`.env`)
 
-```bash
-npm run test:e2e
-```
+| Key | Purpose |
+| --- | --- |
+| `SITE_URL` | Public URL used in canonical tags, sitemap and JSON-LD |
+| `RESEND_API_KEY`, `EMAIL_FROM`, `SALES_EMAIL` | Lead notification e-mails (logged only when no API key) |
+| `GTM_ID`, `GA_ID`, `META_PIXEL_ID` | Analytics |
+| `CALENDLY_URL` | "Schedule a Demo" button on the thank-you page |
+| `BLOG_PATH` | Folder with the Markdown posts (default `content/blog`) |
 
-## Available Scripts
+## Notes on the migration from Next.js
 
-```bash
-npm run dev          # start local development server
-npm run build        # generate Prisma client and build Next app
-npm run start        # start production server
-npm run lint         # run Next.js lint checks
-npm test            # run Vitest suite
-npm run test:e2e     # run Playwright tests
-npm run db:push      # push Prisma schema to database
-npm run db:seed      # seed demo/admin data
-```
-
-## Project Structure
-
-```bash
-src/
-  app/               # routes, pages, API endpoints
-  components/        # UI, layouts, sections, forms
-  data/              # content and SEO metadata
-  lib/               # utilities, validation, automation, email
-  styles/            # global styles
-prisma/
-  schema.prisma       # database schema
-  seed.ts            # seed data
-public/
-  images/            # static assets
-content/
-  blog/              # blog markdown files
-```
-
-## Branding
-
-The site is branded for LALogix and uses the new company identity instead of the previous DoonPortal branding.
-
-## Notes
-
-- Environment variables may be required for forms, email delivery, and database configuration.
-- Email sending is stubbed by default unless Resend or SMTP credentials are configured.
-- Prisma and database setup should be configured before running production features.
+- Every old `/api/*` endpoint exists with the same path, payload and response shape.
+- Admin API endpoints now require login (the old ones were open). Login uses a Laravel session instead of the JWT cookie.
+- Passwords hashed by the old app (bcryptjs) still work and are rehashed on first login.
+- The migration only creates tables that don't exist, so it is safe on the old Prisma database too.
+- Redirects (`/demo`, `/services`, `/blog/*`) and security headers from `next.config.mjs` are kept; `sitemap.xml` and `robots.txt` are served by Laravel.
