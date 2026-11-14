@@ -90,6 +90,8 @@ Route::middleware('auth')->group(function () {
         Route::put('/work/{id}', [Billing\WorkItemController::class, 'update'])->whereNumber('id');
         Route::delete('/work/{id}', [Billing\WorkItemController::class, 'destroy'])->whereNumber('id');
 
+        Route::get('/reports/gst', [Billing\ReportController::class, 'gst']);
+
         Route::get('/invoices/meta', [Billing\InvoiceController::class, 'meta']);
         Route::get('/invoices', [Billing\InvoiceController::class, 'index']);
         Route::post('/invoices', [Billing\InvoiceController::class, 'store']);

@@ -145,4 +145,9 @@ class AdminController extends Controller
     {
         return $this->render('Billing/Settings');
     }
+
+    public function gstReports(): Response
+    {
+        return $this->render('Billing/Reports');
+    }
 }
