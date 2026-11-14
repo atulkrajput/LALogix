@@ -22,6 +22,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   if (!user) return null;
 
   const navItems = [
+    { href: '/admin/growth', label: 'Growth', icon: '📈' },
     { href: '/admin', label: 'Dashboard', icon: '📊' },
     { href: '/admin/leads', label: 'Leads', icon: '👥' },
     { href: '/admin/demos', label: 'Demos', icon: '📅' },

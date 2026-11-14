@@ -97,6 +97,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/work/{id}', [Billing\WorkItemController::class, 'destroy'])->whereNumber('id');
 
         Route::get('/reports/gst', [Billing\ReportController::class, 'gst']);
+        Route::get('/growth', [Billing\GrowthController::class, 'show']);
 
         Route::get('/invoices/meta', [Billing\InvoiceController::class, 'meta']);
         Route::get('/invoices', [Billing\InvoiceController::class, 'index']);
