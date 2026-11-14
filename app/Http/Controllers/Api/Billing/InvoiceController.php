@@ -116,13 +116,14 @@ class InvoiceController extends Controller
     public function cancel(Request $request, int $id): JsonResponse
     {
         $data = $request->validate(['reason' => 'required|string|max:255'], ['reason.required' => 'Give a reason for cancelling.']);
+        $invoice = $this->manualOnly(Invoice::findOrFail($id), 'cancelled');
 
-        return response()->json(['invoice' => $this->service->cancel(Invoice::findOrFail($id), $data['reason'])]);
+        return response()->json(['invoice' => $this->service->cancel($invoice, $data['reason'])]);
     }
 
     public function creditNote(int $id): JsonResponse
     {
-        $note = $this->service->draftCreditNote(Invoice::with('items')->findOrFail($id));
+        $note = $this->service->draftCreditNote($this->manualOnly(Invoice::with('items')->findOrFail($id), 'credited'));
 
         return response()->json(['invoice' => $note], 201);
     }
@@ -151,7 +152,7 @@ class InvoiceController extends Controller
 
     public function email(Request $request, int $id, EmailService $mailer): JsonResponse
     {
-        $invoice = Invoice::with(['items', 'product', 'client'])->findOrFail($id);
+        $invoice = $this->manualOnly(Invoice::with(['items', 'product', 'client'])->findOrFail($id), 'e-mailed');
         if ($invoice->status !== 'issued') {
             return response()->json(['error' => 'Only issued documents can be e-mailed.'], 422);
         }
@@ -206,6 +207,17 @@ class InvoiceController extends Controller
             'items.*.sac.regex' => 'SAC/HSN codes are 4 to 8 digits.',
             'reason.required' => 'Give the reason for this credit note.',
         ]);
+    }
+
+    /** Documents sent by a product are managed in that product (it issued them to the customer). */
+    private function manualOnly(Invoice $invoice, string $verb): Invoice
+    {
+        if ($invoice->source !== 'manual') {
+            $name = $invoice->product?->name ?? 'the product';
+            abort(response()->json(['error' => "This document was issued by {$name} and can only be {$verb} there; the change then syncs here."], 422));
+        }
+
+        return $invoice;
     }
 
     private function applyStatus(Builder $query, string $status): void

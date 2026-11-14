@@ -133,7 +133,10 @@ export default function InvoicesIndex({ type }: { type: 'invoice' | 'credit_note
                   <div className="text-neutral-900">{inv.billName}</div>
                   <div className="font-mono text-xs text-neutral-400">{inv.billGstin || 'B2C'}</div>
                 </td>
-                <td className="px-4 py-3 text-neutral-600">{inv.product?.name}</td>
+                <td className="px-4 py-3 text-neutral-600">
+                  {inv.product?.name}
+                  {inv.source !== 'manual' && <div className="text-xs text-blue-600">{inv.source === 'api' ? 'via API' : 'imported'}</div>}
+                </td>
                 <td className="whitespace-nowrap px-4 py-3 text-right">{money(inv.taxableTotal)}</td>
                 <td className="whitespace-nowrap px-4 py-3 text-right text-neutral-600">{money(inv.taxTotal)}</td>
                 <td className="whitespace-nowrap px-4 py-3 text-right font-medium">{money(inv.grandTotal)}</td>

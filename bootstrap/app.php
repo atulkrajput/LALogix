@@ -18,6 +18,10 @@ return Application::configure(basePath: dirname(__DIR__))
         then: function () {
             // JSON API for the React frontend: session-based (web group) under /api.
             Route::middleware('web')->prefix('api')->group(base_path('routes/api.php'));
+
+            // Ingest API for the products: stateless, API-key auth, no session/CSRF.
+            Route::middleware(['throttle:120,1', \App\Http\Middleware\ProductApiKey::class])
+                ->prefix('api/ingest/v1')->group(base_path('routes/ingest.php'));
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {

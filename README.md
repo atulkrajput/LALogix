@@ -67,7 +67,7 @@ For **FTP**, commands can't run on the server. After a deploy that changes the d
 
 ## GST billing (admin → Billing)
 
-One GSTIN, many business lines. Each **product** (LALogix Services, BIVK.in, ISO, Amritix, Ayurved Dhara, …) has its own invoice and credit-note series, numbered `PREFIX/26-27/0001` per financial year (max 16 characters, as GST requires).
+One GSTIN, many business lines. Each **product** (LALogix Services, VIVK.in, ISO, Amritix, Ayurved Dhara, …) has its own invoice and credit-note series, numbered `PREFIX/26-27/0001` per financial year (max 16 characters, as GST requires).
 
 1. **Business profile**: legal name, GSTIN, GST state (decides CGST+SGST vs IGST), bank/UPI, LUT number for exports, logo and signature.
 2. **Products**: set an invoice prefix (and credit-note prefix) before issuing documents for that product.
@@ -76,6 +76,14 @@ One GSTIN, many business lines. Each **product** (LALogix Services, BIVK.in, ISO
 5. **Invoices**: drafts are editable and unnumbered; *Issue* assigns the next number and freezes the invoice. Then download/e-mail the PDF, record payments (with TDS), raise credit notes, or cancel (the number stays used and is reported as cancelled).
 
 6. **GST Reports**: pick a month, quarter or FY to see the consolidated GSTR-1 tables (B2B, B2CL, B2CS, exports, CDNR/CDNUR, HSN B2B/B2C, documents issued), the GSTR-3B 3.1/3.2 figures and a per-product breakdown. *GSTR-1 for offline tool* downloads an `.xlsx` laid out like the GST offline tool's import template; *Full report* adds the 3B summary and checklist. The B2C-large limit is `GstReportService::B2CL_LIMIT` (₹1 lakh).
+
+7. **Connecting products** (VIVK.in, ISO, Amritix, Ayurved Dhara): invoices those products issue themselves are synced in, so the GST reports are consolidated.
+   - **API (recommended)**: *Products → Connect* creates the product's key (shown once; only its SHA-256 is stored). The product then calls, with `Authorization: Bearer <key>`:
+     - `POST /api/ingest/v1/invoices`: `external_id`, `number` (its own series, ≤16 chars), `date`, `customer {name, company, gstin, email, state_code, country…}`, `items [{description, sac, quantity, rate, discount, gst_rate}]`, optional `total` (must match the lines within ₹1), `place_of_supply` and `payment {date, amount, method, reference}`. An Indian customer with no GSTIN or state (e.g. VIVK.in sign-ups, which only have name + e-mail) is billed at your own GST state, intra-state.
+     - `POST /api/ingest/v1/credit-notes` (with `invoice_external_id`, `reason`), `POST /api/ingest/v1/invoices/{external_id}/cancel`, `POST /api/ingest/v1/credit-notes/{external_id}/cancel`, `GET /api/ingest/v1/ping`.
+     - Responses: `201` created, `200` unchanged (retries are safe), `422 {error, errors}` with the reason; every call is listed in the product's *Recent activity*.
+   - **CSV**: *Billing → Import* for back-filling past months or products without the API (template on the page).
+   - Synced documents are read-only here (cancel/credit them in the product); payments can still be recorded.
 
 After deploying a version with new migrations, run `php artisan migrate --force` on the server. The FTP deploy can't run it for you.
 

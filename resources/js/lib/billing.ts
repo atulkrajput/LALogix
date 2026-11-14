@@ -13,6 +13,10 @@ export interface Product {
   defaultSac: string | null;
   defaultGstRate: number;
   isActive?: boolean;
+  isConnected?: boolean;
+  apiKeyHint?: string | null;
+  apiKeyCreatedAt?: string | null;
+  lastSyncedAt?: string | null;
   _count?: { invoices: number };
 }
 
@@ -83,6 +87,8 @@ export interface Payment {
 export interface Invoice {
   id: number;
   type: 'invoice' | 'credit_note';
+  source: 'manual' | 'api' | 'import';
+  externalId: string | null;
   productId: number;
   clientId: number;
   originalInvoiceId: number | null;
