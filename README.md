@@ -75,6 +75,8 @@ One GSTIN, many business lines. Each **product** (LALogix Services, BIVK.in, ISO
 4. **Work log**: record billable work, then tick entries and click *Create invoice*.
 5. **Invoices**: drafts are editable and unnumbered; *Issue* assigns the next number and freezes the invoice. Then download/e-mail the PDF, record payments (with TDS), raise credit notes, or cancel (the number stays used and is reported as cancelled).
 
+6. **GST Reports**: pick a month, quarter or FY to see the consolidated GSTR-1 tables (B2B, B2CL, B2CS, exports, CDNR/CDNUR, HSN B2B/B2C, documents issued), the GSTR-3B 3.1/3.2 figures and a per-product breakdown. *GSTR-1 for offline tool* downloads an `.xlsx` laid out like the GST offline tool's import template; *Full report* adds the 3B summary and checklist. The B2C-large limit is `GstReportService::B2CL_LIMIT` (₹1 lakh).
+
 After deploying a version with new migrations, run `php artisan migrate --force` on the server. The FTP deploy can't run it for you.
 
 ## Where things are
