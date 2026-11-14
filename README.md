@@ -58,7 +58,8 @@ Set these in CircleCI → Project Settings → Environment Variables.
 | `FTP_PROTOCOL` | ftp | Optional: `ftp` (default, uses TLS when offered), `ftps` or `sftp` |
 | `FTP_PORT` | ftp | Optional, protocol default otherwise |
 | `FTP_SSL` | ftp | Optional, `no` to turn off TLS for plain `ftp` |
-| `FTP_VERIFY_CERT` | ftp | Optional, `no` if the host's certificate doesn't match its name |
+| `FTP_CERT_FINGERPRINT` | ftp | Optional. When the host's certificate doesn't match its name, paste the fingerprint from the deploy error (`Certificate verification: … (4E:46:DA:…)`) to trust only that certificate. Update it when the host renews the certificate |
+| `FTP_VERIFY_CERT` | ftp | Optional, `no` to skip certificate checks entirely (prefer `FTP_CERT_FINGERPRINT`) |
 
 For **rsync**, add the private key of a deploy SSH key pair in CircleCI → Project Settings → SSH Keys (hostname = `SSH_HOST`), and put the public key in the server user's `~/.ssh/authorized_keys`. After uploading, the job runs `php artisan migrate --force`, `php artisan optimize` and `storage:link` on the server.
 
