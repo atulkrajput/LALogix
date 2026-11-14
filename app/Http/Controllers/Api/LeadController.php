@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Activity;
 use App\Models\Lead;
 use App\Models\LeadTag;
+use App\Support\LeadAttribution;
 use App\Services\AutomationService;
 use App\Services\EmailService;
 use Illuminate\Database\Eloquent\Builder;
@@ -41,6 +42,7 @@ class LeadController extends Controller
             'product_interest' => $productInterest,
             'source' => $source,
             'status' => 'new',
+            ...LeadAttribution::fromRequest($request),
         ]);
 
         $email->notifySales(

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DemoBooking;
 use App\Models\Lead;
 use App\Services\EmailService;
+use App\Support\LeadAttribution;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -31,6 +32,7 @@ class FormController extends Controller
             'product_interest' => 'general',
             'source' => 'website',
             'status' => 'new',
+            ...LeadAttribution::fromRequest($request),
         ]);
 
         $email->notifySales("Contact Form: {$name}", 'New Contact Message', [
@@ -80,6 +82,7 @@ class FormController extends Controller
             'product_interest' => $productInterest,
             'source' => 'website',
             'status' => $scheduledDate ? 'demo_scheduled' : 'new',
+            ...LeadAttribution::fromRequest($request),
         ]);
 
         if ($scheduledDate) {

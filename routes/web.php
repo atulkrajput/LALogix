@@ -32,6 +32,7 @@ Route::prefix('admin')->controller(AdminController::class)->group(function () {
     Route::middleware('auth')->group(function () {
         Route::get('/', 'dashboard');
         Route::get('/growth', 'growth');
+        Route::get('/marketing', 'marketing');
         Route::get('/leads', 'leads');
         Route::get('/leads/{id}', 'lead')->whereNumber('id');
         Route::get('/campaigns', 'campaigns');

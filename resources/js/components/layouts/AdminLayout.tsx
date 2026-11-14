@@ -26,6 +26,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: '/admin', label: 'Dashboard', icon: '📊' },
     { href: '/admin/leads', label: 'Leads', icon: '👥' },
     { href: '/admin/demos', label: 'Demos', icon: '📅' },
+    { href: '/admin/marketing', label: 'Marketing', icon: '🎯' },
     { href: '/admin/campaigns', label: 'Campaigns', icon: '📣' },
     { href: '/admin/outreach', label: 'Outreach', icon: '📧' },
     { href: '/admin/followups', label: 'Follow-ups', icon: '🔔' },

@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\CampaignController;
 use App\Http\Controllers\Api\CrmController;
 use App\Http\Controllers\Api\FormController;
 use App\Http\Controllers\Api\LeadController;
+use App\Http\Controllers\Api\MarketingController;
 use App\Http\Controllers\Api\OutreachController;
 use Illuminate\Support\Facades\Route;
 
@@ -69,6 +70,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/outreach/whatsapp', [OutreachController::class, 'whatsapp']);
     Route::get('/outreach/whatsapp', [OutreachController::class, 'whatsappLogs']);
 
+    // ---- Marketing (ad spend → leads → revenue) ---------------------------
+    Route::get('/marketing', [MarketingController::class, 'report']);
+    Route::put('/marketing/meta', [MarketingController::class, 'saveMeta']);
+    Route::post('/marketing/meta/sync', [MarketingController::class, 'syncMeta']);
+    Route::post('/marketing/spend/import', [MarketingController::class, 'importSpend']);
+
     // ---- GST billing ------------------------------------------------------
     Route::prefix('billing')->group(function () {
         Route::get('/settings', [Billing\SettingsController::class, 'show']);
@@ -87,6 +94,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/clients', [Billing\ClientController::class, 'index']);
         Route::post('/clients', [Billing\ClientController::class, 'store']);
+        Route::post('/clients/from-lead/{leadId}', [Billing\ClientController::class, 'fromLead'])->whereNumber('leadId');
         Route::get('/clients/{id}', [Billing\ClientController::class, 'show'])->whereNumber('id');
         Route::put('/clients/{id}', [Billing\ClientController::class, 'update'])->whereNumber('id');
         Route::delete('/clients/{id}', [Billing\ClientController::class, 'destroy'])->whereNumber('id');

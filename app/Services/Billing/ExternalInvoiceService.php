@@ -119,6 +119,8 @@ class ExternalInvoiceService
                 'customer.state_code' => ['nullable', Rule::in(array_keys(GstStates::ALL))],
                 'customer.pincode' => 'nullable|string|max:10',
                 'customer.country' => 'nullable|string|max:100',
+                'customer.utm_source' => 'nullable|string|max:191',
+                'customer.utm_campaign' => 'nullable|string|max:191',
                 'place_of_supply' => ['nullable', Rule::in([...array_keys(GstStates::ALL), GstStates::OUTSIDE_INDIA])],
                 'reverse_charge' => 'nullable|boolean',
                 'export_with_lut' => 'nullable|boolean',
@@ -297,6 +299,9 @@ class ExternalInvoiceService
             'pincode' => $c['pincode'] ?? null,
             'country' => $indian ? 'India' : trim($c['country']),
             'product_id' => $product->id,
+            // Which campaign brought this customer to the product (for the Marketing report)
+            'utm_source' => $c['utm_source'] ?? null,
+            'utm_campaign' => $c['utm_campaign'] ?? null,
         ]);
     }
 

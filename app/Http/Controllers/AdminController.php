@@ -39,6 +39,11 @@ class AdminController extends Controller
         return $this->render('Growth');
     }
 
+    public function marketing(): Response
+    {
+        return $this->render('Marketing', ['siteUrl' => rtrim(config('lalogix.site_url') ?: url('/'), '/')]);
+    }
+
     public function leads(): Response
     {
         return $this->render('Leads/Index');
