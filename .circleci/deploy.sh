@@ -8,7 +8,9 @@
 # Paths in .circleci/deploy-exclude.txt are never uploaded or deleted on the
 # server (.env, storage/, ...). Configure the variables in CircleCI →
 # Project Settings → Environment Variables (see README.md).
-set -euo pipefail
+set -Eeuo pipefail
+# Never fail silently: say which command stopped the deploy.
+trap 'echo "deploy.sh stopped at line $LINENO: $BASH_COMMAND" >&2' ERR
 
 cd "$(dirname "$0")/.."
 
@@ -120,7 +122,8 @@ deploy_ftp() {
     local raw hex fp=""
     raw="$(printf '%s' "$FTP_CERT_FINGERPRINT" | tr '[:lower:]' '[:upper:]' | tr -d '[:space:]')"
     # Longest run of hex digits, allowing ':' or '-' between them.
-    hex="$(printf '%s' "$raw" | grep -oE '[0-9A-F]+([:-][0-9A-F]+)*' | awk '{ if (length($0) > length(m)) m = $0 } END { print m }' | tr -d ':-')"
+    # (grep finds nothing when the value has no hex digits; let the length check report it)
+    hex="$( { printf '%s' "$raw" | grep -oE '[0-9A-F]+([:-][0-9A-F]+)*' || true; } | awk '{ if (length($0) > length(m)) m = $0 } END { print m }' | tr -d ':-')"
     case "${#hex}" in
       40)
         local i
