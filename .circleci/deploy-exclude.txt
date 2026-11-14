@@ -1,0 +1,28 @@
+# Paths never uploaded to (or deleted from) the server.
+# Patterns starting with / are relative to the project root.
+/.git/
+/.github/
+/.circleci/
+/.claude/
+/.env
+/.env.*
+/.editorconfig
+/.gitattributes
+/.gitignore
+/node_modules/
+/old/
+/tests/
+/resources/js/
+/resources/css/
+/storage/
+/bootstrap/cache/*.php
+/public/hot
+/public/storage
+/phpunit.xml
+/README.md
+/package.json
+/package-lock.json
+/postcss.config.js
+/tailwind.config.ts
+/tsconfig.json
+/vite.config.ts

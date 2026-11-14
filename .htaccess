@@ -1,0 +1,12 @@
+# Fallback for shared hosting where the domain's document root cannot be set
+# to public/ (e.g. the app is uploaded straight into public_html).
+# Sends every request into public/ so .env, vendor/, storage/ etc. are never served.
+# Not used when the document root already points at public/ (recommended).
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+<IfModule !mod_rewrite.c>
+    Require all denied
+</IfModule>

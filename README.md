@@ -31,6 +31,39 @@ Open http://localhost:8000 — admin CRM at http://localhost:8000/admin. Change 
 
 Production build: `npm run build` (outputs to `public/build`), then point the web server at `public/`.
 
+## Deployment (CircleCI)
+
+Every push runs [`.circleci/config.yml`](.circleci/config.yml): `composer install`, `npm ci`, type check, `npm run build` and the PHPUnit tests. Pushes to **`master`** then deploy with [`.circleci/deploy.sh`](.circleci/deploy.sh), either over **rsync (SSH)** or **FTP**.
+
+The upload includes `vendor/` and `public/build/`, so the server needs no Composer or Node. Paths in [`.circleci/deploy-exclude.txt`](.circleci/deploy-exclude.txt) (`.env`, `storage/`, `old/`, sources, …) are never uploaded or deleted on the server.
+
+### One-time server setup
+
+1. Point the domain's document root at the app's `public/` folder. (If the host can't do that, the root `.htaccess` routes requests into `public/` instead.)
+2. Create the MySQL database and upload a production `.env` (copy `.env.example`; set `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL`, `SITE_URL`, `DB_*`, `RESEND_API_KEY`, and run `php artisan key:generate` or paste an `APP_KEY`).
+3. After the first deploy, run `php artisan db:seed` once to create the admin user, then change its password.
+
+### CircleCI environment variables
+
+Set these in CircleCI → Project Settings → Environment Variables.
+
+| Variable | Needed for | Purpose |
+| --- | --- | --- |
+| `DEPLOY_METHOD` | both | `rsync` (default) or `ftp` |
+| `SSH_HOST`, `SSH_USER`, `DEPLOY_PATH` | rsync | Server, login user, absolute path of the app folder (the one containing `artisan`) |
+| `SSH_PORT` | rsync | Optional, default `22` |
+| `PHP_BIN` | rsync | Optional PHP CLI path on the server, default `php` (e.g. `/usr/local/bin/php82`) |
+| `FTP_HOST`, `FTP_USER`, `FTP_PASSWORD` | ftp | FTP server and login. Files go into the folder the FTP account opens in |
+| `FTP_PATH` | ftp | Optional subfolder to upload into instead (e.g. `laravel`) |
+| `FTP_PROTOCOL` | ftp | Optional: `ftp` (default, uses TLS when offered), `ftps` or `sftp` |
+| `FTP_PORT` | ftp | Optional, protocol default otherwise |
+| `FTP_SSL` | ftp | Optional, `no` to turn off TLS for plain `ftp` |
+| `FTP_VERIFY_CERT` | ftp | Optional, `no` if the host's certificate doesn't match its name |
+
+For **rsync**, add the private key of a deploy SSH key pair in CircleCI → Project Settings → SSH Keys (hostname = `SSH_HOST`), and put the public key in the server user's `~/.ssh/authorized_keys`. After uploading, the job runs `php artisan migrate --force`, `php artisan optimize` and `storage:link` on the server.
+
+For **FTP**, commands can't run on the server. After a deploy that changes the database schema, run `php artisan migrate --force` (and `php artisan optimize` if you use it) from the host's SSH or terminal tool.
+
 ## Where things are
 
 | Area | Location |
