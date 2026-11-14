@@ -40,5 +40,19 @@ Route::prefix('admin')->controller(AdminController::class)->group(function () {
         Route::get('/outreach', 'outreach');
         Route::get('/automation', 'automation');
         Route::get('/activities', 'activities');
+
+        // GST billing
+        Route::redirect('/billing', '/admin/billing/invoices');
+        Route::get('/billing/invoices', 'invoices');
+        Route::get('/billing/invoices/new', 'invoiceCreate');
+        Route::get('/billing/invoices/{id}', 'invoice')->whereNumber('id');
+        Route::get('/billing/invoices/{id}/edit', 'invoiceEdit')->whereNumber('id');
+        Route::get('/billing/invoices/{id}/pdf', 'invoicePdf')->whereNumber('id');
+        Route::get('/billing/credit-notes', 'creditNotes');
+        Route::get('/billing/clients', 'clients');
+        Route::get('/billing/clients/{id}', 'client')->whereNumber('id');
+        Route::get('/billing/work', 'work');
+        Route::get('/billing/products', 'products');
+        Route::get('/billing/settings', 'billingSettings');
     });
 });

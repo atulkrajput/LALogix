@@ -14,14 +14,16 @@ use Throwable;
 class EmailService
 {
     /**
+     * @param  list<array{filename: string, content: string}>  $attachments  content is base64
      * @return array{success: bool, messageId?: string, error?: string}
      */
-    public function send(string $to, string $subject, ?string $html = null, ?string $text = null): array
+    public function send(string $to, string $subject, ?string $html = null, ?string $text = null, array $attachments = []): array
     {
         Log::info('[Email] Sending email', [
             'to' => $to,
             'subject' => $subject,
             'bodyLength' => strlen($html ?? $text ?? ''),
+            'attachments' => array_column($attachments, 'filename'),
         ]);
 
         $apiKey = config('lalogix.resend_api_key');
@@ -40,6 +42,7 @@ class EmailService
                     'subject' => $subject,
                     'html' => $html,
                     'text' => $text,
+                    'attachments' => $attachments ?: null,
                 ], fn ($v) => $v !== null));
 
             if (! $response->successful()) {
