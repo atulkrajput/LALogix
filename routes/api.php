@@ -81,6 +81,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/products/{id}/api-key', [Billing\ProductController::class, 'generateKey'])->whereNumber('id');
         Route::delete('/products/{id}/api-key', [Billing\ProductController::class, 'revokeKey'])->whereNumber('id');
         Route::get('/products/{id}/logs', [Billing\ProductController::class, 'logs'])->whereNumber('id');
+        Route::put('/products/{id}/sync', [Billing\ProductController::class, 'saveSync'])->whereNumber('id');
+        Route::post('/products/{id}/sync', [Billing\ProductController::class, 'runSync'])->whereNumber('id');
         Route::post('/import', [Billing\ImportController::class, 'store']);
 
         Route::get('/clients', [Billing\ClientController::class, 'index']);

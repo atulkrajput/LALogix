@@ -7,6 +7,7 @@ use App\Models\IngestLog;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -75,6 +76,84 @@ class ProductController extends Controller
         $product->forceFill(['api_key_hash' => null, 'api_key_hint' => null, 'api_key_created_at' => null])->save();
 
         return response()->json(['product' => $product->fresh()]);
+    }
+
+    /** Save the product's "sync now" endpoint (e.g. https://www.vivk.in/api/cron/lalogix-sync) and its secret. */
+    public function saveSync(Request $request, int $id): JsonResponse
+    {
+        $product = Product::findOrFail($id);
+        $data = $request->validate([
+            'sync_url' => ['nullable', 'url', 'max:500', function ($attr, $value, $fail) {
+                if ($value && ! str_starts_with($value, 'https://') && ! app()->environment('local', 'testing')) {
+                    $fail('The sync URL must start with https://.');
+                }
+            }],
+            'sync_secret' => 'nullable|string|max:500',
+            'clear_secret' => 'boolean',
+        ]);
+
+        $product->sync_url = $data['sync_url'] ?? null;
+        if ($request->boolean('clear_secret')) {
+            $product->sync_secret = null;
+        } elseif (! empty($data['sync_secret'])) {
+            $product->sync_secret = trim($data['sync_secret']);
+        }
+        $product->save();
+
+        return response()->json(['product' => $product->fresh()]);
+    }
+
+    /**
+     * "Sync now": ask the product to send the invoices it hasn't sent yet (the same call as
+     * curl -H "Authorization: Bearer <secret>" <sync_url>). Its invoices then arrive through
+     * the ingest API as usual; this returns the product's own summary.
+     */
+    public function runSync(Request $request, int $id): JsonResponse
+    {
+        $product = Product::findOrFail($id);
+        if (! $product->sync_url || ! $product->has_sync_secret) {
+            return response()->json(['error' => "Save {$product->name}'s sync URL and secret first."], 422);
+        }
+
+        @set_time_limit(60);
+        $log = fn (string $outcome, string $message) => IngestLog::create([
+            'product_id' => $product->id, 'channel' => 'pull', 'action' => 'sync',
+            'outcome' => $outcome, 'message' => mb_substr($message, 0, 500), 'ip' => $request->ip(),
+        ]);
+
+        try {
+            // No redirects: the secret would be dropped on a host change (e.g. vivk.in → www.vivk.in).
+            $response = Http::withToken($product->sync_secret)->acceptJson()->timeout(40)->withoutRedirecting()->get($product->sync_url);
+        } catch (\Throwable $e) {
+            $log('rejected', 'Could not reach '.$product->sync_url.': '.$e->getMessage());
+
+            return response()->json(['error' => "Could not reach {$product->name}: ".$e->getMessage()], 502);
+        }
+
+        if ($response->redirect()) {
+            $to = $response->header('Location') ?: 'another address';
+            $reason = "{$product->name}'s sync URL redirects to {$to}. Save that URL instead (the secret isn't sent across a redirect).";
+            $log('rejected', $reason);
+
+            return response()->json(['error' => $reason, 'redirect' => $to], 502);
+        }
+
+        $body = $response->json() ?? [];
+        if (! $response->successful()) {
+            $reason = $response->status() === 401
+                ? "{$product->name} refused the secret (401). Check it matches CRON_SECRET there."
+                : "{$product->name} answered {$response->status()}: ".($body['error'] ?? 'no details');
+            $log('rejected', $reason);
+
+            return response()->json(['error' => $reason], 502);
+        }
+
+        $result = collect($body)->only(['synced', 'failed', 'remaining', 'configured', 'message'])->all();
+        $log('synced', isset($result['synced'])
+            ? "Sync now: {$result['synced']} sent, ".($result['failed'] ?? 0).' failed, '.($result['remaining'] ?? 0).' remaining'
+            : 'Sync now: '.json_encode($result));
+
+        return response()->json(['result' => $result]);
     }
 
     public function logs(int $id): JsonResponse

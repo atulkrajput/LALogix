@@ -17,6 +17,8 @@ export interface Product {
   apiKeyHint?: string | null;
   apiKeyCreatedAt?: string | null;
   lastSyncedAt?: string | null;
+  syncUrl?: string | null;
+  hasSyncSecret?: boolean;
   _count?: { invoices: number };
 }
 
