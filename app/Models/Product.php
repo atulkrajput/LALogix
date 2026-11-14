@@ -9,11 +9,12 @@ class Product extends Model
 {
     protected $table = 'products';
 
-    protected $hidden = ['api_key_hash'];
+    protected $hidden = ['api_key_hash', 'sync_secret'];
 
-    protected $appends = ['is_connected'];
+    protected $appends = ['is_connected', 'has_sync_secret'];
 
     protected $casts = [
+        'sync_secret' => 'encrypted',
         'api_key_created_at' => 'datetime',
         'last_synced_at' => 'datetime',
         'default_gst_rate' => 'float',
@@ -30,6 +31,12 @@ class Product extends Model
     public function getIsConnectedAttribute(): bool
     {
         return $this->api_key_hash !== null;
+    }
+
+    /** A secret for the product's "sync now" endpoint is saved (the value itself never leaves the server). */
+    public function getHasSyncSecretAttribute(): bool
+    {
+        return ! empty($this->attributes['sync_secret'] ?? null);
     }
 
     public function invoices(): HasMany
