@@ -195,7 +195,7 @@ return new class extends Migration
         $products = [
             ['LALogix Services', 'lalogix-services', 'services', 'https://lalogix.com', 'LAL', 'LALCN', '998313'],
             ['VIVK.in', 'vivk', 'saas', 'https://vivk.in', null, null, '998314'],
-            ['ISO', 'iso', 'saas', null, null, null, '998314'],
+            ['AISHO', 'aisho', 'saas', 'https://aisho.live', null, null, '998314'],
             ['Amritix', 'amritix', 'saas', null, null, null, '998314'],
             ['Ayurved Dhara', 'ayurved-dhara', 'ecommerce', null, null, null, null],
         ];
