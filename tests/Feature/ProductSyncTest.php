@@ -72,6 +72,22 @@ class ProductSyncTest extends TestCase
         $this->assertSame('rejected', IngestLog::latest('id')->value('outcome'));
     }
 
+    public function test_sync_errors_show_the_url_and_the_products_own_reason(): void
+    {
+        $this->vivk->forceFill(['sync_url' => 'https://api.example.test/api/cron/lalogix-sync', 'sync_secret' => 'secret'])->save();
+
+        // Nested error object (e.g. AISHO's API): its message is shown instead of crashing.
+        Http::fake(['api.example.test/*' => Http::sequence()
+            ->push(['error' => ['code' => 'db_down', 'message' => 'Database unavailable']], 500)
+            ->push('<!doctype html><html>Not found</html>', 404, ['Content-Type' => 'text/html; charset=UTF-8'])]);
+        $this->postJson("/api/billing/products/{$this->vivk->id}/sync")->assertStatus(502)
+            ->assertJsonPath('error', 'VIVK.in answered 500 at https://api.example.test/api/cron/lalogix-sync: Database unavailable');
+
+        // A web page instead of JSON: the URL points at the website, not the API.
+        $this->postJson("/api/billing/products/{$this->vivk->id}/sync")->assertStatus(502)
+            ->assertJsonPath('error', fn ($e) => str_contains($e, 'answered 404 at https://api.example.test/api/cron/lalogix-sync: got a web page instead of the sync API'));
+    }
+
     public function test_redirects_are_not_followed_and_the_target_is_suggested(): void
     {
         // vivk.in answers 307 → www.vivk.in; following it would drop the Authorization header.
