@@ -65,7 +65,7 @@ class InvoiceController extends Controller
     {
         return response()->json([
             'profile' => collect(BusinessProfile::current()->toArray())
-                ->only(['stateCode', 'gstin', 'lutNumber', 'paymentTermsDays', 'roundOffTotal', 'invoiceNotes', 'invoiceTerms']),
+                ->only(['stateCode', 'gstin', 'lutNumber', 'paymentTermsDays', 'roundOffTotal', 'invoiceNotes', 'invoiceTerms', 'quotationValidDays']),
             'products' => Product::where('is_active', true)->orderBy('sort')->get(['id', 'name', 'kind', 'invoice_prefix', 'credit_note_prefix', 'default_sac', 'default_gst_rate']),
             'clients' => Client::orderBy('name')->get(['id', 'name', 'company', 'gstin', 'state_code', 'country', 'email']),
             'states' => GstStates::options(),

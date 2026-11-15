@@ -18,6 +18,11 @@ class AdminController extends Controller
 {
     private function render(string $component, array $props = []): Response
     {
+        // Recurring invoices that fell due are created here too (throttled), so no server cron is required.
+        if ($component !== 'Login') {
+            app(\App\Services\Billing\RecurringInvoiceService::class)->runIfStale();
+        }
+
         $meta = Seo::resolve(['title' => 'Admin CRM', 'noindex' => true]);
 
         return Inertia::render("Admin/{$component}", [...$props, 'meta' => ['title' => $meta['title']]])
@@ -161,6 +166,31 @@ class AdminController extends Controller
     public function gstReports(): Response
     {
         return $this->render('Billing/Reports');
+    }
+
+    public function quotations(): Response
+    {
+        return $this->render('Billing/Quotations/Index');
+    }
+
+    public function quotationCreate(Request $request): Response
+    {
+        return $this->render('Billing/Invoices/Edit', ['id' => null, 'clientId' => $request->integer('client') ?: null, 'workIds' => [], 'kind' => 'quotation']);
+    }
+
+    public function quotation(int $id): Response
+    {
+        return $this->render('Billing/Quotations/Show', ['id' => $id]);
+    }
+
+    public function quotationEdit(int $id): Response
+    {
+        return $this->render('Billing/Invoices/Edit', ['id' => $id, 'clientId' => null, 'workIds' => [], 'kind' => 'quotation']);
+    }
+
+    public function recurring(): Response
+    {
+        return $this->render('Billing/Recurring');
     }
 
     public function purchases(): Response

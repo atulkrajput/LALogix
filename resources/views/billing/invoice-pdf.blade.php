@@ -2,6 +2,8 @@
     use App\Support\GstStates;
     $intra = $invoice->supply_type === 'intra';
     $isCn = $invoice->isCreditNote();
+    $isQuote = $isQuote ?? false; // quotation rendered with this template (see QuotationPdf)
+    $docTitle = $isQuote ? 'Quotation' : $invoice->documentTitle();
     $money = fn ($v) => number_format((float) $v, 2);
     $taxCols = $intra ? 2 : 1;
 @endphp
@@ -9,7 +11,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>{{ $invoice->documentTitle() }} {{ $invoice->number ?? 'Draft' }}</title>
+<title>{{ $docTitle }} {{ $invoice->number ?? 'Draft' }}</title>
 <style>
     @page { margin: 26px 28px 34px; }
     * { font-family: "DejaVu Sans", sans-serif; }
@@ -35,8 +37,8 @@
 </style>
 </head>
 <body>
-@if ($invoice->status === 'draft')<div class="stamp">DRAFT</div>@endif
-@if ($invoice->status === 'cancelled')<div class="stamp">CANCELLED</div>@endif
+@if (! $isQuote && $invoice->status === 'draft')<div class="stamp">DRAFT</div>@endif
+@if (! $isQuote && $invoice->status === 'cancelled')<div class="stamp">CANCELLED</div>@endif
 
 <table>
     <tr>
@@ -53,19 +55,19 @@
             <div class="muted">{{ implode(' · ', array_filter([$seller['email'] ?? null, $seller['phone'] ?? null, $seller['website'] ?? null])) }}</div>
         </td>
         <td class="right">
-            <div class="title">{{ strtoupper($invoice->documentTitle()) }}</div>
-            <div class="muted" style="margin-bottom: 8px;">{{ $isCn ? 'Original' : 'Original for Recipient' }}</div>
+            <div class="title">{{ strtoupper($docTitle) }}</div>
+            <div class="muted" style="margin-bottom: 8px;">{{ $isQuote ? 'Not a tax invoice' : ($isCn ? 'Original' : 'Original for Recipient') }}</div>
             <table style="width: auto; margin-left: auto;">
-                <tr><td class="muted right" style="padding: 1px 6px;">{{ $isCn ? 'Credit Note No.' : 'Invoice No.' }}</td><td class="bold">{{ $invoice->number ?? 'DRAFT' }}</td></tr>
+                <tr><td class="muted right" style="padding: 1px 6px;">{{ $isQuote ? 'Quotation No.' : ($isCn ? 'Credit Note No.' : 'Invoice No.') }}</td><td class="bold">{{ $invoice->number ?? 'DRAFT' }}</td></tr>
                 <tr><td class="muted right" style="padding: 1px 6px;">Date</td><td>{{ $invoice->invoice_date->format('d M Y') }}</td></tr>
                 @if (! $isCn && $invoice->due_date)
-                    <tr><td class="muted right" style="padding: 1px 6px;">Due Date</td><td>{{ $invoice->due_date->format('d M Y') }}</td></tr>
+                    <tr><td class="muted right" style="padding: 1px 6px;">{{ $isQuote ? 'Valid Until' : 'Due Date' }}</td><td>{{ $invoice->due_date->format('d M Y') }}</td></tr>
                 @endif
                 @if ($isCn && $invoice->originalInvoice)
                     <tr><td class="muted right" style="padding: 1px 6px;">Against Invoice</td><td>{{ $invoice->originalInvoice->number }} ({{ $invoice->originalInvoice->invoice_date->format('d M Y') }})</td></tr>
                 @endif
                 <tr><td class="muted right" style="padding: 1px 6px;">Place of Supply</td><td>{{ GstStates::label($invoice->place_of_supply) }}</td></tr>
-                <tr><td class="muted right" style="padding: 1px 6px;">Reverse Charge</td><td>{{ $invoice->reverse_charge ? 'Yes' : 'No' }}</td></tr>
+                @unless ($isQuote)<tr><td class="muted right" style="padding: 1px 6px;">Reverse Charge</td><td>{{ $invoice->reverse_charge ? 'Yes' : 'No' }}</td></tr>@endunless
             </table>
         </td>
     </tr>
@@ -74,7 +76,7 @@
 <table style="margin-top: 12px;">
     <tr>
         <td class="box" style="width: 60%;">
-            <div class="label">{{ $isCn ? 'Issued to' : 'Bill to' }}</div>
+            <div class="label">{{ $isQuote ? 'Quotation for' : ($isCn ? 'Issued to' : 'Bill to') }}</div>
             <div class="bold" style="font-size: 10.5px;">{{ $invoice->bill_name }}</div>
             @if ($invoice->bill_company)<div>Attn: {{ $invoice->bill_company }}</div>@endif
             @if ($invoice->bill_address)<div>{!! nl2br(e($invoice->bill_address)) !!}</div>@endif
@@ -225,6 +227,6 @@
     </tr>
 </table>
 
-<div class="footer">This is a computer-generated {{ strtolower($invoice->documentTitle()) }}.</div>
+<div class="footer">This is a computer-generated {{ strtolower($docTitle) }}.</div>
 </body>
 </html>

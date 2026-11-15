@@ -9,7 +9,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class InvoicePdf
 {
-    public static function render(Invoice $invoice): string
+    public static function render(Invoice $invoice, bool $isQuote = false): string
     {
         $invoice->loadMissing(['items', 'product', 'client', 'originalInvoice']);
         $profile = BusinessProfile::current();
@@ -36,6 +36,7 @@ class InvoicePdf
 
         return Pdf::setOption(['isFontSubsettingEnabled' => true, 'isRemoteEnabled' => false])->loadView('billing.invoice-pdf', [
             'invoice' => $invoice,
+            'isQuote' => $isQuote,
             'seller' => $seller,
             'logo' => $profile->logo,
             'signature' => $profile->signature,

@@ -34,7 +34,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { href: '/admin/activities', label: 'Activities', icon: '📝' },
   ];
   const billingItems = [
+    { href: '/admin/billing/quotations', label: 'Quotations', icon: '📝' },
     { href: '/admin/billing/invoices', label: 'Invoices', icon: '🧾' },
+    { href: '/admin/billing/recurring', label: 'Recurring', icon: '🔄' },
     { href: '/admin/billing/credit-notes', label: 'Credit Notes', icon: '↩️' },
     { href: '/admin/billing/purchases', label: 'Purchases', icon: '🛒' },
     { href: '/admin/billing/reports', label: 'GST Reports', icon: '📑' },

@@ -9,7 +9,7 @@ import {
 } from '@/lib/billing';
 
 interface Meta {
-  profile: { stateCode: string | null; gstin: string | null; lutNumber: string | null; paymentTermsDays: number; roundOffTotal: boolean; invoiceNotes: string | null; invoiceTerms: string | null };
+  profile: { stateCode: string | null; gstin: string | null; lutNumber: string | null; paymentTermsDays: number; roundOffTotal: boolean; invoiceNotes: string | null; invoiceTerms: string | null; quotationValidDays?: number };
   products: Product[];
   clients: Client[];
   states: StateOption[];
@@ -30,7 +30,11 @@ const addDays = (iso: string, days: number) => {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 };
 
-export default function InvoiceEdit({ id, clientId, workIds }: { id: number | null; clientId: number | null; workIds: number[] }) {
+export default function InvoiceEdit({ id, clientId, workIds, kind = 'invoice' }: { id: number | null; clientId: number | null; workIds: number[]; kind?: 'invoice' | 'quotation' }) {
+  // The same builder makes quotations: different endpoints and labels, no issuing.
+  const isQuote = kind === 'quotation';
+  const base = isQuote ? '/api/billing/quotations' : '/api/billing/invoices';
+  const pageBase = isQuote ? '/admin/billing/quotations' : '/admin/billing/invoices';
   const router = useRouter();
   const [meta, setMeta] = useState<Meta | null>(null);
   const [invoice, setInvoice] = useState<Invoice | null>(null);
@@ -51,7 +55,15 @@ export default function InvoiceEdit({ id, clientId, workIds }: { id: number | nu
       try {
         const m = await api<Meta>('/api/billing/invoices/meta');
         setMeta(m);
-        if (id) {
+        if (id && isQuote) {
+          const { quotation: q } = await api<{ quotation: any }>(`${base}/${id}`);
+          if (q.status === 'converted') { router.replace(`${pageBase}/${id}`); return; }
+          setForm({
+            product_id: String(q.productId), client_id: String(q.clientId), invoice_date: q.quoteDate, due_date: q.validUntil ?? '',
+            place_of_supply: q.placeOfSupply, export_with_lut: q.exportWithLut, reverse_charge: false, notes: q.notes ?? '', terms: q.terms ?? '', reason: '',
+          });
+          setLines((q.items ?? []).map((i: InvoiceItem) => ({ ...i, sac: i.sac ?? '', key: keySeq++ })));
+        } else if (id) {
           const d = await api<{ invoice: Invoice; unbilledWork: WorkItem[] }>(`/api/billing/invoices/${id}`);
           const inv = d.invoice;
           if (inv.status !== 'draft') { router.replace(`/admin/billing/invoices/${id}`); return; }
@@ -68,7 +80,7 @@ export default function InvoiceEdit({ id, clientId, workIds }: { id: number | nu
           setForm(f => ({
             ...f,
             product_id: product ? String(product.id) : '',
-            due_date: addDays(f.invoice_date, m.profile.paymentTermsDays ?? 15),
+            due_date: addDays(f.invoice_date, isQuote ? (m.profile.quotationValidDays ?? 15) : (m.profile.paymentTermsDays ?? 15)),
             notes: m.profile.invoiceNotes ?? '',
             terms: m.profile.invoiceTerms ?? '',
             export_with_lut: !!m.profile.lutNumber,
@@ -89,6 +101,7 @@ export default function InvoiceEdit({ id, clientId, workIds }: { id: number | nu
     if (!meta || id || !client) return;
     const pos = client.country.toLowerCase() !== 'india' ? OUTSIDE_INDIA : client.stateCode ?? '';
     setForm(f => ({ ...f, place_of_supply: pos }));
+    if (isQuote) return; // quotations don't bill logged work
     api<{ workItems: WorkItem[] }>(`/api/billing/work?client_id=${client.id}&status=unbilled`).then(d => {
       setUnbilled(d.workItems);
       const preselected = d.workItems.filter(w => workIds.includes(w.id));
@@ -117,7 +130,9 @@ export default function InvoiceEdit({ id, clientId, workIds }: { id: number | nu
     const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
     setForm(f => {
       const next = { ...f, [key]: value };
-      if (key === 'invoice_date' && typeof value === 'string' && value && !isCn) next.due_date = addDays(value, meta.profile.paymentTermsDays ?? 15);
+      if (key === 'invoice_date' && typeof value === 'string' && value && !isCn) {
+        next.due_date = addDays(value, isQuote ? (meta.profile.quotationValidDays ?? 15) : (meta.profile.paymentTermsDays ?? 15));
+      }
       return next;
     });
   };
@@ -143,6 +158,11 @@ export default function InvoiceEdit({ id, clientId, workIds }: { id: number | nu
       })),
     };
     try {
+      if (isQuote) {
+        const q = await api<{ quotation: { id: number } }>(id ? `${base}/${id}` : base, id ? 'PUT' : 'POST', body);
+        router.push(`${pageBase}/${q.quotation.id}`);
+        return;
+      }
       const saved = await api<{ invoice: Invoice }>(id ? `/api/billing/invoices/${id}` : '/api/billing/invoices', id ? 'PUT' : 'POST', body);
       if (issue) {
         try {
@@ -166,11 +186,13 @@ export default function InvoiceEdit({ id, clientId, workIds }: { id: number | nu
   return (
     <div className="mx-auto max-w-6xl space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <Link href={id ? `/admin/billing/invoices/${id}` : '/admin/billing/invoices'} className="text-sm text-neutral-500 hover:underline">← Back</Link>
-        <span className="text-sm text-neutral-500">{isCn ? `Credit note against ${invoice?.originalInvoice?.number}` : id ? 'Editing draft invoice' : 'New invoice'}</span>
+        <Link href={id ? `${pageBase}/${id}` : pageBase} className="text-sm text-neutral-500 hover:underline">← Back</Link>
+        <span className="text-sm text-neutral-500">
+          {isQuote ? (id ? 'Editing quotation' : 'New quotation · not a tax invoice') : isCn ? `Credit note against ${invoice?.originalInvoice?.number}` : id ? 'Editing draft invoice' : 'New invoice'}
+        </span>
       </div>
       <ErrorBanner message={error} onClose={() => setError(null)} />
-      {!meta.profile.gstin && (
+      {!isQuote && !meta.profile.gstin && (
         <div className="rounded-lg border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-yellow-800">
           Add your GSTIN in <Link href="/admin/billing/settings" className="underline">Business profile</Link> before issuing. You can still save drafts.
         </div>
@@ -187,7 +209,7 @@ export default function InvoiceEdit({ id, clientId, workIds }: { id: number | nu
               {!id && <button type="button" onClick={() => setAddingClient(true)} className={`${btnSecondary} whitespace-nowrap`}>+ New</button>}
             </div>
           </Field>
-          <Field label="Product / series *" hint={product && !(isCn ? product.creditNotePrefix : product.invoicePrefix) ? <span className="text-orange-600">No {isCn ? 'credit note' : 'invoice'} prefix set for this product yet.</span> : undefined}>
+          <Field label="Product / series *" hint={!isQuote && product && !(isCn ? product.creditNotePrefix : product.invoicePrefix) ? <span className="text-orange-600">No {isCn ? 'credit note' : 'invoice'} prefix set for this product yet.</span> : undefined}>
             <select required value={form.product_id} onChange={set('product_id')} disabled={isCn} className={inputCls}>
               {meta.products.map(p => <option key={p.id} value={p.id}>{p.name}{(isCn ? p.creditNotePrefix : p.invoicePrefix) ? ` (${isCn ? p.creditNotePrefix : p.invoicePrefix})` : ''}</option>)}
             </select>
@@ -199,8 +221,8 @@ export default function InvoiceEdit({ id, clientId, workIds }: { id: number | nu
               <option value={OUTSIDE_INDIA}>96 - Outside India (export)</option>
             </select>
           </Field>
-          <Field label={isCn ? 'Credit note date *' : 'Invoice date *'}><input type="date" required value={form.invoice_date} onChange={set('invoice_date')} className={inputCls} /></Field>
-          {!isCn && <Field label="Due date"><input type="date" value={form.due_date} onChange={set('due_date')} className={inputCls} /></Field>}
+          <Field label={isQuote ? 'Quotation date *' : isCn ? 'Credit note date *' : 'Invoice date *'}><input type="date" required value={form.invoice_date} onChange={set('invoice_date')} className={inputCls} /></Field>
+          {!isCn && <Field label={isQuote ? 'Valid until' : 'Due date'}><input type="date" value={form.due_date} onChange={set('due_date')} className={inputCls} /></Field>}
           {isCn && <Field label="Reason *"><input required value={form.reason} onChange={set('reason')} className={inputCls} placeholder="e.g. Discount after sale, service deficiency" /></Field>}
           <div className="flex flex-col justify-end gap-2 pb-1 text-sm text-neutral-700">
             {supplyType === 'export' && !isCn && (
@@ -223,7 +245,7 @@ export default function InvoiceEdit({ id, clientId, workIds }: { id: number | nu
         )}
       </Card>
 
-      {!isCn && unbilledLeft.length > 0 && (
+      {!isCn && !isQuote && unbilledLeft.length > 0 && (
         <div className="rounded-xl border border-brand-200 bg-brand-50 p-4">
           <div className="mb-2 text-sm font-medium text-neutral-800">Unbilled work for this client</div>
           <div className="flex flex-wrap gap-2">
@@ -307,8 +329,14 @@ export default function InvoiceEdit({ id, clientId, workIds }: { id: number | nu
       </Card>
 
       <div className="flex flex-wrap justify-end gap-2 pb-6">
-        <button type="button" onClick={() => save(false)} disabled={!!saving || !form.client_id} className={btnSecondary}>{saving === 'draft' ? 'Saving…' : 'Save draft'}</button>
-        <button type="button" onClick={() => save(true)} disabled={!!saving || !form.client_id} className={btnPrimary}>{saving === 'issue' ? 'Issuing…' : `Save & issue ${isCn ? 'credit note' : 'invoice'}`}</button>
+        {isQuote ? (
+          <button type="button" onClick={() => save(false)} disabled={!!saving || !form.client_id} className={btnPrimary}>{saving ? 'Saving…' : 'Save quotation'}</button>
+        ) : (
+          <>
+            <button type="button" onClick={() => save(false)} disabled={!!saving || !form.client_id} className={btnSecondary}>{saving === 'draft' ? 'Saving…' : 'Save draft'}</button>
+            <button type="button" onClick={() => save(true)} disabled={!!saving || !form.client_id} className={btnPrimary}>{saving === 'issue' ? 'Issuing…' : `Save & issue ${isCn ? 'credit note' : 'invoice'}`}</button>
+          </>
+        )}
       </div>
 
       {addingClient && (
