@@ -138,11 +138,12 @@ class ProductController extends Controller
             return response()->json(['error' => $reason, 'redirect' => $to], 502);
         }
 
-        $body = $response->json() ?? [];
+        $body = $response->json();
+        $body = is_array($body) ? $body : [];
         if (! $response->successful()) {
             $reason = $response->status() === 401
-                ? "{$product->name} refused the secret (401). Check it matches CRON_SECRET there."
-                : "{$product->name} answered {$response->status()}: ".($body['error'] ?? 'no details');
+                ? "{$product->name} refused the secret (401). Check it matches the sync secret set on {$product->name}'s server."
+                : "{$product->name} answered {$response->status()} at {$product->sync_url}: ".$this->errorDetail($response, $body);
             $log('rejected', $reason);
 
             return response()->json(['error' => $reason], 502);
@@ -154,6 +155,30 @@ class ProductController extends Controller
             : 'Sync now: '.json_encode($result));
 
         return response()->json(['result' => $result]);
+    }
+
+    /**
+     * The reason a product gave for a failed sync. Products answer in different shapes
+     * ("error": "text", "error": {"code", "message"}, "message": "text"); a web page instead
+     * of JSON usually means the URL points at the website rather than the API.
+     */
+    private function errorDetail(\Illuminate\Http\Client\Response $response, array $body): string
+    {
+        $error = $body['error'] ?? null;
+        $text = match (true) {
+            is_string($error) => $error,
+            is_array($error) => (string) ($error['message'] ?? $error['code'] ?? json_encode($error)),
+            is_string($body['message'] ?? null) => $body['message'],
+            default => null,
+        };
+        if ($text !== null && trim($text) !== '') {
+            return mb_substr(trim($text), 0, 300);
+        }
+        if (str_contains(strtolower((string) $response->header('Content-Type')), 'text/html')) {
+            return 'got a web page instead of the sync API. Check the sync URL points at the API (for example an api. subdomain), not the website.';
+        }
+
+        return 'no details';
     }
 
     public function logs(int $id): JsonResponse
