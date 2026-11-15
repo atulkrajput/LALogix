@@ -4,7 +4,7 @@ use App\Http\Controllers\Api\IngestController;
 use Illuminate\Support\Facades\Route;
 
 /*
-| Ingest API for the products (VIVK.in, ISO, Amritix, Ayurved Dhara, …).
+| Ingest API for the products (VIVK.in, AISHO, Amritix, Ayurved Dhara, …).
 | Mounted at /api/ingest/v1 in bootstrap/app.php, without sessions or CSRF;
 | authenticated by the product's API key (App\Http\Middleware\ProductApiKey).
 */
