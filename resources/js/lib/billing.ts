@@ -37,6 +37,7 @@ export interface Client {
   pincode?: string | null;
   country: string;
   notes?: string | null;
+  noReminders?: boolean;
   outstanding?: number;
   _count?: { invoices: number; workItems: number };
 }

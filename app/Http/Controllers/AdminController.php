@@ -21,6 +21,7 @@ class AdminController extends Controller
         // Recurring invoices that fell due are created here too (throttled), so no server cron is required.
         if ($component !== 'Login') {
             app(\App\Services\Billing\RecurringInvoiceService::class)->runIfStale();
+            app(\App\Services\Billing\PaymentReminderService::class)->runIfStale();
         }
 
         $meta = Seo::resolve(['title' => 'Admin CRM', 'noindex' => true]);
@@ -191,6 +192,16 @@ class AdminController extends Controller
     public function recurring(): Response
     {
         return $this->render('Billing/Recurring');
+    }
+
+    public function receivables(): Response
+    {
+        return $this->render('Billing/Receivables');
+    }
+
+    public function accountingExport(): Response
+    {
+        return $this->render('Billing/Export');
     }
 
     public function purchases(): Response

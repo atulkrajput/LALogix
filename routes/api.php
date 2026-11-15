@@ -125,6 +125,16 @@ Route::middleware('auth')->group(function () {
         Route::delete('/recurring/{id}', [Billing\RecurringInvoiceController::class, 'destroy'])->whereNumber('id');
         Route::post('/recurring/{id}/status', [Billing\RecurringInvoiceController::class, 'status'])->whereNumber('id');
 
+        Route::get('/receivables', [Billing\ReceivablesController::class, 'index']);
+        Route::put('/reminders/settings', [Billing\ReceivablesController::class, 'updateSettings']);
+        Route::post('/reminders/run', [Billing\ReceivablesController::class, 'run']);
+        Route::get('/invoices/{id}/reminder', [Billing\ReceivablesController::class, 'preview'])->whereNumber('id');
+        Route::post('/invoices/{id}/reminder', [Billing\ReceivablesController::class, 'remind'])->whereNumber('id');
+        Route::post('/invoices/{id}/reminders-paused', [Billing\ReceivablesController::class, 'pause'])->whereNumber('id');
+
+        Route::get('/export', [Billing\ExportController::class, 'preview']);
+        Route::put('/export/settings', [Billing\ExportController::class, 'saveSettings']);
+
         Route::get('/purchases', [Billing\PurchaseController::class, 'index']);
         Route::post('/purchases', [Billing\PurchaseController::class, 'store']);
         Route::post('/purchases/{id}', [Billing\PurchaseController::class, 'update'])->whereNumber('id');

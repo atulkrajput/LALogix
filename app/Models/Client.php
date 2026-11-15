@@ -9,7 +9,7 @@ class Client extends Model
 {
     protected $table = 'clients';
 
-    protected $casts = ['lead_id' => 'integer'];
+    protected $casts = ['lead_id' => 'integer', 'no_reminders' => 'boolean'];
 
     protected function countableRelations(): array
     {

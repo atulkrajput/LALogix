@@ -25,7 +25,7 @@ Route::permanentRedirect('/services', '/custom-automation');
 Route::permanentRedirect('/blog', '/insights');
 Route::get('/blog/{slug}', fn (string $slug) => redirect("/insights/{$slug}", 301));
 
-// Secret URL for an external cron service (recurring invoices).
+// Secret URL for an external cron service (recurring invoices and payment reminders).
 Route::get('/cron/recurring/{token}', [\App\Http\Controllers\CronController::class, 'recurring'])
     ->middleware('throttle:10,1')->where('token', '[A-Za-z0-9]{20,64}');
 
@@ -70,6 +70,9 @@ Route::prefix('admin')->controller(AdminController::class)->group(function () {
         Route::get('/billing/quotations/{id}/edit', 'quotationEdit')->whereNumber('id');
         Route::get('/billing/quotations/{id}/pdf', [\App\Http\Controllers\Api\Billing\QuotationController::class, 'pdf'])->whereNumber('id');
         Route::get('/billing/recurring', 'recurring');
+        Route::get('/billing/receivables', 'receivables');
+        Route::get('/billing/export', 'accountingExport');
+        Route::get('/billing/export/download', [\App\Http\Controllers\Api\Billing\ExportController::class, 'download']);
         Route::get('/billing/import', 'billingImport');
         Route::get('/billing/import/template', [\App\Http\Controllers\Api\Billing\ImportController::class, 'template']);
         Route::get('/billing/reports/download', [\App\Http\Controllers\Api\Billing\ReportController::class, 'download']);

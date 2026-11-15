@@ -149,6 +149,7 @@ class ClientController extends Controller
             'country' => 'required|string|max:100',
             'notes' => 'nullable|string|max:2000',
             'lead_id' => 'nullable|integer',
+            'no_reminders' => 'sometimes|boolean',
         ], [
             'state_code.required' => 'Select the state (it decides the place of supply).',
             'pan.regex' => 'That PAN is not valid.',
