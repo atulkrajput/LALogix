@@ -4,6 +4,7 @@ namespace App\Services\Billing;
 
 use App\Models\BusinessProfile;
 use App\Models\Invoice;
+use App\Models\Purchase;
 use App\Support\GstStates;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -90,7 +91,7 @@ class GstReportService
             'hsn_b2b' => $this->hsnRows($hsn['b2b']),
             'hsn_b2c' => $this->hsnRows($hsn['b2c']),
             'docs' => $this->documents($docs),
-            'gstr3b' => $this->gstr3b($invoices, $notes),
+            'gstr3b' => ($g = $this->gstr3b($invoices, $notes)) + $this->itc($from, $to, $g['tax_payable']),
             'by_product' => $this->byProduct($invoices, $notes),
             'counts' => [
                 'invoices' => $invoices->count(),
@@ -239,6 +240,48 @@ class GstReportService
             ...$t,
             'interstate_unregistered' => collect($unregistered)->sortKeys()->values()->map(fn ($r) => $this->rounded($r))->all(),
             'tax_payable' => $payable + ['total' => round(array_sum($payable), 2)],
+        ];
+    }
+
+    /**
+     * Purchases side of GSTR-3B for the period (bills dated in it):
+     *  3.1(d) inward supplies liable to reverse charge – tax we owe on RCM purchases
+     *  4A(3)  ITC on those RCM purchases;  4A(5) all other eligible ITC
+     *  net    output tax + RCM tax − ITC, per head (negative = credit to carry forward;
+     *         the portal's cross-utilisation order IGST→CGST/SGST is not applied here).
+     */
+    private function itc(Carbon $from, Carbon $to, array $outputTax): array
+    {
+        $purchases = Purchase::query()->whereDate('bill_date', '>=', $from->toDateString())->whereDate('bill_date', '<=', $to->toDateString())
+            ->get(['taxable_value', 'cgst', 'sgst', 'igst', 'reverse_charge', 'itc_eligible', 'gstr2b_status']);
+        $sum = fn ($rows) => $this->rounded([
+            'taxable' => (float) $rows->sum('taxable_value'),
+            'igst' => (float) $rows->sum('igst'), 'cgst' => (float) $rows->sum('cgst'), 'sgst' => (float) $rows->sum('sgst'), 'cess' => 0.0,
+        ]);
+        $rcm = $purchases->where('reverse_charge', true);
+        $rcmItc = $rcm->where('itc_eligible', true);
+        $otherItc = $purchases->where('reverse_charge', false)->where('itc_eligible', true);
+
+        $liability = $sum($rcm);
+        $credit = ['igst' => 0.0, 'cgst' => 0.0, 'sgst' => 0.0];
+        foreach ([$sum($rcmItc), $sum($otherItc)] as $part) {
+            foreach ($credit as $head => $_) {
+                $credit[$head] += $part[$head];
+            }
+        }
+        $net = [];
+        foreach ($credit as $head => $c) {
+            $net[$head] = round(($outputTax[$head] ?? 0) + $liability[$head] - $c, 2);
+        }
+
+        return [
+            'inward_reverse_charge' => $liability,
+            'itc_reverse_charge' => $sum($rcmItc),
+            'itc_other' => $sum($otherItc),
+            'itc_total' => array_map(fn ($v) => round($v, 2), $credit) + ['total' => round(array_sum($credit), 2)],
+            'itc_not_in_2b' => round($otherItc->filter(fn ($p) => $p->gstr2b_status !== 'matched')->sum(fn ($p) => $p->cgst + $p->sgst + $p->igst), 2),
+            'net_payable' => $net + ['total' => round(array_sum($net), 2)],
+            'purchases_count' => $purchases->count(),
         ];
     }
 

@@ -163,6 +163,16 @@ class AdminController extends Controller
         return $this->render('Billing/Reports');
     }
 
+    public function purchases(): Response
+    {
+        return $this->render('Billing/Purchases');
+    }
+
+    public function gstr2b(): Response
+    {
+        return $this->render('Billing/Gstr2b');
+    }
+
     public function billingImport(): Response
     {
         return $this->render('Billing/Import', ['ingestUrl' => url('/api/ingest/v1')]);

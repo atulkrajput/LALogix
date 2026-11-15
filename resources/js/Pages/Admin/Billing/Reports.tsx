@@ -17,6 +17,11 @@ interface Report {
     taxable_outward: Amounts; zero_rated: Amounts; nil_exempt: Amounts; reverse_charge_outward: Amounts;
     interstate_unregistered: { place_of_supply: string; taxable: number; igst: number }[];
     tax_payable: { igst: number; cgst: number; sgst: number; total: number };
+    inward_reverse_charge: Amounts; itc_reverse_charge: Amounts; itc_other: Amounts;
+    itc_total: { igst: number; cgst: number; sgst: number; total: number };
+    itc_not_in_2b: number;
+    net_payable: { igst: number; cgst: number; sgst: number; total: number };
+    purchases_count: number;
   };
   by_product: { product: string; invoices: number; credit_notes: number; taxable: number; tax: number; total: number }[];
   counts: { invoices: number; credit_notes: number; cancelled: number };
@@ -156,7 +161,7 @@ export default function GstReports() {
             <StatCard label="Taxable value (net)" value={money(g!.taxable_outward.taxable + g!.zero_rated.taxable + g!.nil_exempt.taxable + g!.reverse_charge_outward.taxable)} />
             <StatCard label="IGST" value={money(g!.tax_payable.igst)} tone="blue" />
             <StatCard label="CGST + SGST" value={money(g!.tax_payable.cgst + g!.tax_payable.sgst)} tone="blue" />
-            <StatCard label="Output tax (before ITC)" value={money(g!.tax_payable.total)} tone="orange" />
+            <StatCard label={`Net GST payable (after ${money(g!.itc_total.total)} ITC)`} value={money(g!.net_payable.total)} tone="orange" />
           </div>
 
           {report.warnings.length > 0 && (
@@ -186,7 +191,33 @@ export default function GstReports() {
                   amountRow('(c) Other outward supplies (nil rated, exempted)', g.nil_exempt),
                   amountRow('Outward supplies on reverse charge (tax paid by the recipient)', g.reverse_charge_outward),
                 ]} />
-                <p className="mt-3 text-xs text-neutral-500">Net of credit notes. Input tax credit (Table 4) comes from your purchases / GSTR-2B and isn't tracked here yet.</p>
+                <p className="mt-3 text-xs text-neutral-500">Net of credit notes.</p>
+              </Card>
+              <Card title="GSTR-3B · purchases: reverse charge (3.1 d) and input tax credit (Table 4)">
+                <Table head={['', 'Taxable value', 'IGST', 'CGST', 'SGST/UTGST']} rows={[
+                  amountRow('3.1(d) Inward supplies liable to reverse charge (tax you pay)', g.inward_reverse_charge),
+                  amountRow('4A(3) ITC on inward supplies liable to reverse charge', g.itc_reverse_charge),
+                  amountRow('4A(5) All other ITC', g.itc_other),
+                ]} />
+                <div className="mt-4 grid gap-3 sm:grid-cols-4">
+                  {(['igst', 'cgst', 'sgst'] as const).map(h => (
+                    <div key={h} className="rounded-lg bg-neutral-50 p-3 text-sm">
+                      <div className="text-xs uppercase text-neutral-500">{h} {g.net_payable[h] < 0 ? 'credit carried forward' : 'to pay'}</div>
+                      <div className={`text-lg font-semibold tabular-nums ${g.net_payable[h] < 0 ? 'text-green-700' : 'text-neutral-900'}`}>{money(g.net_payable[h])}</div>
+                      <div className="text-xs text-neutral-400">{money(g.tax_payable[h] + g.inward_reverse_charge[h])} − {money(g.itc_total[h])} ITC</div>
+                    </div>
+                  ))}
+                  <div className="rounded-lg bg-brand-50 p-3 text-sm">
+                    <div className="text-xs uppercase text-neutral-500">Net total</div>
+                    <div className="text-lg font-semibold tabular-nums text-neutral-900">{money(g.net_payable.total)}</div>
+                    <div className="text-xs text-neutral-400">{g.purchases_count} purchase bills in the period</div>
+                  </div>
+                </div>
+                <p className="mt-3 text-xs text-neutral-500">
+                  From bills recorded in <Link href="/admin/billing/purchases" className="text-brand-600 hover:underline">Purchases</Link> dated in the period.
+                  A negative amount is credit carried forward; the portal applies IGST credit before CGST/SGST, so its split can differ.
+                  {g.itc_not_in_2b > 0 && <span className="text-orange-600"> {money(g.itc_not_in_2b)} of this ITC isn't matched with GSTR-2B yet: check <Link href="/admin/billing/gstr2b" className="underline">GSTR-2B Match</Link> before claiming.</span>}
+                </p>
               </Card>
               <Card title="GSTR-3B · 3.2 Inter-state supplies to unregistered persons">
                 <Table head={['Place of supply', 'Taxable value', 'IGST']} rows={g.interstate_unregistered.map(u => [posLabel(u.place_of_supply), u.taxable, u.igst])} empty="No inter-state supplies to unregistered persons." />

@@ -105,6 +105,17 @@ Route::middleware('auth')->group(function () {
         Route::delete('/work/{id}', [Billing\WorkItemController::class, 'destroy'])->whereNumber('id');
 
         Route::get('/reports/gst', [Billing\ReportController::class, 'gst']);
+
+        Route::get('/purchases', [Billing\PurchaseController::class, 'index']);
+        Route::post('/purchases', [Billing\PurchaseController::class, 'store']);
+        Route::post('/purchases/{id}', [Billing\PurchaseController::class, 'update'])->whereNumber('id');
+        Route::delete('/purchases/{id}', [Billing\PurchaseController::class, 'destroy'])->whereNumber('id');
+        Route::get('/vendors', [Billing\PurchaseController::class, 'vendors']);
+
+        Route::get('/gstr2b', [Billing\Gstr2bController::class, 'show']);
+        Route::post('/gstr2b/import', [Billing\Gstr2bController::class, 'import']);
+        Route::post('/gstr2b/{period}/reconcile', [Billing\Gstr2bController::class, 'reconcile'])->where('period', '[0-9]{6}');
+        Route::post('/gstr2b/entries/{id}/purchase', [Billing\Gstr2bController::class, 'createPurchase'])->whereNumber('id');
         Route::get('/growth', [Billing\GrowthController::class, 'show']);
 
         Route::get('/invoices/meta', [Billing\InvoiceController::class, 'meta']);
