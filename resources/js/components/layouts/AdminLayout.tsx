@@ -36,7 +36,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const billingItems = [
     { href: '/admin/billing/invoices', label: 'Invoices', icon: '🧾' },
     { href: '/admin/billing/credit-notes', label: 'Credit Notes', icon: '↩️' },
+    { href: '/admin/billing/purchases', label: 'Purchases', icon: '🛒' },
     { href: '/admin/billing/reports', label: 'GST Reports', icon: '📑' },
+    { href: '/admin/billing/gstr2b', label: 'GSTR-2B Match', icon: '🔁' },
     { href: '/admin/billing/import', label: 'Import', icon: '⬆️' },
     { href: '/admin/billing/clients', label: 'Clients', icon: '🏢' },
     { href: '/admin/billing/work', label: 'Work Log', icon: '🛠️' },

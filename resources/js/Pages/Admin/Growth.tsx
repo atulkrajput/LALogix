@@ -4,7 +4,7 @@ import { Card, ErrorBanner } from '@/components/billing/ui';
 import { api, filterCls, money } from '@/lib/billing';
 
 interface ProductInfo { id: number; name: string; kind: string; slot: number }
-interface Month { month: string; label: string; by_product: Record<string, number>; revenue: number; tax: number; collected: number; invoices: number; new_customers: number; saas_revenue: number; saas_customers: number }
+interface Month { month: string; label: string; by_product: Record<string, number>; revenue: number; tax: number; collected: number; invoices: number; new_customers: number; saas_revenue: number; saas_customers: number; expenses: number; profit: number }
 interface Growth {
   range: { key: string; from: string; to: string; label: string; compare_from: string; compare_to: string };
   products: ProductInfo[];
@@ -14,7 +14,9 @@ interface Growth {
     range_revenue: number; prev_range_revenue: number; range_change_pct: number | null; range_tax: number; month_tax: number;
     month_collected: number; outstanding: number; overdue: number; customers: number; new_customers_month: number;
     leads_month: number; leads_last_month: number;
+    range_expenses: number; range_profit: number; month_expenses: number; month_profit: number;
   };
+  expenses_by_category: { category: string; label: string; amount: number }[];
   by_product: { product_id: number; name: string; kind: string; revenue: number; share_pct: number; invoices: number; customers: number; prev_revenue: number; change_pct: number | null }[];
   top_clients: { client_id: number; name: string; revenue: number; invoices: number; outstanding: number }[];
   aging: { not_due: number; d1_30: number; d31_60: number; d61_90: number; d90_plus: number };
@@ -133,6 +135,8 @@ function RevenueChart({ months, products }: { months: Month[]; products: Product
           ))}
           <div className="mt-1 flex justify-between border-t border-neutral-100 pt-1 font-medium"><span>Revenue</span><span className="tabular-nums">{money(months[hover].revenue)}</span></div>
           <div className="flex justify-between text-neutral-500"><span>Collected</span><span className="tabular-nums">{money(months[hover].collected)}</span></div>
+          <div className="flex justify-between text-neutral-500"><span>Expenses</span><span className="tabular-nums">{money(months[hover].expenses)}</span></div>
+          <div className="flex justify-between text-neutral-500"><span>Profit</span><span className="tabular-nums">{money(months[hover].profit)}</span></div>
           <div className="flex justify-between text-neutral-500"><span>New customers</span><span className="tabular-nums">{months[hover].new_customers}</span></div>
         </div>
       )}
@@ -221,6 +225,13 @@ export default function GrowthPage() {
         <Tile label={`Paying customers · ${data.range.label}`} value={String(k.customers)} sub={<span className="text-neutral-500">{k.new_customers_month} new this month</span>} href="/admin/billing/clients" />
         <Tile label="New leads this month" value={String(k.leads_month)} sub={<span className="text-neutral-500">{k.leads_last_month} last month</span>} href="/admin/leads" />
         <Tile label="Invoices this month" value={String(data.months[data.months.length - 1]?.invoices ?? 0)} sub={<span className="text-neutral-500">across all products</span>} href="/admin/billing/invoices" />
+        <Tile label={`Expenses · ${data.range.label}`} value={money(k.range_expenses)} href="/admin/billing/purchases"
+          sub={<span className="text-neutral-500">{money(k.month_expenses)} this month · before claimable GST</span>} />
+        <Tile label={`Profit · ${data.range.label}`} value={money(k.range_profit)}
+          sub={<span className={k.range_profit >= 0 ? 'text-green-700' : 'text-red-600'}>{k.range_revenue > 0 ? `${Math.round((k.range_profit / k.range_revenue) * 100)}% margin` : 'revenue − expenses'} · before income tax</span>} />
+        <Tile label="Profit this month" value={money(k.month_profit)} sub={<span className="text-neutral-500">{money(k.month_revenue)} − {money(k.month_expenses)}</span>} />
+        <Tile label="Top expense" value={data.expenses_by_category[0] ? money(data.expenses_by_category[0].amount) : '—'}
+          sub={<span className="text-neutral-500">{data.expenses_by_category[0]?.label ?? 'no purchases recorded'}</span>} href="/admin/billing/purchases" />
       </div>
 
       <Card title="Monthly revenue by product" actions={
@@ -237,6 +248,8 @@ export default function GrowthPage() {
                   {productsWithData.map(p => <th key={p.id} className="py-2 pr-4 text-right font-medium">{p.name}</th>)}
                   <th className="py-2 pr-4 text-right font-medium">Revenue</th>
                   <th className="py-2 pr-4 text-right font-medium">Collected</th>
+                  <th className="py-2 pr-4 text-right font-medium">Expenses</th>
+                  <th className="py-2 pr-4 text-right font-medium">Profit</th>
                   <th className="py-2 text-right font-medium">New customers</th>
                 </tr>
               </thead>
@@ -247,6 +260,8 @@ export default function GrowthPage() {
                     {productsWithData.map(p => <td key={p.id} className="py-2 pr-4 text-right tabular-nums">{m.by_product[p.id] ? money(m.by_product[p.id]) : '—'}</td>)}
                     <td className="py-2 pr-4 text-right font-medium tabular-nums">{money(m.revenue)}</td>
                     <td className="py-2 pr-4 text-right tabular-nums text-neutral-600">{money(m.collected)}</td>
+                    <td className="py-2 pr-4 text-right tabular-nums text-neutral-600">{m.expenses ? money(m.expenses) : '—'}</td>
+                    <td className={`py-2 pr-4 text-right tabular-nums ${m.profit < 0 ? 'text-red-600' : 'text-neutral-900'}`}>{money(m.profit)}</td>
                     <td className="py-2 text-right tabular-nums text-neutral-600">{m.new_customers}</td>
                   </tr>
                 ))}

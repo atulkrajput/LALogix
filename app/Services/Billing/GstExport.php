@@ -150,6 +150,15 @@ class GstExport
         foreach ($r['by_product'] as $p) {
             $rows[] = [$p['product'], $p['invoices'], $p['credit_notes'], $p['taxable'], $p['tax'], $p['total']];
         }
+        if (isset($g['itc_total'])) {
+            $rows[] = [];
+            $rows[] = ['GSTR-3B (purchases)', 'Taxable value', 'IGST', 'CGST', 'SGST/UTGST', 'Cess'];
+            $rows[] = $row('3.1(d) Inward supplies liable to reverse charge', $g['inward_reverse_charge']);
+            $rows[] = $row('4A(3) ITC: inward supplies liable to reverse charge', $g['itc_reverse_charge']);
+            $rows[] = $row('4A(5) ITC: all other', $g['itc_other']);
+            $rows[] = ['Net GST payable (output + RCM − ITC)', '', $g['net_payable']['igst'], $g['net_payable']['cgst'], $g['net_payable']['sgst'], 0];
+            $rows[] = ['Net total', $g['net_payable']['total']];
+        }
         if ($r['warnings']) {
             $rows[] = [];
             $rows[] = ['Checklist'];

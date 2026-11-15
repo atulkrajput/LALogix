@@ -148,7 +148,10 @@ export async function api<T = any>(url: string, method = 'GET', body?: unknown):
 }
 
 const inr = new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-export const money = (v: number | string | null | undefined) => `₹${inr.format(Number(v || 0))}`;
+export const money = (v: number | string | null | undefined) => {
+  const n = Number(v || 0);
+  return `${n < 0 ? '−' : ''}₹${inr.format(Math.abs(n))}`;
+};
 
 export const formatDate = (d: string | null | undefined) =>
   d ? new Date(d.length === 10 ? `${d}T00:00:00` : d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';

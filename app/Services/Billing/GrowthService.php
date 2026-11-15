@@ -6,6 +6,7 @@ use App\Models\Invoice;
 use App\Models\Lead;
 use App\Models\Payment;
 use App\Models\Product;
+use App\Models\Purchase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
@@ -61,11 +62,45 @@ class GrowthService
             'products' => $products->values()->map(fn (Product $p, $i) => [
                 'id' => $p->id, 'name' => $p->name, 'kind' => $p->kind, 'slot' => $i + 1,
             ])->all(),
-            'months' => $this->months($from, $to, $current, $payments, $products, $firstInvoice, $sign),
-            'kpis' => $this->kpis($today, $docs, $current, $previous, $payments, $revenue, $tax, $firstInvoice),
+            ...$this->withExpenses(
+                $this->months($from, $to, $current, $payments, $products, $firstInvoice, $sign),
+                $this->kpis($today, $docs, $current, $previous, $payments, $revenue, $tax, $firstInvoice),
+                $from, $to, $today,
+            ),
             'by_product' => $this->byProduct($products, $current, $previous, $sign),
             'top_clients' => $this->topClients($current, $sign),
             'aging' => $this->aging($today),
+        ];
+    }
+
+    /**
+     * Expenses from recorded purchases: value before GST plus any GST that can't be claimed
+     * (blocked or without a GST invoice), since that GST is a real cost. Profit = revenue − expenses.
+     */
+    private function withExpenses(array $months, array $kpis, Carbon $from, Carbon $to, Carbon $today): array
+    {
+        $purchases = Purchase::query()->whereDate('bill_date', '>=', $from->toDateString())->whereDate('bill_date', '<=', $to->toDateString())
+            ->get(['bill_date', 'category', 'taxable_value', 'cgst', 'sgst', 'igst', 'itc_eligible']);
+        $cost = fn (Purchase $p) => $p->taxable_value + ($p->itc_eligible ? 0 : $p->cgst + $p->sgst + $p->igst);
+        $byMonth = $purchases->groupBy(fn ($p) => $p->bill_date->format('Y-m'))->map(fn ($rows) => $rows->sum($cost));
+
+        $months = array_map(fn ($m) => [...$m, 'expenses' => round((float) ($byMonth[$m['month']] ?? 0), 2),
+            'profit' => round($m['revenue'] - (float) ($byMonth[$m['month']] ?? 0), 2)], $months);
+        $rangeExpenses = round($purchases->sum($cost), 2);
+        $monthExpenses = round($purchases->filter(fn ($p) => $p->bill_date->gte($today->copy()->startOfMonth()))->sum($cost), 2);
+
+        return [
+            'months' => $months,
+            'kpis' => [
+                ...$kpis,
+                'range_expenses' => $rangeExpenses,
+                'range_profit' => round($kpis['range_revenue'] - $rangeExpenses, 2),
+                'month_expenses' => $monthExpenses,
+                'month_profit' => round($kpis['month_revenue'] - $monthExpenses, 2),
+            ],
+            'expenses_by_category' => $purchases->groupBy('category')
+                ->map(fn ($rows, $cat) => ['category' => $cat, 'label' => Purchase::CATEGORIES[$cat] ?? $cat, 'amount' => round($rows->sum($cost), 2)])
+                ->sortByDesc('amount')->values()->all(),
         ];
     }
 

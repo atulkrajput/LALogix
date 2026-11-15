@@ -57,6 +57,9 @@ Route::prefix('admin')->controller(AdminController::class)->group(function () {
         Route::get('/billing/products', 'products');
         Route::get('/billing/settings', 'billingSettings');
         Route::get('/billing/reports', 'gstReports');
+        Route::get('/billing/purchases', 'purchases');
+        Route::get('/billing/purchases/{id}/attachment', [\App\Http\Controllers\Api\Billing\PurchaseController::class, 'attachment'])->whereNumber('id');
+        Route::get('/billing/gstr2b', 'gstr2b');
         Route::get('/billing/import', 'billingImport');
         Route::get('/billing/import/template', [\App\Http\Controllers\Api\Billing\ImportController::class, 'template']);
         Route::get('/billing/reports/download', [\App\Http\Controllers\Api\Billing\ReportController::class, 'download']);
