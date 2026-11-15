@@ -33,7 +33,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 const iso = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 
 /** Monthly periods for the last 15 months plus the quarters (QRMP filers) of the current and previous FY. */
-function periods() {
+export function periods() {
   const now = new Date();
   const out: { label: string; from: string; to: string; group: string }[] = [];
   for (let i = 0; i < 15; i++) {

@@ -12,6 +12,9 @@ class BusinessProfile extends Model
         'round_off_total' => 'boolean',
         'meta_access_token' => 'encrypted',
         'meta_synced_at' => 'datetime',
+        'reminders_enabled' => 'boolean',
+        'reminders_started_on' => 'date:Y-m-d',
+        'reminders_last_run_at' => 'datetime',
     ];
 
     protected $hidden = ['meta_access_token', 'cron_token'];

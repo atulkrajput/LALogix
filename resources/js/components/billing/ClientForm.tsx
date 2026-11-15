@@ -20,6 +20,7 @@ export default function ClientForm({ client, states, onSaved, onCancel }: {
     address_line2: client.addressLine2 ?? '', city: client.city ?? '', state_code: client.stateCode ?? '',
     pincode: client.pincode ?? '', country: client.country || 'India', notes: client.notes ?? '',
   } : EMPTY);
+  const [noReminders, setNoReminders] = useState(!!client?.noReminders);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const indian = form.country.trim().toLowerCase() === 'india';
@@ -43,7 +44,7 @@ export default function ClientForm({ client, states, onSaved, onCancel }: {
     setSaving(true);
     setError(null);
     try {
-      const data = await api<{ client: Client }>(client ? `/api/billing/clients/${client.id}` : '/api/billing/clients', client ? 'PUT' : 'POST', form);
+      const data = await api<{ client: Client }>(client ? `/api/billing/clients/${client.id}` : '/api/billing/clients', client ? 'PUT' : 'POST', { ...form, no_reminders: noReminders });
       onSaved(data.client);
     } catch (err) {
       setError((err as Error).message);
@@ -80,6 +81,9 @@ export default function ClientForm({ client, states, onSaved, onCancel }: {
         <Field label={indian ? 'PIN code' : 'Postal code'}><input value={form.pincode} onChange={set('pincode')} className={inputCls} /></Field>
         {indian && <Field label="PAN" hint={form.gstin ? 'Taken from the GSTIN if empty.' : undefined}><input value={form.pan} onChange={set('pan')} maxLength={10} className={`${inputCls} font-mono uppercase`} /></Field>}
         <Field label="Notes" className="sm:col-span-2"><textarea rows={2} value={form.notes} onChange={set('notes')} className={inputCls} /></Field>
+        <label className="flex items-center gap-2 text-sm text-neutral-700 sm:col-span-2">
+          <input type="checkbox" checked={noReminders} onChange={e => setNoReminders(e.target.checked)} /> Don't send automatic payment reminders to this client
+        </label>
       </div>
       <div className="flex justify-end gap-2">
         <button type="button" onClick={onCancel} className={btnSecondary}>Cancel</button>

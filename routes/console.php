@@ -19,3 +19,14 @@ Artisan::command('billing:recurring', function (\App\Services\Billing\RecurringI
 })->purpose('Create invoices that recurring schedules are due for');
 
 \Illuminate\Support\Facades\Schedule::command('billing:recurring')->hourly()->withoutOverlapping();
+
+// Payment reminders for unpaid invoices (when switched on under Billing → Receivables).
+Artisan::command('billing:reminders', function (\App\Services\Billing\PaymentReminderService $service) {
+    $r = $service->runDue();
+    $this->info("Sent {$r['sent']} reminder(s).");
+    foreach ($r['errors'] as $error) {
+        $this->warn($error);
+    }
+})->purpose('E-mail payment reminders that are due');
+
+\Illuminate\Support\Facades\Schedule::command('billing:reminders')->hourlyAt(15)->withoutOverlapping();

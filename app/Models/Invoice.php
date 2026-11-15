@@ -40,6 +40,7 @@ class Invoice extends Model
         'sequence' => 'integer',
         'recurring_invoice_id' => 'integer',
         'recurring_period' => 'date:Y-m-d',
+        'reminders_paused' => 'boolean',
         'issued_at' => 'datetime',
         'emailed_at' => 'datetime',
         'cancelled_at' => 'datetime',
@@ -75,6 +76,11 @@ class Invoice extends Model
     public function creditNotes(): HasMany
     {
         return $this->hasMany(self::class, 'original_invoice_id');
+    }
+
+    public function reminders(): HasMany
+    {
+        return $this->hasMany(InvoiceReminder::class)->orderBy('created_at');
     }
 
     public function workItems(): HasMany
