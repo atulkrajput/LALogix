@@ -38,6 +38,8 @@ class Invoice extends Model
         'amount_paid' => 'float',
         'amount_credited' => 'float',
         'sequence' => 'integer',
+        'recurring_invoice_id' => 'integer',
+        'recurring_period' => 'date:Y-m-d',
         'issued_at' => 'datetime',
         'emailed_at' => 'datetime',
         'cancelled_at' => 'datetime',
@@ -113,7 +115,7 @@ class Invoice extends Model
     public function getPaymentStatusAttribute(): string
     {
         if ($this->status !== 'issued') {
-            return $this->status;
+            return (string) $this->status; // also safe when loaded without the status column
         }
         if ($this->isCreditNote()) {
             return 'issued';

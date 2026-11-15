@@ -288,14 +288,14 @@ class InvoiceService
         Invoice::whereKey($invoiceId)->update(['amount_credited' => round((float) $sum, 2)]);
     }
 
-    private function requireSellerState(BusinessProfile $profile): void
+    public function requireSellerState(BusinessProfile $profile): void
     {
         if (! GstStates::valid($profile->state_code)) {
             throw ValidationException::withMessages(['profile' => 'Set your GST state in Billing → Business profile first (it decides CGST+SGST vs IGST).']);
         }
     }
 
-    private function defaultPlaceOfSupply(Client $client): string
+    public function defaultPlaceOfSupply(Client $client): string
     {
         if (! $client->isIndian()) {
             return GstStates::OUTSIDE_INDIA;
@@ -308,7 +308,7 @@ class InvoiceService
     }
 
     /** @return array<string, mixed> */
-    private function buyerSnapshot(Client $client): array
+    public function buyerSnapshot(Client $client): array
     {
         return [
             'bill_name' => $client->company ?: $client->name,

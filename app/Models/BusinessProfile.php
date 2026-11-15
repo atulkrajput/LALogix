@@ -14,7 +14,7 @@ class BusinessProfile extends Model
         'meta_synced_at' => 'datetime',
     ];
 
-    protected $hidden = ['meta_access_token'];
+    protected $hidden = ['meta_access_token', 'cron_token'];
 
     protected $appends = ['has_meta_token'];
 

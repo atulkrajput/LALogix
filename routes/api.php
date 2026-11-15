@@ -106,6 +106,25 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/reports/gst', [Billing\ReportController::class, 'gst']);
 
+        Route::get('/quotations', [Billing\QuotationController::class, 'index']);
+        Route::post('/quotations', [Billing\QuotationController::class, 'store']);
+        Route::get('/quotations/{id}', [Billing\QuotationController::class, 'show'])->whereNumber('id');
+        Route::put('/quotations/{id}', [Billing\QuotationController::class, 'update'])->whereNumber('id');
+        Route::delete('/quotations/{id}', [Billing\QuotationController::class, 'destroy'])->whereNumber('id');
+        Route::post('/quotations/{id}/status', [Billing\QuotationController::class, 'status'])->whereNumber('id');
+        Route::post('/quotations/{id}/convert', [Billing\QuotationController::class, 'convert'])->whereNumber('id');
+        Route::post('/quotations/{id}/duplicate', [Billing\QuotationController::class, 'duplicate'])->whereNumber('id');
+        Route::post('/quotations/{id}/email', [Billing\QuotationController::class, 'email'])->whereNumber('id');
+
+        Route::get('/recurring', [Billing\RecurringInvoiceController::class, 'index']);
+        Route::post('/recurring', [Billing\RecurringInvoiceController::class, 'store']);
+        Route::post('/recurring/run', [Billing\RecurringInvoiceController::class, 'run']);
+        Route::get('/recurring/cron-url', [Billing\RecurringInvoiceController::class, 'cronUrl']);
+        Route::get('/recurring/{id}', [Billing\RecurringInvoiceController::class, 'show'])->whereNumber('id');
+        Route::put('/recurring/{id}', [Billing\RecurringInvoiceController::class, 'update'])->whereNumber('id');
+        Route::delete('/recurring/{id}', [Billing\RecurringInvoiceController::class, 'destroy'])->whereNumber('id');
+        Route::post('/recurring/{id}/status', [Billing\RecurringInvoiceController::class, 'status'])->whereNumber('id');
+
         Route::get('/purchases', [Billing\PurchaseController::class, 'index']);
         Route::post('/purchases', [Billing\PurchaseController::class, 'store']);
         Route::post('/purchases/{id}', [Billing\PurchaseController::class, 'update'])->whereNumber('id');
