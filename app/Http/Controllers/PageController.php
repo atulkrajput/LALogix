@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Services\BlogService;
 use App\Support\Seo;
+use App\Support\Site;
 use Illuminate\Http\Response;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
 
@@ -14,6 +18,14 @@ use Inertia\Response as InertiaResponse;
  */
 class PageController extends Controller
 {
+    /** Policy pages: URL slug => [Markdown file in content/legal, SEO key, heading]. */
+    public const LEGAL = [
+        'privacy-policy' => ['privacy', 'Privacy Policy'],
+        'terms-and-conditions' => ['terms', 'Terms and Conditions'],
+        'refund-policy' => ['refund', 'Refund and Cancellation Policy'],
+        'shipping-policy' => ['shipping', 'Shipping and Delivery Policy'],
+    ];
+
     private function render(string $component, array $seo, array $props = []): InertiaResponse
     {
         $meta = Seo::resolve($seo);
@@ -25,22 +37,16 @@ class PageController extends Controller
 
     public function home(): InertiaResponse
     {
-        return $this->render('Home', Seo::page('home'));
-    }
-
-    public function solutions(): InertiaResponse
-    {
-        return $this->render('Solutions', Seo::page('solutions'));
+        return $this->render('Home', Seo::page('home'), [
+            'home' => Site::clean(config('lalogix.home')),
+            'products' => Site::cards(),
+            'quiz' => config('lalogix.quiz'),
+        ]);
     }
 
     public function about(): InertiaResponse
     {
         return $this->render('About', Seo::page('about'));
-    }
-
-    public function customAutomation(): InertiaResponse
-    {
-        return $this->render('CustomAutomation', Seo::page('customAutomation'));
     }
 
     public function contact(): InertiaResponse
@@ -58,15 +64,73 @@ class PageController extends Controller
         return $this->render('ThankYou', Seo::page('thankYou'));
     }
 
+    /** /products: every product as a card. */
+    public function products(): InertiaResponse
+    {
+        return $this->render('Products/Index', Seo::page('products'), ['products' => Site::cards()]);
+    }
+
+    /** /products/{slug}: one template for every product, driven by config/lalogix.php. */
     public function product(string $slug): InertiaResponse
     {
-        $component = [
-            'school-management' => 'Products/SchoolManagement',
-            'inventory-pos' => 'Products/InventoryPos',
-            'dairy-management' => 'Products/DairyManagement',
-        ][$slug] ?? abort(404);
+        $product = Site::product($slug) ?? abort(404);
 
-        return $this->render($component, Seo::product($slug));
+        $others = array_values(array_filter(Site::cards(), fn ($p) => $p['slug'] !== $slug && $p['status'] === 'live'));
+
+        return $this->render('Products/Show', Seo::product($slug), [
+            'product' => $product,
+            'related' => array_slice($others, 0, 3),
+        ]);
+    }
+
+    public function pricing(): InertiaResponse
+    {
+        return $this->render('Pricing', Seo::page('pricing'), ['products' => Site::cards()]);
+    }
+
+    public function industries(): InertiaResponse
+    {
+        return $this->render('Industries', Seo::page('industries'), [
+            'industries' => Site::clean(config('lalogix.industries')),
+            'products' => Site::cards(),
+        ]);
+    }
+
+    /** Privacy, terms, refund and shipping policies (content/legal/*.md). */
+    public function legal(string $slug): InertiaResponse
+    {
+        [$seoKey, $heading] = self::LEGAL[$slug] ?? abort(404);
+
+        return $this->render('Legal', Seo::page($seoKey), [
+            'heading' => $heading,
+            'html' => self::legalHtml($slug),
+            'updated' => Carbon::parse(config('lalogix.legal_updated'))->format('j F Y'),
+        ]);
+    }
+
+    /** Markdown → HTML with the company details filled in from config/lalogix.php. */
+    public static function legalHtml(string $slug): string
+    {
+        $c = Site::company();
+        $billed = array_filter(Site::products(), fn ($p) => $p['billed'] ?? false);
+        $names = array_map(fn ($p) => ($p['brand'] && ! Site::isTodo($p['brand']) ? $p['brand'] : $p['name']), $billed);
+        $list = count($names) > 1 ? implode(', ', array_slice($names, 0, -1)).' and '.end($names) : implode('', $names);
+
+        $markdown = strtr(File::get(base_path("content/legal/{$slug}.md")), [
+            '{{company}}' => $c['name'],
+            '{{legal_form}}' => strtolower($c['legal_form']),
+            '{{address}}' => $c['address'],
+            '{{email}}' => $c['email'],
+            '{{phone}}' => $c['phone_display'],
+            '{{site}}' => preg_replace('#^https?://#', '', Seo::siteUrl()),
+            '{{products}}' => $list,
+        ]);
+
+        // Hide TODO notes on the public site (same rule as Site::clean, line by line).
+        $lines = array_map(fn ($line) => Site::clean($line), preg_split('/\R/', $markdown));
+        $markdown = implode("\n", array_filter($lines, fn ($l) => $l !== null));
+
+        return Str::markdown($markdown, ['html_input' => 'strip', 'allow_unsafe_links' => false]);
     }
 
     public function insights(BlogService $blog): InertiaResponse
@@ -102,16 +166,20 @@ class PageController extends Controller
 
         $routes = [
             ['', 1, 'weekly'],
-            ['/solutions', 0.9, 'monthly'],
-            ['/products/school-management', 0.95, 'monthly'],
-            ['/products/inventory-pos', 0.9, 'monthly'],
-            ['/products/dairy-management', 0.9, 'monthly'],
-            ['/custom-automation', 0.8, 'monthly'],
+            ['/products', 0.9, 'monthly'],
+            ['/pricing', 0.8, 'monthly'],
+            ['/industries', 0.7, 'monthly'],
             ['/about', 0.7, 'monthly'],
             ['/insights', 0.8, 'weekly'],
             ['/contact', 0.7, 'monthly'],
             ['/book-demo', 0.85, 'monthly'],
         ];
+        foreach (Site::slugs() as $slug) {
+            $routes[] = ["/products/{$slug}", 0.9, 'monthly'];
+        }
+        foreach (array_keys(self::LEGAL) as $legal) {
+            $routes[] = ["/{$legal}", 0.3, 'yearly'];
+        }
         foreach ($blog->slugs() as $slug) {
             $routes[] = ["/insights/{$slug}", 0.6, 'monthly'];
         }

@@ -1,78 +1,40 @@
-import type { NavLink } from '@/types';
-
+/**
+ * Site navigation. Product names and contact details come from
+ * config/lalogix.php (see lib/site.ts); this file only holds page links.
+ */
 export const logo = {
-  src: '/logo.png',
+  src: '/images/logo.webp',
   alt: 'LALogix',
+  width: 396,
+  height: 132,
 };
 
-export const mainLinks: NavLink[] = [
-  { label: 'Home', href: '/' },
-  {
-    label: 'Solutions',
-    href: '/solutions',
-    children: [
-      { label: 'School Management', href: '/products/school-management' },
-      { label: 'Inventory POS', href: '/products/inventory-pos' },
-      { label: 'Dairy Management', href: '/products/dairy-management' },
-      { label: 'Custom Automation', href: '/custom-automation' },
-    ],
-  },
-  { label: 'About', href: '/about' },
+/** Top navigation after the "Products" dropdown. */
+export const mainLinks = [
+  { label: 'Industries', href: '/industries' },
+  { label: 'Pricing', href: '/pricing' },
   { label: 'Insights', href: '/insights' },
-  { label: 'Contact', href: '/contact' },
+  { label: 'About', href: '/about' },
 ];
 
 export const ctaButton = {
-  label: 'Book Demo',
+  label: 'Book a Free Demo',
   href: '/book-demo',
 };
 
-export const footerLinkGroups = [
-  {
-    title: 'Products',
-    links: [
-      { label: 'School Management', href: '/products/school-management' },
-      { label: 'Inventory POS', href: '/products/inventory-pos' },
-      { label: 'Dairy Management', href: '/products/dairy-management' },
-    ],
-  },
-  {
-    title: 'Company',
-    links: [
-      { label: 'About', href: '/about' },
-      { label: 'Insights', href: '/insights' },
-      { label: 'Contact', href: '/contact' },
-    ],
-  },
-  {
-    title: 'Services',
-    links: [
-      { label: 'Custom Automation', href: '/custom-automation' },
-      { label: 'Solutions', href: '/solutions' },
-    ],
-  },
+export const companyLinks = [
+  { label: 'All products', href: '/products' },
+  { label: 'Industries', href: '/industries' },
+  { label: 'Pricing', href: '/pricing' },
+  { label: 'Insights', href: '/insights' },
+  { label: 'About', href: '/about' },
+  { label: 'Contact', href: '/contact' },
+  { label: 'Book a Free Demo', href: '/book-demo' },
 ];
 
-export const socialLinks = [
-  {
-    platform: 'LinkedIn',
-    url: 'https://linkedin.com/company/lalogix',
-    icon: 'linkedin',
-  },
-  {
-    platform: 'Twitter',
-    url: 'https://twitter.com/lalogix',
-    icon: 'twitter',
-  },
-  {
-    platform: 'Facebook',
-    url: 'https://facebook.com/lalogix',
-    icon: 'facebook',
-  },
+export const legalLinks = [
+  { label: 'Privacy Policy', href: '/privacy-policy' },
+  { label: 'Terms & Conditions', href: '/terms-and-conditions' },
+  { label: 'Refund Policy', href: '/refund-policy' },
+  { label: 'Shipping Policy', href: '/shipping-policy' },
 ];
-
-export const contactInfo = {
-  email: 'info@lalogix.com',
-  phone: '+91-XXXXXXXXXX',
-  address: 'Dehradun, India',
-};

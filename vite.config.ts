@@ -7,6 +7,8 @@ export default defineConfig({
     plugins: [
         laravel({
             input: ['resources/js/app.tsx'],
+            // `vite build --ssr` writes bootstrap/ssr/ssr.js (run by `php artisan inertia:start-ssr`).
+            ssr: 'resources/js/ssr.tsx',
             refresh: true,
         }),
         react(),
@@ -15,6 +17,10 @@ export default defineConfig({
         alias: {
             '@': fileURLToPath(new URL('./resources/js', import.meta.url)),
         },
+    },
+    ssr: {
+        // Bundle everything so the server only needs Node, not node_modules.
+        noExternal: true,
     },
     server: {
         watch: {

@@ -156,3 +156,19 @@
     box-shadow: inherit !important;
   }
 }
+
+/* Server-rendered Markdown (policy pages, product copy). */
+@layer components {
+  .rich-text { @apply text-neutral-700; }
+  .rich-text h2 { @apply mt-10 mb-3 text-xl font-semibold text-neutral-900 md:text-2xl; }
+  .rich-text h3 { @apply mt-6 mb-2 text-lg font-semibold text-neutral-900; }
+  .rich-text p { @apply my-3 text-base leading-7 text-neutral-700; }
+  .rich-text ul { @apply my-3 list-disc space-y-1.5 pl-6; }
+  .rich-text ol { @apply my-3 list-decimal space-y-1.5 pl-6; }
+  .rich-text li { @apply leading-7; }
+  .rich-text a { @apply text-brand-700 underline underline-offset-2 hover:text-brand-800; }
+  .rich-text strong { @apply font-semibold text-neutral-900; }
+  .rich-text blockquote { @apply my-4 rounded-lg border-l-4 border-amber-400 bg-amber-50 px-4 py-2 text-amber-900; }
+  .rich-text blockquote p { @apply my-1 text-amber-900; }
+  .rich-text code { @apply rounded bg-neutral-100 px-1 py-0.5 text-sm; }
+}

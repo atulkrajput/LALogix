@@ -5,22 +5,18 @@ namespace App\Support;
 /**
  * Server-side SEO metadata (title, description, Open Graph, Twitter, canonical, JSON-LD).
  *
- * Ported from old/src/data/seo.ts, old/src/app/layout.tsx and the product pages'
- * generateMetadata(). Rendered into <head> by resources/views/app.blade.php so
- * crawlers and social previews get it without running JavaScript.
+ * Rendered into <head> by resources/views/app.blade.php so crawlers and social
+ * previews get it without running JavaScript.
+ *
+ * Rules (checked by tests/Feature/SeoTest.php): every title is complete as
+ * written (no suffix is appended) and under 60 characters; every indexable
+ * page has its own 150–160 character description and its own OG image.
  */
 class Seo
 {
-    public const TITLE_TEMPLATE = '%s | LALogix Enterprises Automation Software';
+    public const DEFAULT_TITLE = 'LALogix: Ready-to-Use Software for Indian Businesses';
 
-    public const DEFAULT_TITLE = 'LALogix Enterprises - Automation Software for Schools, Retail & Dairy';
-
-    public const DEFAULT_DESCRIPTION = 'Automation software for schools and businesses. Manage operations with School ERP, Inventory POS, and Dairy Management systems.';
-
-    public const DEFAULT_KEYWORDS = [
-        'automation software', 'school management software', 'school ERP software',
-        'inventory POS', 'dairy management software', 'business automation India',
-    ];
+    public const DEFAULT_DESCRIPTION = 'LALogix builds ready-to-use cloud software for Indian schools, dairies and shops: AI chat, dairy accounts, school management and billing. Try any product free.';
 
     public static function siteUrl(): string
     {
@@ -32,214 +28,185 @@ class Seo
         return config('lalogix.site_name');
     }
 
-    /** SEO for a named static page (keys match the old `pageSEO` object). */
-    public static function page(string $key): array
+    /** Static pages: key => [path, title, description, og image]. */
+    public static function pages(): array
     {
-        $url = self::siteUrl();
-        $name = self::siteName();
-
-        $pages = [
-            'home' => [
-                'title' => 'LALogix Enterprises — Automation Software for Schools, Retail & Dairy',
-                'description' => 'Automation software for schools and businesses. Manage operations with School ERP, Inventory POS, and Dairy Management systems. 15+ years of expertise.',
-                'keywords' => [
-                    'business automation software', 'school management software', 'school ERP software',
-                    'inventory POS software', 'dairy management software', 'automation solutions India',
-                    'school management system India',
-                ],
-                'ogImage' => '/images/og/home.png',
-                'canonical' => $url,
-                'jsonLd' => [[
-                    '@context' => 'https://schema.org',
-                    '@type' => 'Organization',
-                    'name' => $name,
-                    'url' => $url,
-                    'logo' => "{$url}/logo.png",
-                    'description' => 'LALogix is an automation software company building platforms for schools, retail businesses, and dairy farms.',
-                    'address' => [
-                        '@type' => 'PostalAddress',
-                        'addressLocality' => 'Dehradun',
-                        'addressRegion' => 'Uttarakhand',
-                        'addressCountry' => 'IN',
-                    ],
-                    'contactPoint' => [
-                        '@type' => 'ContactPoint',
-                        'email' => 'info@lalogix.com',
-                        'contactType' => 'sales',
-                    ],
-                    'sameAs' => [
-                        'https://linkedin.com/company/lalogix',
-                        'https://twitter.com/lalogix',
-                        'https://facebook.com/lalogix',
-                    ],
-                ]],
-            ],
-            'solutions' => [
-                'title' => 'Solutions — School, Retail & Dairy Software | LALogix Enterprises',
-                'description' => 'Explore LALogix Enterprises automation solutions: School Management System, Inventory POS, Dairy Management, and custom automation services.',
-                'keywords' => ['business automation solutions', 'school ERP', 'retail POS system', 'dairy farm software', 'custom automation'],
-                'ogImage' => '/images/og/solutions.png',
-                'canonical' => "{$url}/solutions",
-                'jsonLd' => [self::breadcrumb([['Home', $url], ['Solutions', "{$url}/solutions"]])],
-            ],
-            'about' => [
-                'title' => 'About LALogix Enterprises — 15+ Years of Automation Expertise',
-                'description' => "Learn about LALogix Enterprises' mission, history, and team. Over 15 years of experience building automation software for schools, retail, and agriculture.",
-                'keywords' => ['about LALogix Enterprises', 'automation software company', 'software company Dehradun', 'business automation India'],
-                'ogImage' => '/images/og/about.png',
-                'canonical' => "{$url}/about",
-                'jsonLd' => [
-                    [
-                        '@context' => 'https://schema.org',
-                        '@type' => 'Organization',
-                        'name' => $name,
-                        'url' => $url,
-                        'logo' => "{$url}/logo.png",
-                        'foundingDate' => '2008',
-                        'description' => 'LALogix is an automation software company with 15+ years of experience building platforms for schools, retail businesses, and dairy farms.',
-                        'address' => ['@type' => 'PostalAddress', 'addressLocality' => 'Dehradun', 'addressCountry' => 'IN'],
-                    ],
-                    self::breadcrumb([['Home', $url], ['About', "{$url}/about"]]),
-                ],
-            ],
-            'blog' => [
-                'title' => 'Insights on Business Automation | LALogix Enterprises',
-                'description' => 'Read articles and insights on school management, retail automation, dairy farm technology, and business process optimization from LALogix Enterprises.',
-                'keywords' => ['business automation blog', 'school management tips', 'retail technology insights', 'dairy farm automation'],
-                'ogImage' => '/images/og/blog.png',
-                'canonical' => "{$url}/insights",
-                'jsonLd' => [self::breadcrumb([['Home', $url], ['Insights', "{$url}/insights"]])],
-            ],
-            'contact' => [
-                'title' => 'Contact LALogix Enterprises — Get in Touch',
-                'description' => "Contact LALogix Enterprises for inquiries about our automation software, custom solutions, or partnership opportunities. We're based in Dehradun, India.",
-                'keywords' => ['contact LALogix Enterprises', 'automation software inquiry', 'business software consultation'],
-                'ogImage' => '/images/og/contact.png',
-                'canonical' => "{$url}/contact",
-                'jsonLd' => [self::breadcrumb([['Home', $url], ['Contact', "{$url}/contact"]])],
-            ],
-            'bookDemo' => [
-                'title' => 'Book a Demo — See LALogix Enterprises in Action',
-                'description' => 'Schedule a free demo of LALogix Enterprises automation software. See how our school management, inventory POS, or dairy management systems can transform your operations.',
-                'keywords' => ['book demo', 'free software demo', 'school management demo', 'POS software demo', 'dairy management demo'],
-                'ogImage' => '/images/og/book-demo.png',
-                'canonical' => "{$url}/book-demo",
-                'jsonLd' => [self::breadcrumb([['Home', $url], ['Book a Demo', "{$url}/book-demo"]])],
-            ],
-            'customAutomation' => [
-                'title' => 'Custom Automation Solutions | LALogix Enterprises',
-                'description' => 'LALogix Enterprises builds custom automation solutions including business process automation, custom ERP development, workflow automation, and system integrations.',
-                'keywords' => ['custom automation solutions', 'custom ERP development', 'business process automation', 'workflow automation India'],
-                'ogImage' => '/images/og/custom-automation.png',
-                'canonical' => "{$url}/custom-automation",
-                'jsonLd' => [self::breadcrumb([['Home', $url], ['Custom Automation', "{$url}/custom-automation"]])],
-            ],
-            'thankYou' => [
-                'title' => 'Thank You — LALogix',
-                'description' => 'Thank you for your interest in LALogix. Our team will get back to you shortly.',
-                'canonical' => "{$url}/thank-you",
-                'noindex' => true,
-            ],
-            'notFound' => [
-                'title' => 'Page Not Found',
-                'description' => self::DEFAULT_DESCRIPTION,
-                'noindex' => true,
-            ],
+        return [
+            'home' => ['', 'LALogix: Ready-to-Use Software for Schools, Dairies & Shops',
+                'Cloud apps Indian businesses switch on in a day: VIVK AI chat, AMRITIX dairy accounts, school management and billing with stock. Try any LALogix product free.',
+                '/images/og/home.jpg'],
+            'products' => ['/products', 'All LALogix Products: School, Dairy, POS and AI Chat',
+                'Compare every LALogix product: VIVK AI chat, AMRITIX dairy app, School Automation, Inventory & POS, AISHO and DoonPortal. Try a live demo or book a free demo.',
+                '/images/og/products.jpg'],
+            'pricing' => ['/pricing', 'Pricing for LALogix Products in Indian Rupees',
+                'Simple rupee pricing for every LALogix product, with GST invoices and one bill from LALogix Enterprises. See plans for VIVK, AMRITIX, school and POS software.',
+                '/images/og/pricing.jpg'],
+            'industries' => ['/industries', 'Software by Industry: Schools, Dairies, Shops | LALogix',
+                'Find the LALogix product for your business: school management for schools, AMRITIX for dairies, Inventory & POS for shops, VIVK AI chat for customer replies.',
+                '/images/og/industries.jpg'],
+            'about' => ['/about', 'About LALogix Enterprises, Dehradun',
+                'LALogix Enterprises is a Dehradun software company with 15+ years’ experience. We build and run ready-made cloud products for Indian schools, dairies and shops.',
+                '/images/og/about.jpg'],
+            'blog' => ['/insights', 'Insights: Guides for Schools, Dairies and Shops | LALogix',
+                'Practical guides from LALogix on running schools, dairies and shops with software: fees and attendance, milk hisab, billing, stock and AI tools for small teams.',
+                '/images/og/insights.jpg'],
+            'contact' => ['/contact', 'Contact LALogix: WhatsApp, Phone and E-mail',
+                'Talk to LALogix about any of our products on WhatsApp, phone or e-mail. We are based in Dehradun, Uttarakhand, and help businesses across India get started.',
+                '/images/og/contact.jpg'],
+            'bookDemo' => ['/book-demo', 'Book a Free Demo of Any LALogix Product',
+                'Book a free demo of VIVK, AMRITIX, School Automation or Inventory & POS. Leave your name and mobile number and we will WhatsApp you to fix a time that suits.',
+                '/images/og/book-demo.jpg'],
+            'privacy' => ['/privacy-policy', 'Privacy Policy | LALogix Enterprises',
+                'How LALogix Enterprises collects, uses and protects personal information on lalogix.com and in VIVK, AMRITIX, AISHO and our school and inventory software.',
+                '/images/og/legal.jpg'],
+            'terms' => ['/terms-and-conditions', 'Terms and Conditions | LALogix Enterprises',
+                'Terms for using lalogix.com and subscribing to LALogix Enterprises products: accounts, trials, rupee pricing with GST invoices, acceptable use and liability.',
+                '/images/og/legal.jpg'],
+            'refund' => ['/refund-policy', 'Refund and Cancellation Policy | LALogix',
+                'How to cancel a LALogix subscription and when you get a refund: duplicate payments, renewals after cancelling, services not delivered and early first payments.',
+                '/images/og/legal.jpg'],
+            'shipping' => ['/shipping-policy', 'Shipping and Delivery Policy | LALogix',
+                'LALogix products are software delivered online, so nothing is shipped. Read how and when account access and GST invoices reach you after a payment is made.',
+                '/images/og/legal.jpg'],
         ];
-
-        return $pages[$key] ?? [];
     }
 
-    /** SEO for the three product pages (ported from old/src/data/products.ts + product pages). */
+    /** SEO for a named static page. */
+    public static function page(string $key): array
+    {
+        $site = self::siteUrl();
+
+        if ($key === 'thankYou') {
+            return ['title' => 'Thank You | LALogix', 'description' => 'Thank you for contacting LALogix. We will get back to you shortly.', 'canonical' => "{$site}/thank-you", 'noindex' => true];
+        }
+        if ($key === 'notFound') {
+            return ['title' => 'Page Not Found | LALogix', 'description' => self::DEFAULT_DESCRIPTION, 'noindex' => true];
+        }
+
+        $pages = self::pages();
+        if (! isset($pages[$key])) {
+            return [];
+        }
+        [$path, $title, $description, $og] = $pages[$key];
+        $url = $site.$path;
+        $label = trim(explode('|', $title)[0]);
+
+        $jsonLd = $key === 'home'
+            ? [self::organization(), self::website()]
+            : [self::breadcrumb([['Home', $site], [$label, $url]])];
+        if ($key === 'home') {
+            $faq = array_values(array_filter(Site::clean(config('lalogix.home.faq')), fn ($f) => ! empty($f['q']) && ! empty($f['a'])));
+            if ($faq) {
+                $jsonLd[] = self::faqPage($faq);
+            }
+        }
+        if ($key === 'about') {
+            array_unshift($jsonLd, self::organization());
+        }
+
+        return [
+            'title' => $title,
+            'description' => $description,
+            'ogImage' => $og,
+            'canonical' => $url,
+            'jsonLd' => $jsonLd,
+        ];
+    }
+
+    public static function organization(): array
+    {
+        $site = self::siteUrl();
+        $c = Site::company();
+
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'Organization',
+            'name' => $c['name'],
+            'url' => $site,
+            'logo' => "{$site}/logo.png",
+            'email' => $c['email'],
+            'telephone' => $c['tel'],
+            'description' => 'LALogix Enterprises builds ready-to-use cloud software for Indian schools, dairies and shops.',
+            'address' => [
+                '@type' => 'PostalAddress',
+                'addressLocality' => $c['city'],
+                'addressRegion' => $c['state'],
+                'addressCountry' => 'IN',
+            ],
+            'contactPoint' => [
+                '@type' => 'ContactPoint',
+                'email' => $c['email'],
+                'telephone' => $c['tel'],
+                'contactType' => 'sales',
+                'areaServed' => 'IN',
+                'availableLanguage' => ['en', 'hi'],
+            ],
+            'sameAs' => array_values($c['social'] ?? []),
+        ];
+    }
+
+    private static function website(): array
+    {
+        return ['@context' => 'https://schema.org', '@type' => 'WebSite', 'name' => self::siteName(), 'url' => self::siteUrl()];
+    }
+
+    /** SEO for a product page, from config/lalogix.php. */
     public static function product(string $slug): ?array
     {
-        $products = [
-            'school-management' => [
-                'name' => 'School Management System',
-                'description' => 'An all-in-one school management platform that digitizes every aspect of school administration — from student enrollment and attendance to fee collection, exams, and parent communication.',
-                'heroImage' => '/images/products/school-management-hero.png',
-                'category' => 'EducationalApplication',
-                'title' => 'School Management Software — School ERP System | LALogix',
-                'seoDescription' => 'Best school management software in India. Complete school ERP with student management, attendance tracking, fee management, exams, parent app, and school automation system.',
-                'keywords' => [
-                    'school management software', 'school ERP software', 'school automation system',
-                    'school management system India', 'student management system', 'school administration software',
-                    'attendance tracking software', 'school fee management software',
-                ],
-                'ogImage' => '/images/og/school-management.png',
-            ],
-            'inventory-pos' => [
-                'name' => 'Inventory POS System',
-                'description' => 'A powerful point-of-sale and inventory management system designed for retail businesses of all sizes. Streamline billing, track stock in real-time, and grow your business with data-driven insights.',
-                'heroImage' => '/images/products/inventory-pos-hero.png',
-                'category' => 'BusinessApplication',
-                'title' => 'Inventory POS Software — Retail Inventory Management | LALogix',
-                'seoDescription' => 'Smart inventory management system and POS software for retail. Barcode scanning, stock tracking, purchase management, and sales reports for retail inventory software.',
-                'keywords' => [
-                    'inventory management system', 'POS software for retail', 'retail inventory software',
-                    'inventory POS software', 'POS billing software', 'stock management software', 'retail POS system',
-                ],
-                'ogImage' => '/images/og/inventory-pos.png',
-            ],
-            'dairy-management' => [
-                'name' => 'Dairy Management System',
-                'description' => 'A comprehensive dairy management platform that digitizes farm operations — from cattle records and milk production to vendor purchases, quality testing, and financial reporting.',
-                'heroImage' => '/images/products/dairy-management-hero.png',
-                'category' => 'BusinessApplication',
-                'title' => 'Dairy Farm Management Software — Cattle & Milk Management | LALogix',
-                'seoDescription' => 'Complete dairy farm management software with cattle management, milk production management system, vendor tracking, fat/SNF calculations, and financial reports.',
-                'keywords' => [
-                    'dairy farm management software', 'milk production management system', 'cattle management software',
-                    'dairy management software', 'dairy ERP', 'dairy farm software', 'milk tracking software',
-                ],
-                'ogImage' => '/images/og/dairy-management.png',
-            ],
-        ];
-
-        if (! isset($products[$slug])) {
+        $p = Site::product($slug);
+        if (! $p) {
             return null;
         }
 
-        $p = $products[$slug];
         $site = self::siteUrl();
         $url = "{$site}/products/{$slug}";
+        $image = $site."/images/og/{$slug}.jpg";
+
+        $app = [
+            '@context' => 'https://schema.org',
+            '@type' => 'SoftwareApplication',
+            'name' => $p['name'],
+            'alternateName' => $p['brand'] ?: null,
+            'description' => $p['seo']['description'],
+            'url' => $url,
+            'image' => $image,
+            'applicationCategory' => $p['schema_category'],
+            'operatingSystem' => $p['os'],
+            'publisher' => ['@type' => 'Organization', 'name' => self::siteName(), 'url' => $site],
+        ];
+        // Only state a price when we actually have one; otherwise just availability.
+        $app['offers'] = [
+            '@type' => 'Offer',
+            'priceCurrency' => 'INR',
+            'availability' => $p['status'] === 'coming_soon' ? 'https://schema.org/PreOrder' : 'https://schema.org/InStock',
+            'seller' => ['@type' => 'Organization', 'name' => self::siteName()],
+        ];
+        if (! empty($p['site_url'])) {
+            $app['sameAs'] = $p['site_url'];
+        }
+
+        $faq = array_values(array_filter($p['faq'] ?? [], fn ($f) => ! empty($f['q']) && ! empty($f['a'])));
 
         return [
-            'title' => $p['title'],
-            'description' => $p['seoDescription'],
-            'keywords' => $p['keywords'],
-            'ogImage' => $p['ogImage'],
+            'title' => $p['seo']['title'],
+            'description' => $p['seo']['description'],
+            'ogImage' => "/images/og/{$slug}.jpg",
             'canonical' => $url,
-            'jsonLd' => [
-                [
-                    '@context' => 'https://schema.org',
-                    '@type' => 'SoftwareApplication',
-                    'name' => $p['name'],
-                    'description' => $p['seoDescription'],
-                    'url' => $url,
-                    'image' => $p['heroImage'],
-                    'applicationCategory' => $p['category'],
-                    'operatingSystem' => 'Web',
-                    'offers' => [
-                        '@type' => 'Offer',
-                        'price' => '0',
-                        'priceCurrency' => 'INR',
-                        'availability' => 'https://schema.org/InStock',
-                        'description' => 'Contact for pricing',
-                    ],
-                    'publisher' => ['@type' => 'Organization', 'name' => self::siteName(), 'url' => $site],
-                ],
+            'jsonLd' => array_values(array_filter([
+                array_filter($app, fn ($v) => $v !== null),
                 [
                     '@context' => 'https://schema.org',
                     '@type' => 'Product',
                     'name' => $p['name'],
-                    'description' => $p['description'],
+                    'description' => $p['promise'] ?: $p['seo']['description'],
                     'url' => $url,
-                    'image' => $p['heroImage'],
-                    'brand' => ['@type' => 'Organization', 'name' => self::siteName()],
+                    'image' => $image,
+                    'brand' => ['@type' => 'Brand', 'name' => $p['brand'] ?: $p['name']],
+                    'manufacturer' => ['@type' => 'Organization', 'name' => self::siteName()],
                 ],
-                self::breadcrumb([['Home', $site], ['Solutions', "{$site}/solutions"], [$p['name'], $url]]),
-            ],
+                $faq ? self::faqPage($faq) : null,
+                self::breadcrumb([['Home', $site], ['Products', "{$site}/products"], [$p['name'], $url]]),
+            ])),
         ];
     }
 
@@ -248,11 +215,12 @@ class Seo
     {
         $site = self::siteUrl();
         $url = "{$site}/insights/{$post['slug']}";
+        $title = self::fitTitle($post['title'], ' | LALogix Insights');
 
         return [
-            'title' => "{$post['title']} | LALogix Insights",
-            'description' => $post['excerpt'],
-            'ogImage' => $post['featuredImage'] ?: null,
+            'title' => $title,
+            'description' => self::fitDescription($post['description'] ?? $post['excerpt'] ?? ''),
+            'ogImage' => ($post['featuredImage'] ?? null) ?: '/images/og/insights.jpg',
             'ogType' => 'article',
             'canonical' => $url,
             'jsonLd' => [
@@ -260,7 +228,7 @@ class Seo
                     '@context' => 'https://schema.org',
                     '@type' => 'BlogPosting',
                     'headline' => $post['title'],
-                    'description' => $post['excerpt'],
+                    'description' => $post['excerpt'] ?? '',
                     'url' => $url,
                     'datePublished' => $post['date'],
                     'author' => ['@type' => 'Person', 'name' => $post['author']],
@@ -273,6 +241,48 @@ class Seo
                 ],
                 self::breadcrumb([['Home', $site], ['Insights', "{$site}/insights"], [$post['title'], $url]]),
             ],
+        ];
+    }
+
+    /** Append the suffix only when the result stays under 60 characters; cut long titles at a word. */
+    public static function fitTitle(string $title, string $suffix = ' | LALogix'): string
+    {
+        $title = trim($title);
+        if (mb_strlen($title.$suffix) < 60) {
+            return $title.$suffix;
+        }
+        if (mb_strlen($title) < 60) {
+            return $title;
+        }
+
+        return rtrim(mb_substr($title, 0, mb_strrpos(mb_substr($title, 0, 58), ' ') ?: 58), ' ,:;-').'…';
+    }
+
+    /** Keep descriptions within 160 characters (cut at a word). */
+    public static function fitDescription(string $text): string
+    {
+        $text = trim(preg_replace('/\s+/', ' ', strip_tags($text)));
+        if ($text === '') {
+            return self::DEFAULT_DESCRIPTION;
+        }
+        if (mb_strlen($text) <= 160) {
+            return $text;
+        }
+
+        return rtrim(mb_substr($text, 0, mb_strrpos(mb_substr($text, 0, 159), ' ') ?: 159), ' ,:;-').'…';
+    }
+
+    /** @param  array<int, array{q: string, a: string}>  $items */
+    public static function faqPage(array $items): array
+    {
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'FAQPage',
+            'mainEntity' => array_map(fn ($f) => [
+                '@type' => 'Question',
+                'name' => $f['q'],
+                'acceptedAnswer' => ['@type' => 'Answer', 'text' => $f['a']],
+            ], $items),
         ];
     }
 
@@ -297,17 +307,16 @@ class Seo
         $seo = $seo ?? [];
         $site = self::siteUrl();
 
-        $title = isset($seo['title']) ? sprintf(self::TITLE_TEMPLATE, $seo['title']) : self::DEFAULT_TITLE;
-        $ogImage = $seo['ogImage'] ?? '/images/og/home.png';
+        $title = $seo['title'] ?? self::DEFAULT_TITLE;
+        $ogImage = $seo['ogImage'] ?? '/images/og/home.jpg';
         if ($ogImage && ! str_starts_with($ogImage, 'http')) {
             $ogImage = $site.$ogImage;
         }
 
         return [
             'title' => $title,
-            'ogTitle' => $seo['title'] ?? self::DEFAULT_TITLE,
+            'ogTitle' => $seo['ogTitle'] ?? $title,
             'description' => $seo['description'] ?? self::DEFAULT_DESCRIPTION,
-            'keywords' => implode(', ', $seo['keywords'] ?? self::DEFAULT_KEYWORDS),
             'canonical' => $seo['canonical'] ?? $site,
             'ogImage' => $ogImage,
             'ogType' => $seo['ogType'] ?? 'website',

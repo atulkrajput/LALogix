@@ -16,7 +16,7 @@ export interface ButtonProps {
 
 const variantStyles: Record<string, string> = {
   primary:
-    'bg-brand-500 text-white hover:bg-brand-400 active:bg-brand-600',
+    'bg-brand-700 text-white hover:bg-brand-800 hover:text-white active:bg-brand-800',
   secondary:
     'bg-brand-100 text-brand-700 hover:bg-brand-200 active:bg-brand-300',
   outline:

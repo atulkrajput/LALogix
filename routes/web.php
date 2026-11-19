@@ -7,9 +7,10 @@ use Illuminate\Support\Facades\Route;
 // ---- Public website -------------------------------------------------------
 Route::controller(PageController::class)->group(function () {
     Route::get('/', 'home');
-    Route::get('/solutions', 'solutions');
-    Route::get('/products/{slug}', 'product')->where('slug', 'school-management|inventory-pos|dairy-management');
-    Route::get('/custom-automation', 'customAutomation');
+    Route::get('/products', 'products');
+    Route::get('/products/{slug}', 'product')->where('slug', implode('|', array_map('preg_quote', \App\Support\Site::slugs())));
+    Route::get('/pricing', 'pricing');
+    Route::get('/industries', 'industries');
     Route::get('/about', 'about');
     Route::get('/insights', 'insights');
     Route::get('/insights/{slug}', 'insight');
@@ -17,13 +18,19 @@ Route::controller(PageController::class)->group(function () {
     Route::get('/book-demo', 'bookDemo');
     Route::get('/thank-you', 'thankYou');
     Route::get('/sitemap.xml', 'sitemap');
+
+    // Policy pages (required by Razorpay), linked in the footer of every page.
+    Route::get('/{slug}', 'legal')->where('slug', implode('|', array_keys(PageController::LEGAL)));
 });
 
-// Permanent redirects carried over from old/next.config.mjs.
+// Permanent redirects (old URLs and removed pages).
 Route::permanentRedirect('/demo', '/book-demo');
-Route::permanentRedirect('/services', '/custom-automation');
 Route::permanentRedirect('/blog', '/insights');
 Route::get('/blog/{slug}', fn (string $slug) => redirect("/insights/{$slug}", 301));
+Route::permanentRedirect('/custom-automation', '/products');
+Route::permanentRedirect('/services', '/products');
+Route::permanentRedirect('/solutions', '/industries');
+Route::permanentRedirect('/products/dairy-management', '/products/amritix');
 
 // Secret URL for an external cron service (recurring invoices and payment reminders).
 Route::get('/cron/recurring/{token}', [\App\Http\Controllers\CronController::class, 'recurring'])

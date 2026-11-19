@@ -27,3 +27,4 @@ Thumbs.db
 /old/node_modules
 /old/.next
 /old/src/generated
+/bootstrap/ssr

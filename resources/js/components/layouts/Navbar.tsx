@@ -1,360 +1,232 @@
-
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from '@/components/ui/Link';
-import Image from '@/components/ui/Image';
-import { AnimatePresence, motion } from 'framer-motion';
+import Icon, { WhatsAppIcon } from '@/components/ui/Icon';
 import { logo, mainLinks, ctaButton } from '@/data/navigation';
-import type { NavLink } from '@/types';
-import Button from '@/components/ui/Button';
+import { useSite, whatsappUrl, type ProductSummary } from '@/lib/site';
+import { usePathname } from '@/lib/navigation';
+import { trackEvent } from '@/lib/analytics';
+
+const linkClass =
+  'rounded-md px-3 py-2 text-sm font-medium text-neutral-700 transition-colors hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600';
 
 export default function Navbar() {
+  const { company, products } = useSite();
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const drawerRef = useRef<HTMLDivElement>(null);
   const hamburgerRef = useRef<HTMLButtonElement>(null);
+  const drawerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Lock body scroll when mobile menu is open
-  useEffect(() => {
-    if (mobileOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [mobileOpen]);
+  // Close the drawer on navigation.
+  useEffect(() => setMobileOpen(false), [pathname]);
 
-  // Focus trap and keyboard navigation for mobile drawer
   useEffect(() => {
+    document.body.style.overflow = mobileOpen ? 'hidden' : '';
     if (!mobileOpen) return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
+    drawerRef.current?.querySelector<HTMLElement>('a[href], button')?.focus();
+    const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setMobileOpen(false);
         hamburgerRef.current?.focus();
-        return;
-      }
-
-      if (e.key === 'Tab' && drawerRef.current) {
-        const focusable = drawerRef.current.querySelectorAll<HTMLElement>(
-          'a[href], button, [tabindex]:not([tabindex="-1"])'
-        );
-        if (focusable.length === 0) return;
-
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
       }
     };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = '';
+    };
   }, [mobileOpen]);
 
-  // Focus first link when drawer opens
-  useEffect(() => {
-    if (mobileOpen && drawerRef.current) {
-      const firstLink = drawerRef.current.querySelector<HTMLElement>('a[href], button');
-      firstLink?.focus();
-    }
-  }, [mobileOpen]);
-
-  const closeMobile = useCallback(() => setMobileOpen(false), []);
+  const close = useCallback(() => setMobileOpen(false), []);
+  const waHref = whatsappUrl(company.whatsapp, "Hi, I'm interested in LALogix products.");
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? 'bg-white/80 backdrop-blur-xl border-b border-white/20 shadow-nav'
-          : 'bg-transparent'
+    <header
+      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
+        scrolled || mobileOpen ? 'border-b border-neutral-200 bg-white/95 shadow-sm backdrop-blur' : 'bg-white/80 backdrop-blur-sm'
       }`}
-      role="navigation"
-      aria-label="Main navigation"
     >
-      <div className="mx-auto max-w-8xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between md:h-18">
-          {/* Logo */}
-          <Link href="/" className="flex-shrink-0" aria-label="LALogix Home">
-            <Image
-              src={logo.src}
-              alt={logo.alt}
-              width={2172}
-              height={724}
-              sizes="162px"
-              priority
-              className="h-[54px] w-auto"
-            />
+      <nav className="mx-auto flex h-16 max-w-8xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
+        <Link href="/" className="flex-shrink-0" aria-label="LALogix home">
+          <img src={logo.src} alt={logo.alt} width={logo.width} height={logo.height} className="h-11 w-auto" {...{ fetchpriority: "high" }} />
+        </Link>
+
+        {/* Desktop links */}
+        <div className="hidden items-center gap-1 lg:flex">
+          <ProductsMenu products={products} />
+          {mainLinks.map((l) => (
+            <Link key={l.href} href={l.href} className={linkClass} aria-current={pathname === l.href ? 'page' : undefined}>
+              {l.label}
+            </Link>
+          ))}
+        </div>
+
+        {/* Desktop contact + CTA */}
+        <div className="hidden items-center gap-3 lg:flex">
+          <a href={`tel:${company.tel}`} className="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-700 hover:text-brand-700">
+            <Icon name="phone" className="h-4 w-4" />
+            <span className="hidden xl:inline">{company.phone_display}</span>
+            <span className="sr-only xl:hidden">Call {company.phone_display}</span>
+          </a>
+          <a
+            href={waHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => trackEvent('whatsapp_click', { location: 'header' })}
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-[#0f7a40] hover:text-[#0b6233]"
+          >
+            <WhatsAppIcon className="h-4 w-4" />
+            <span className="hidden xl:inline">{company.whatsapp_display}</span>
+            <span className="sr-only xl:hidden">WhatsApp {company.whatsapp_display}</span>
+          </a>
+          <Link
+            href={ctaButton.href}
+            className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
+          >
+            {ctaButton.label}
           </Link>
+        </div>
 
-          {/* Desktop nav links */}
-          <div className="hidden md:flex md:items-center md:gap-1">
-            {mainLinks.map((link) => (
-              <NavItem key={link.href} link={link} />
-            ))}
-          </div>
-
-          {/* Desktop CTA */}
-          <div className="hidden md:block">
-            <Button href={ctaButton.href} variant="primary" size="sm">
-              {ctaButton.label}
-            </Button>
-          </div>
-
-          {/* Mobile hamburger */}
+        {/* Mobile: call + menu */}
+        <div className="flex items-center gap-1 lg:hidden">
+          <a href={`tel:${company.tel}`} className="rounded-md p-2.5 text-neutral-700 hover:bg-neutral-100" aria-label={`Call ${company.phone_display}`}>
+            <Icon name="phone" className="h-5 w-5" />
+          </a>
           <button
             ref={hamburgerRef}
             type="button"
-            className="inline-flex items-center justify-center rounded-md p-2 text-neutral-700 hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 md:hidden"
-            onClick={() => setMobileOpen((prev) => !prev)}
+            className="rounded-md p-2.5 text-neutral-700 hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
+            onClick={() => setMobileOpen((o) => !o)}
             aria-expanded={mobileOpen}
             aria-controls="mobile-menu"
             aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
           >
-            <span className="sr-only">{mobileOpen ? 'Close menu' : 'Open menu'}</span>
-            {/* Animated hamburger icon */}
-            <div className="relative h-5 w-6">
-              <span
-                className={`absolute left-0 block h-0.5 w-6 bg-current transition-all duration-300 ${
-                  mobileOpen ? 'top-2.5 rotate-45' : 'top-0'
-                }`}
-              />
-              <span
-                className={`absolute left-0 top-2.5 block h-0.5 w-6 bg-current transition-opacity duration-300 ${
-                  mobileOpen ? 'opacity-0' : 'opacity-100'
-                }`}
-              />
-              <span
-                className={`absolute left-0 block h-0.5 w-6 bg-current transition-all duration-300 ${
-                  mobileOpen ? 'top-2.5 -rotate-45' : 'top-5'
-                }`}
-              />
-            </div>
+            <Icon name={mobileOpen ? 'x' : 'menu'} className="h-6 w-6" />
           </button>
         </div>
+      </nav>
+
+      {/* Mobile drawer */}
+      <div
+        id="mobile-menu"
+        ref={drawerRef}
+        hidden={!mobileOpen}
+        className="max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-neutral-200 bg-white px-4 pb-6 pt-2 lg:hidden"
+      >
+        <p className="px-3 pb-1 pt-3 text-xs font-semibold uppercase tracking-wide text-neutral-500">Products</p>
+        {products.map((p) => (
+          <Link key={p.slug} href={`/products/${p.slug}`} onClick={close} className="flex items-center gap-3 rounded-md px-3 py-2.5 text-neutral-800 hover:bg-neutral-100">
+            <Icon name={p.icon} className="h-5 w-5 text-brand-700" />
+            <span className="font-medium">{p.name}</span>
+            {p.category && <span className="text-sm text-neutral-500">{p.category}</span>}
+          </Link>
+        ))}
+        <Link href="/products" onClick={close} className="block rounded-md px-3 py-2.5 text-sm font-medium text-brand-700 hover:bg-neutral-100">
+          See all products
+        </Link>
+        <div className="my-2 border-t border-neutral-200" />
+        {mainLinks.map((l) => (
+          <Link key={l.href} href={l.href} onClick={close} className="block rounded-md px-3 py-2.5 font-medium text-neutral-800 hover:bg-neutral-100">
+            {l.label}
+          </Link>
+        ))}
+        <div className="mt-4 grid gap-2">
+          <Link href={ctaButton.href} onClick={close} className="rounded-lg bg-brand-700 px-4 py-3 text-center font-semibold text-white hover:bg-brand-800">
+            {ctaButton.label}
+          </Link>
+          <a
+            href={waHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => trackEvent('whatsapp_click', { location: 'mobile_menu' })}
+            className="inline-flex items-center justify-center gap-2 rounded-lg border border-neutral-300 px-4 py-3 font-medium text-neutral-800"
+          >
+            <WhatsAppIcon className="h-5 w-5 text-[#0f7a40]" /> WhatsApp {company.whatsapp_display}
+          </a>
+        </div>
       </div>
-
-      {/* Mobile drawer overlay */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 top-16 z-40 bg-black/20 backdrop-blur-sm md:hidden"
-              onClick={closeMobile}
-              aria-hidden="true"
-            />
-
-            {/* Drawer */}
-            <motion.div
-              ref={drawerRef}
-              id="mobile-menu"
-              role="dialog"
-              aria-modal="true"
-              aria-label="Mobile navigation menu"
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="fixed right-0 top-16 bottom-0 z-50 w-72 bg-white shadow-xl md:hidden"
-            >
-              <div className="flex flex-col gap-1 p-4">
-                {mainLinks.map((link) => (
-                  <MobileNavItem key={link.href} link={link} onClose={closeMobile} />
-                ))}
-                <div className="mt-4 border-t border-neutral-200 pt-4">
-                  <Button
-                    href={ctaButton.href}
-                    variant="primary"
-                    size="md"
-                    className="w-full"
-                    onClick={closeMobile}
-                  >
-                    {ctaButton.label}
-                  </Button>
-                </div>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-    </nav>
+    </header>
   );
 }
 
-
-/* Desktop nav item with optional dropdown */
-function NavItem({ link }: { link: NavLink }) {
+/** "Products ▾" dropdown: opens on hover, click and keyboard. */
+function ProductsMenu({ products }: { products: ProductSummary[] }) {
   const [open, setOpen] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const ref = useRef<HTMLDivElement>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const handleMouseEnter = () => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    setOpen(true);
-  };
-
-  const handleMouseLeave = () => {
-    timeoutRef.current = setTimeout(() => setOpen(false), 150);
-  };
-
-  if (!link.children?.length) {
-    return (
-      <Link
-        href={link.href}
-        className="relative rounded-md px-3 py-2 text-body-sm font-medium text-neutral-700 transition-colors hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-brand-500 after:transition-all after:duration-200 hover:after:w-full"
-      >
-        {link.label}
-      </Link>
-    );
-  }
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e: MouseEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
+    document.addEventListener('mousedown', onDoc);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDoc);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
 
   return (
     <div
+      ref={ref}
       className="relative"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      onMouseEnter={() => {
+        if (timer.current) clearTimeout(timer.current);
+        setOpen(true);
+      }}
+      onMouseLeave={() => {
+        timer.current = setTimeout(() => setOpen(false), 150);
+      }}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node)) setOpen(false);
+      }}
     >
-      <Link
-        href={link.href}
-        className="relative inline-flex items-center gap-1 rounded-md px-3 py-2 text-body-sm font-medium text-neutral-700 transition-colors hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-brand-500 after:transition-all after:duration-200 hover:after:w-full"
+      <button
+        type="button"
+        className={`${linkClass} inline-flex items-center gap-1`}
         aria-expanded={open}
-        aria-haspopup="true"
-        onFocus={() => setOpen(true)}
-        onBlur={(e) => {
-          if (!e.currentTarget.parentElement?.contains(e.relatedTarget)) {
-            setOpen(false);
-          }
-        }}
+        aria-controls="products-menu"
+        onClick={() => setOpen((o) => !o)}
       >
-        {link.label}
-        <svg
-          className={`h-4 w-4 transition-transform ${open ? 'rotate-180' : ''}`}
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          aria-hidden="true"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </Link>
-
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, y: -4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -4 }}
-            transition={{ duration: 0.2 }}
-            className="absolute left-0 top-full mt-1 w-56 rounded-lg bg-white py-2 shadow-card"
-            onBlur={(e: React.FocusEvent) => {
-              if (!e.currentTarget.contains(e.relatedTarget)) {
-                setOpen(false);
-              }
-            }}
+        Products
+        <Icon name="chevron-down" className={`h-4 w-4 transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+      <div
+        id="products-menu"
+        hidden={!open}
+        className="absolute left-0 top-full mt-1 w-80 rounded-xl border border-neutral-200 bg-white p-2 shadow-lg"
+      >
+        {products.map((p) => (
+          <Link
+            key={p.slug}
+            href={`/products/${p.slug}`}
+            onClick={() => setOpen(false)}
+            className="flex items-start gap-3 rounded-lg px-3 py-2 hover:bg-brand-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-600"
           >
-            {link.children!.map((child) => (
-              <Link
-                key={child.href}
-                href={child.href}
-                className="block px-4 py-2 text-body-sm text-neutral-600 transition-colors hover:bg-brand-50 hover:text-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-500"
-              >
-                {child.label}
-              </Link>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
-
-/* Mobile nav item with expandable children */
-function MobileNavItem({ link, onClose }: { link: NavLink; onClose: () => void }) {
-  const [expanded, setExpanded] = useState(false);
-
-  if (!link.children?.length) {
-    return (
-      <Link
-        href={link.href}
-        onClick={onClose}
-        className="block rounded-md px-3 py-2.5 text-body font-medium text-neutral-700 transition-colors hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
-      >
-        {link.label}
-      </Link>
-    );
-  }
-
-  return (
-    <div>
-      <div className="flex items-center">
-        <Link
-          href={link.href}
-          onClick={onClose}
-          className="flex-1 rounded-md px-3 py-2.5 text-body font-medium text-neutral-700 transition-colors hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
-        >
-          {link.label}
+            <Icon name={p.icon} className="mt-0.5 h-5 w-5 flex-shrink-0 text-brand-700" />
+            <span>
+              <span className="block text-sm font-semibold text-neutral-900">
+                {p.name}
+                {p.status === 'coming_soon' && <span className="ml-2 rounded bg-neutral-100 px-1.5 py-0.5 text-xs font-medium text-neutral-600">Coming soon</span>}
+              </span>
+              {p.category && <span className="block text-xs text-neutral-600">{p.category}</span>}
+            </span>
+          </Link>
+        ))}
+        <Link href="/products" onClick={() => setOpen(false)} className="mt-1 block rounded-lg px-3 py-2 text-sm font-medium text-brand-700 hover:bg-brand-50">
+          Compare all products
         </Link>
-        <button
-          type="button"
-          onClick={() => setExpanded((prev) => !prev)}
-          className="rounded-md p-2 text-neutral-500 hover:bg-neutral-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
-          aria-expanded={expanded}
-          aria-label={`${expanded ? 'Collapse' : 'Expand'} ${link.label} submenu`}
-        >
-          <svg
-            className={`h-4 w-4 transition-transform ${expanded ? 'rotate-180' : ''}`}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            aria-hidden="true"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
       </div>
-
-      <AnimatePresence>
-        {expanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden"
-          >
-            <div className="ml-4 border-l border-neutral-200 pl-2">
-              {link.children!.map((child) => (
-                <Link
-                  key={child.href}
-                  href={child.href}
-                  onClick={onClose}
-                  className="block rounded-md px-3 py-2 text-body-sm text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
-                >
-                  {child.label}
-                </Link>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }

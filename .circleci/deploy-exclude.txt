@@ -26,3 +26,6 @@
 /tailwind.config.ts
 /tsconfig.json
 /vite.config.ts
+/scripts/
+/DEPLOY.md
+/TRACKING.md

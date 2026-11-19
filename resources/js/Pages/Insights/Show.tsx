@@ -32,7 +32,7 @@ export default function InsightsPostPage({ post, relatedPosts, shareUrl }: Insig
     <PageLayout>
       <BlogContent>
         <article>
-          <div className="mx-auto max-w-4xl px-4 pt-24 md:pt-28 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-4xl px-4 pt-8 md:pt-12 sm:px-6 lg:px-8">
             <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm text-neutral-400">
               <Link href="/" className="hover:text-brand-600 transition-colors">Home</Link>
               <span>/</span>

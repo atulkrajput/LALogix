@@ -3,6 +3,8 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\Billing;
 use App\Http\Controllers\Api\CampaignController;
+use App\Http\Controllers\Api\ChatController;
+use App\Http\Controllers\Api\LeadEventController;
 use App\Http\Controllers\Api\CrmController;
 use App\Http\Controllers\Api\FormController;
 use App\Http\Controllers\Api\LeadController;
@@ -20,10 +22,16 @@ use Illuminate\Support\Facades\Route;
 // ---- Public (website forms + login) -----------------------------------------
 Route::middleware('throttle:20,1')->group(function () {
     Route::post('/contact', [FormController::class, 'contact']);
-    Route::post('/demo', [FormController::class, 'demo']);
-    Route::post('/leads', [LeadController::class, 'store']);
     Route::post('/auth/login', [AuthController::class, 'login']);
 });
+
+// Website lead capture: short demo form, quiz, chat, exit popup, notify-me (named limiters in AppServiceProvider).
+Route::middleware('throttle:leads')->group(function () {
+    Route::post('/demo', [FormController::class, 'demo']);
+    Route::post('/leads', [LeadController::class, 'store']);
+});
+Route::post('/lead-events', [LeadEventController::class, 'store'])->middleware('throttle:lead-events');
+Route::post('/chat', [ChatController::class, 'reply'])->middleware('throttle:chat');
 Route::post('/auth/logout', [AuthController::class, 'logout']);
 Route::get('/auth/me', [AuthController::class, 'me']);
 

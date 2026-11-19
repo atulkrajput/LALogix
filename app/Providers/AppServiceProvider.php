@@ -2,6 +2,11 @@
 
 namespace App\Providers;
 
+use App\Services\Notifiers\NullWhatsAppNotifier;
+use App\Services\Notifiers\WhatsAppNotifier;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +16,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // New-lead WhatsApp alerts: swap in a real provider here later.
+        $this->app->bind(WhatsAppNotifier::class, NullWhatsAppNotifier::class);
     }
 
     /**
@@ -19,6 +25,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Website lead forms: a few per minute and a daily cap per visitor IP.
+        RateLimiter::for('leads', fn (Request $request) => [
+            Limit::perMinute(5)->by('leads:'.$request->ip()),
+            Limit::perDay(30)->by('leads-day:'.$request->ip()),
+        ]);
+
+        // Click logging (WhatsApp button).
+        RateLimiter::for('lead-events', fn (Request $request) => Limit::perMinute(30)->by('events:'.$request->ip()));
+
+        // AI chat: each message costs an API call.
+        RateLimiter::for('chat', fn (Request $request) => [
+            Limit::perMinute(10)->by('chat:'.$request->ip()),
+            Limit::perDay(100)->by('chat-day:'.$request->ip()),
+        ]);
     }
 }

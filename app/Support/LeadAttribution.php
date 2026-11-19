@@ -5,8 +5,12 @@ namespace App\Support;
 use Illuminate\Http\Request;
 
 /**
- * Reads the ad attribution the website sends with a form (captured in the browser
- * from utm_* / fbclid / gclid on the landing URL; see resources/js/lib/attribution.ts).
+ * Reads the ad attribution sent with a website form.
+ *
+ * The browser keeps utm_* / fbclid / gclid from the landing URL (see
+ * resources/js/lib/attribution.ts) and sends them as `attribution`. The first
+ * tagged visit is also stored in the `lx_utm` cookie; it is used when the form
+ * did not send any attribution (e.g. localStorage blocked).
  */
 class LeadAttribution
 {
@@ -17,9 +21,14 @@ class LeadAttribution
     public static function fromRequest(Request $request): array
     {
         $raw = (array) $request->input('attribution', []);
+        if (! array_filter($raw)) {
+            $cookie = json_decode((string) $request->cookie('lx_utm', ''), true);
+            $raw = is_array($cookie) ? $cookie : [];
+        }
+
         $out = [];
         foreach (self::FIELDS as $field => $max) {
-            $value = trim((string) ($raw[$field] ?? ''));
+            $value = trim((string) (is_scalar($raw[$field] ?? null) ? $raw[$field] : ''));
             if ($value !== '') {
                 $out[$field] = mb_substr(strip_tags($value), 0, $max);
             }
