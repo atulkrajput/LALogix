@@ -13,6 +13,7 @@ interface Lead {
   productInterest: string;
   status: string;
   source: string;
+  sourceWidget: string | null;
   score: number;
   createdAt: string;
   _count: { demoBookings: number; activities: number };
@@ -23,11 +24,20 @@ const STATUS_COLORS: Record<string, string> = {
   new: 'bg-blue-100 text-blue-700',
   contacted: 'bg-yellow-100 text-yellow-700',
   demo_scheduled: 'bg-purple-100 text-purple-700',
+  trial: 'bg-amber-100 text-amber-800',
+  paid: 'bg-green-100 text-green-700',
   converted: 'bg-green-100 text-green-700',
   lost: 'bg-red-100 text-red-700',
 };
 
-const STATUSES = ['all', 'new', 'contacted', 'demo_scheduled', 'converted', 'lost'];
+// Lead pipeline (demo_scheduled is shown as "Demo booked"; converted is kept for older leads).
+const STATUSES = ['all', 'new', 'contacted', 'demo_scheduled', 'trial', 'paid', 'converted', 'lost'];
+const STATUS_LABELS: Record<string, string> = { all: 'All', new: 'New', contacted: 'Contacted', demo_scheduled: 'Demo booked', trial: 'Trial', paid: 'Paid', converted: 'Converted', lost: 'Lost' };
+const PRODUCTS = [
+  ['all', 'All products'], ['vivk', 'VIVK'], ['dairy', 'AMRITIX (dairy)'], ['school', 'School'], ['inventory', 'Inventory & POS'],
+  ['aisho', 'AISHO'], ['ayurvedadhara', 'AyurvedaDhara'], ['doonportal', 'DoonPortal'], ['general', 'General'],
+];
+const WIDGETS = [['all', 'All sources'], ['form', 'Form'], ['quiz', 'Quiz'], ['chat', 'Chat'], ['whatsapp', 'WhatsApp'], ['exit', 'Exit popup'], ['none', 'Other / older']];
 
 export default function LeadsPage() {
   const router = useRouter();
@@ -38,6 +48,9 @@ export default function LeadsPage() {
   const [status, setStatus] = useState(searchParams.get('status') || 'all');
   const [cityFilter, setCityFilter] = useState('');
   const [tagFilter, setTagFilter] = useState('');
+  const [product, setProduct] = useState(searchParams.get('product') || 'all');
+  const [widget, setWidget] = useState(searchParams.get('source_widget') || 'all');
+  const [whatsappClicks, setWhatsappClicks] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [showImport, setShowImport] = useState(false);
   const [importResult, setImportResult] = useState('');
@@ -50,12 +63,15 @@ export default function LeadsPage() {
     if (search) params.set('search', search);
     if (cityFilter) params.set('city', cityFilter);
     if (tagFilter) params.set('tag', tagFilter);
+    if (product !== 'all') params.set('product', product);
+    if (widget !== 'all') params.set('source_widget', widget);
     const res = await apiFetch(`/api/leads?${params}`);
     const data = await res.json();
     setLeads(data.leads || []);
     setTotal(data.total || 0);
+    setWhatsappClicks(typeof data.whatsappClicks30d === 'number' ? data.whatsappClicks30d : null);
     setLoading(false);
-  }, [status, search, cityFilter, tagFilter]);
+  }, [status, search, cityFilter, tagFilter, product, widget]);
 
   useEffect(() => { fetchLeads(); }, [fetchLeads]);
 
@@ -64,6 +80,8 @@ export default function LeadsPage() {
     if (status !== 'all') params.set('status', status);
     if (cityFilter) params.set('city', cityFilter);
     if (tagFilter) params.set('tag', tagFilter);
+    if (product !== 'all') params.set('product', product);
+    if (widget !== 'all') params.set('source_widget', widget);
     window.open(`/api/leads/export?${params}`, '_blank');
   };
 
@@ -112,11 +130,17 @@ export default function LeadsPage() {
           className="rounded-lg border border-neutral-300 px-3 py-2 text-sm w-28" />
         <input type="text" placeholder="Tag..." value={tagFilter} onChange={e => setTagFilter(e.target.value)}
           className="rounded-lg border border-neutral-300 px-3 py-2 text-sm w-28" />
-        <div className="flex gap-1">
+        <select aria-label="Product" value={product} onChange={e => setProduct(e.target.value)} className="rounded-lg border border-neutral-300 px-3 py-2 text-sm">
+          {PRODUCTS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+        </select>
+        <select aria-label="Source" value={widget} onChange={e => setWidget(e.target.value)} className="rounded-lg border border-neutral-300 px-3 py-2 text-sm">
+          {WIDGETS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
+        </select>
+        <div className="flex flex-wrap gap-1">
           {STATUSES.map(s => (
             <button key={s} onClick={() => setStatus(s)}
               className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${status === s ? 'bg-brand-600 text-white' : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'}`}>
-              {s === 'all' ? 'All' : s.replace('_', ' ')}
+              {STATUS_LABELS[s] ?? s}
             </button>
           ))}
         </div>
@@ -124,6 +148,7 @@ export default function LeadsPage() {
           <button onClick={() => setShowImport(!showImport)} className="rounded-lg bg-neutral-100 px-3 py-2 text-sm hover:bg-neutral-200">Import</button>
           <button onClick={handleExport} className="rounded-lg bg-neutral-100 px-3 py-2 text-sm hover:bg-neutral-200">Export CSV</button>
           <span className="flex items-center text-sm text-neutral-500">{total} leads</span>
+          {whatsappClicks !== null && <span className="flex items-center text-sm text-neutral-500" title="Website WhatsApp button clicks, last 30 days">· {whatsappClicks} WhatsApp clicks (30d)</span>}
         </div>
       </div>
 
@@ -161,12 +186,12 @@ export default function LeadsPage() {
               <tr key={lead.id} onClick={() => router.push(`/admin/leads/${lead.id}`)}
                 className="cursor-pointer border-b border-neutral-100 hover:bg-neutral-50 transition-colors">
                 <td className="px-4 py-3 font-medium text-neutral-900">{lead.name}</td>
-                <td className="px-4 py-3 text-neutral-600">{lead.email}</td>
+                <td className="px-4 py-3 text-neutral-600">{lead.email || '—'}</td>
                 <td className="px-4 py-3 text-neutral-600">{lead.phone || '—'}</td>
                 <td className="px-4 py-3 text-neutral-600 capitalize">{lead.productInterest}</td>
                 <td className="px-4 py-3">
                   <span className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${STATUS_COLORS[lead.status] || 'bg-neutral-100 text-neutral-600'}`}>
-                    {lead.status.replace('_', ' ')}
+                    {STATUS_LABELS[lead.status] ?? lead.status.replace('_', ' ')}
                   </span>
                 </td>
                 <td className="px-4 py-3 text-neutral-600">{lead.score}</td>
@@ -177,7 +202,7 @@ export default function LeadsPage() {
                     ))}
                   </div>
                 </td>
-                <td className="px-4 py-3 text-neutral-600 capitalize">{lead.source}</td>
+                <td className="px-4 py-3 text-neutral-600 capitalize">{lead.sourceWidget ? `${lead.source} · ${lead.sourceWidget}` : lead.source}</td>
                 <td className="px-4 py-3 text-neutral-400">{new Date(lead.createdAt).toLocaleDateString()}</td>
               </tr>
             ))}

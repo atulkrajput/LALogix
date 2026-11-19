@@ -25,7 +25,7 @@ class CrmController extends Controller
         $newLeads = $count('new');
         $contacted = $count('contacted');
         $demoScheduled = $count('demo_scheduled');
-        $converted = $count('converted');
+        $converted = $count('converted') + $count('paid'); // "paid" is the new name for a won lead
         $lost = $count('lost');
 
         $pct = fn (int $n) => $totalLeads > 0 ? number_format($n / $totalLeads * 100, 1, '.', '') : '0';

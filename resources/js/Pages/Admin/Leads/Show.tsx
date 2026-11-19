@@ -56,13 +56,19 @@ interface LeadDetail {
   clickId?: string | null;
   landingPage?: string | null;
   referrer?: string | null;
+  sourceWidget?: string | null;
+  businessType?: string | null;
+  size?: string | null;
+  pageUrl?: string | null;
+  consentAt?: string | null;
   activities: Activity[];
   demoBookings: DemoBooking[];
   tags: Tag[];
   whatsappLogs: WhatsappLog[];
 }
 
-const STATUSES = ['new', 'contacted', 'demo_scheduled', 'converted', 'lost'];
+const STATUSES = ['new', 'contacted', 'demo_scheduled', 'trial', 'paid', 'lost'];
+const STATUS_LABELS: Record<string, string> = { new: 'New', contacted: 'Contacted', demo_scheduled: 'Demo booked', trial: 'Trial', paid: 'Paid', converted: 'Converted', lost: 'Lost' };
 const ACTIVITY_TYPES = ['call', 'email', 'whatsapp', 'meeting'];
 const TAG_PRESETS = ['hot', 'warm', 'cold', 'follow-up', 'not-interested'];
 
@@ -70,6 +76,8 @@ const STATUS_COLORS: Record<string, string> = {
   new: 'bg-blue-100 text-blue-700',
   contacted: 'bg-yellow-100 text-yellow-700',
   demo_scheduled: 'bg-purple-100 text-purple-700',
+  trial: 'bg-amber-100 text-amber-800',
+  paid: 'bg-green-100 text-green-700',
   converted: 'bg-green-100 text-green-700',
   lost: 'bg-red-100 text-red-700',
 };
@@ -199,7 +207,7 @@ export default function LeadDetailPage({ id }: { id: number }) {
             </button>
             <span className="rounded-full bg-brand-50 px-3 py-1 text-sm font-bold text-brand-700">Score: {lead.score}</span>
             <span className={`rounded-full px-3 py-1 text-sm font-medium capitalize ${STATUS_COLORS[lead.status] || ''}`}>
-              {lead.status.replace('_', ' ')}
+              {STATUS_LABELS[lead.status] ?? lead.status.replace('_', ' ')}
             </span>
           </div>
         </div>
@@ -208,6 +216,10 @@ export default function LeadDetailPage({ id }: { id: number }) {
           <div><span className="text-xs text-neutral-400">Email</span><p className="text-sm">{lead.email}</p></div>
           <div><span className="text-xs text-neutral-400">Phone</span><p className="text-sm">{lead.phone || '—'}</p></div>
           <div><span className="text-xs text-neutral-400">Product Interest</span><p className="text-sm capitalize">{lead.productInterest}</p></div>
+          {lead.sourceWidget && <div><span className="text-xs text-neutral-400">Website widget</span><p className="text-sm capitalize">{lead.sourceWidget}</p></div>}
+          {lead.businessType && <div><span className="text-xs text-neutral-400">Business type</span><p className="text-sm">{lead.businessType}{lead.size ? ` · ${lead.size}` : ''}</p></div>}
+          {lead.pageUrl && <div className="col-span-2"><span className="text-xs text-neutral-400">Page</span><p className="truncate text-sm">{lead.pageUrl}</p></div>}
+          {lead.consentAt && <div><span className="text-xs text-neutral-400">Consent given</span><p className="text-sm">{new Date(lead.consentAt).toLocaleString()}</p></div>}
           <div><span className="text-xs text-neutral-400">Source</span><p className="text-sm capitalize">{lead.source}</p></div>
           <div><span className="text-xs text-neutral-400">Created</span><p className="text-sm">{new Date(lead.createdAt).toLocaleString()}</p></div>
           <div><span className="text-xs text-neutral-400">Updated</span><p className="text-sm">{new Date(lead.updatedAt).toLocaleString()}</p></div>
@@ -241,7 +253,7 @@ export default function LeadDetailPage({ id }: { id: number }) {
             {STATUSES.map(s => (
               <button key={s} onClick={() => updateStatus(s)} disabled={saving || lead.status === s}
                 className={`rounded-full px-3 py-1 text-xs font-medium capitalize transition-colors ${lead.status === s ? 'bg-brand-600 text-white' : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'} disabled:opacity-50`}>
-                {s.replace('_', ' ')}
+                {STATUS_LABELS[s] ?? s}
               </button>
             ))}
           </div>

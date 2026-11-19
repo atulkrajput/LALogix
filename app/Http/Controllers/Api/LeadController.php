@@ -7,61 +7,26 @@ use App\Models\Activity;
 use App\Models\Lead;
 use App\Models\LeadTag;
 use App\Support\LeadAttribution;
-use App\Services\AutomationService;
-use App\Services\EmailService;
+use App\Services\LeadCaptureService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /** Ported from old/src/app/api/leads/** */
 class LeadController extends Controller
 {
-    /** POST /api/leads — create a lead (public). */
-    public function store(Request $request, EmailService $email, AutomationService $automation): JsonResponse
+    /** POST /api/leads — create a lead (public): quiz, chat, exit popup, notify-me. */
+    public function store(Request $request, LeadCaptureService $capture): JsonResponse
     {
-        $name = $request->input('name');
-        $mail = $request->input('email');
-
-        if (! $name || ! $mail) {
-            return response()->json(['error' => 'Name and email are required'], 400);
+        if (LeadCaptureService::isSpam($request)) {
+            return response()->json(['success' => true], 201);
         }
 
-        $productInterest = $request->input('product_interest') ?: 'general';
-        $source = $request->input('source') ?: 'website';
-
-        $lead = Lead::create([
-            'name' => $name,
-            'organization' => $request->input('organization') ?: null,
-            'city' => $request->input('city') ?: null,
-            'phone' => $request->input('phone') ?: null,
-            'email' => $mail,
-            'message' => $request->input('message') ?: null,
-            'product_interest' => $productInterest,
-            'source' => $source,
-            'status' => 'new',
-            ...LeadAttribution::fromRequest($request),
-        ]);
-
-        $email->notifySales(
-            "New Lead: {$name} — ".($request->input('product_interest') ?: 'General'),
-            'New Lead Received',
-            [
-                'Name' => $name,
-                'Email' => $mail,
-                'Phone' => $request->input('phone'),
-                'Organization' => $request->input('organization'),
-                'City' => $request->input('city'),
-                'Product Interest' => $request->input('product_interest') ?: 'General',
-                'Message' => $request->input('message'),
-                'Source' => $source,
-            ],
-        );
-
-        // Run "new_lead" automation rules after the response is sent.
-        dispatch(fn () => $automation->run('new_lead', $lead->id))->afterResponse();
+        $lead = $capture->capture($request, 'form');
 
         return response()->json(['success' => true, 'lead' => ['id' => $lead->id]], 201);
     }
@@ -99,7 +64,10 @@ class LeadController extends Controller
             ->with('tags')
             ->get();
 
-        return response()->json(['leads' => $leads, 'total' => $total, 'page' => $page, 'limit' => $limit]);
+        // WhatsApp button clicks in the last 30 days (logged by POST /api/lead-events).
+        $whatsappClicks = DB::table('lead_events')->where('type', 'whatsapp_click')->where('created_at', '>=', now()->subDays(30))->count();
+
+        return response()->json(['leads' => $leads, 'total' => $total, 'page' => $page, 'limit' => $limit, 'whatsappClicks30d' => $whatsappClicks]);
     }
 
     /** GET /api/leads/{id} */
@@ -227,14 +195,16 @@ class LeadController extends Controller
 
         return response()->streamDownload(function () use ($leads) {
             $out = fopen('php://output', 'w');
-            fputcsv($out, ['id', 'name', 'email', 'phone', 'organization', 'city', 'state', 'product_interest', 'source', 'status', 'score', 'tags', 'created_at']);
+            fputcsv($out, ['id', 'name', 'email', 'phone', 'organization', 'city', 'state', 'product_interest', 'business_type', 'size',
+                'source', 'source_widget', 'status', 'score', 'page_url', 'utm_source', 'utm_medium', 'utm_campaign', 'message', 'tags', 'created_at']);
             foreach ($leads as $l) {
-                fputcsv($out, [
+                fputcsv($out, array_map(fn ($v) => self::csvSafe($v), [
                     $l->id, $l->name, $l->email, $l->phone, $l->organization, $l->city, $l->state,
-                    $l->product_interest, $l->source, $l->status, $l->score,
+                    $l->product_interest, $l->business_type, $l->size, $l->source, $l->source_widget, $l->status, $l->score,
+                    $l->page_url, $l->utm_source, $l->utm_medium, $l->utm_campaign, $l->message,
                     $l->tags->pluck('tag_name')->implode(';'),
                     $l->created_at?->toISOString(),
-                ]);
+                ]));
             }
             fclose($out);
         }, 'leads-export-'.(int) (microtime(true) * 1000).'.csv', ['Content-Type' => 'text/csv']);
@@ -289,7 +259,13 @@ class LeadController extends Controller
         ]);
     }
 
-    /** Shared status / city / tag filters. */
+    /** Stop spreadsheet apps from running visitor-typed text as a formula. */
+    private static function csvSafe(mixed $value): mixed
+    {
+        return is_string($value) && preg_match('/^[=+\-@\t\r]/', $value) ? "'".$value : $value;
+    }
+
+    /** Shared status / city / tag / product / source widget filters. */
     private function filtered(Request $request): Builder
     {
         $query = Lead::query();
@@ -303,6 +279,14 @@ class LeadController extends Controller
         }
         if ($tag = $request->query('tag')) {
             $query->whereHas('tags', fn ($q) => $q->where('tag_name', $tag));
+        }
+        $product = $request->query('product');
+        if ($product && $product !== 'all') {
+            $query->where('product_interest', $product);
+        }
+        $widget = $request->query('source_widget');
+        if ($widget && $widget !== 'all') {
+            $widget === 'none' ? $query->whereNull('source_widget') : $query->where('source_widget', $widget);
         }
 
         return $query;

@@ -67,6 +67,12 @@ export function captureAttribution(): void {
   const landing = (window.location.pathname + window.location.search).slice(0, 500);
 
   if (Object.keys(tagged).length) {
+    // First tagged visit also goes into a cookie (first touch, 90 days) that the server
+    // reads when a form arrives without attribution (see App\Support\LeadAttribution).
+    if (!document.cookie.split('; ').some((c) => c.startsWith('lx_utm='))) {
+      const first = JSON.stringify({ ...tagged, landing_page: landing.slice(0, 200) });
+      document.cookie = `lx_utm=${encodeURIComponent(first)}; Max-Age=${MAX_AGE_DAYS * 86400}; Path=/; SameSite=Lax${window.location.protocol === 'https:' ? '; Secure' : ''}`;
+    }
     write({ ...tagged, landing_page: landing, referrer: externalReferrer, captured_at: new Date().toISOString() });
   } else if (externalReferrer && !read()) {
     write({ referrer: externalReferrer, landing_page: landing, captured_at: new Date().toISOString() });
