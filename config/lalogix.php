@@ -21,6 +21,13 @@
 
 $wa = '918755587185';
 
+// Product screenshots: public/images/products/{slug}-{1..4}.webp, 1200×750.
+// TODO: these are generated placeholders; replace them with real screenshots (same file names).
+$shots = fn (string $slug, string $name, array $captions) => array_map(
+    fn ($caption, $i) => ['src' => '/images/products/'.$slug.'-'.($i + 1).'.webp', 'alt' => $name.': '.$caption, 'width' => 1200, 'height' => 750],
+    $captions, array_keys($captions),
+);
+
 return [
     // Public canonical URL used for SEO tags, sitemap and JSON-LD.
     'site_url' => rtrim(env('SITE_URL', 'https://lalogix.com'), '/'),
@@ -116,6 +123,7 @@ return [
             'demo' => ['label' => 'Try VIVK free', 'url' => 'https://vivk.in'],
             'site_url' => 'https://vivk.in',
             'play_store_url' => null,
+            'screenshots' => $shots('vivk', 'VIVK', ['chat screen', 'answer view', 'history', 'plans']),
             'outcomes' => [
                 ['title' => 'Answers in seconds', 'text' => 'Ask a question in plain words and get a clear answer straight away.'],
                 ['title' => 'Nothing to install', 'text' => 'Open VIVK in any browser on your phone or computer.'],
@@ -157,6 +165,7 @@ return [
             'demo' => ['label' => 'Try demo', 'url' => 'https://amritix.shop'],
             'site_url' => 'https://amritix.shop',
             'play_store_url' => 'TODO: Google Play URL',
+            'screenshots' => $shots('amritix', 'AMRITIX', ['milk purchase entry', 'vendor accounts', 'inventory', 'income and expense']),
             'outcomes' => [
                 ['title' => 'Every litre accounted for', 'text' => 'Record milk purchase and sale as it happens, so the daily hisab is always ready.'],
                 ['title' => 'Vendors and stock in one place', 'text' => 'Keep vendor accounts and inventory together instead of in separate registers.'],
@@ -201,6 +210,7 @@ return [
             'demo' => ['label' => 'Try live demo', 'url' => null, 'note' => 'TODO: demo URL and demo login'],
             'site_url' => null,
             'play_store_url' => null,
+            'screenshots' => $shots('school-management', 'School Automation', ['admissions', 'attendance', 'fee collection', 'report cards']),
             'outcomes' => [
                 ['title' => 'No more registers', 'text' => 'Admissions, attendance and fee records live in one system instead of paper.'],
                 ['title' => 'Fees under control', 'text' => 'See who has paid and who has not, and issue receipts without manual work.'],
@@ -245,6 +255,7 @@ return [
             'demo' => ['label' => 'Try live demo', 'url' => null, 'note' => 'TODO: demo URL and demo login'],
             'site_url' => null,
             'play_store_url' => null,
+            'screenshots' => $shots('inventory-pos', 'Inventory & POS', ['billing counter', 'stock list', 'purchases', 'sales report']),
             'outcomes' => [
                 ['title' => 'Quick billing at the counter', 'text' => 'Make bills fast and keep the queue moving.'],
                 ['title' => 'Stock that is always right', 'text' => 'Every sale and purchase updates stock straight away.'],
@@ -289,6 +300,7 @@ return [
             'demo' => ['label' => 'Visit AISHO', 'url' => 'https://aisho.live'],
             'site_url' => 'https://aisho.live',
             'play_store_url' => null,
+            'screenshots' => $shots('aisho', 'AISHO', ['screen 1', 'screen 2', 'screen 3', 'screen 4']),
             'outcomes' => [
                 ['title' => 'TODO: outcome 1', 'text' => 'TODO'],
                 ['title' => 'TODO: outcome 2', 'text' => 'TODO'],
@@ -328,6 +340,7 @@ return [
             'demo' => null,
             'site_url' => null,
             'play_store_url' => null,
+            'screenshots' => $shots('ayurvedadhara', 'AyurvedaDhara', ['store preview', 'product page', 'doctor consultation', 'formulas']),
             'outcomes' => [
                 ['title' => 'Authentic products', 'text' => 'Ayurvedic medicines and herbs in one store.'],
                 ['title' => "A doctor's guidance", 'text' => 'Consult a doctor before you choose.'],
@@ -368,6 +381,7 @@ return [
             'demo' => ['label' => 'Visit DoonPortal', 'url' => 'https://doonportal.com'],
             'site_url' => 'https://doonportal.com',
             'play_store_url' => null,
+            'screenshots' => $shots('doonportal', 'DoonPortal', ['directory search', 'business listing', 'claim your business', 'categories']),
             'outcomes' => [
                 ['title' => 'Get found locally', 'text' => 'List your Dehradun business free so nearby customers can find you.'],
                 ['title' => 'Own your listing', 'text' => 'Claim your business and keep its details correct.'],

@@ -7,7 +7,10 @@ use Illuminate\Support\Facades\Route;
 // ---- Public website -------------------------------------------------------
 Route::controller(PageController::class)->group(function () {
     Route::get('/', 'home');
-    Route::get('/products/{slug}', 'product')->where('slug', 'school-management|inventory-pos');
+    Route::get('/products', 'products');
+    Route::get('/products/{slug}', 'product')->where('slug', implode('|', array_map('preg_quote', \App\Support\Site::slugs())));
+    Route::get('/pricing', 'pricing');
+    Route::get('/industries', 'industries');
     Route::get('/about', 'about');
     Route::get('/insights', 'insights');
     Route::get('/insights/{slug}', 'insight');

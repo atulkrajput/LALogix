@@ -69,6 +69,14 @@ export interface ProductCard {
   site_url: string | null;
   play_store_url: string | null;
   billed: boolean;
+  screenshots: Screenshot[];
+}
+
+export interface Screenshot {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
 }
 
 export interface Faq {
@@ -83,7 +91,6 @@ export interface Product extends ProductCard {
   who_for: string[];
   faq: Faq[];
   whatsapp_text: string;
-  screenshots: { src: string; alt: string; width: number; height: number }[];
 }
 
 const FALLBACK: SiteProps = {

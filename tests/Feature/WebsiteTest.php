@@ -139,4 +139,38 @@ class WebsiteTest extends TestCase
         $this->assertStringNotContainsString('custom-automation', $xml);
         $this->assertStringNotContainsString('/solutions', $xml);
     }
+
+    public function test_products_pricing_and_industries_pages_render(): void
+    {
+        $this->get('/products')->assertOk()->assertInertia(fn ($p) => $p->component('Products/Index')->has('products', count(Site::slugs())));
+        $this->get('/pricing')->assertOk()->assertInertia(fn ($p) => $p->component('Pricing')->has('products', count(Site::slugs())));
+        $this->get('/industries')->assertOk()->assertInertia(fn ($p) => $p->component('Industries')->has('industries'));
+    }
+
+    public function test_every_product_page_uses_the_shared_template(): void
+    {
+        foreach (Site::slugs() as $slug) {
+            $html = $this->get("/products/{$slug}")
+                ->assertOk()
+                ->assertInertia(fn ($p) => $p->component('Products/Show')->where('product.slug', $slug))
+                ->getContent();
+            $this->assertStringContainsString('"@type":"SoftwareApplication"', $html, $slug);
+            $this->assertStringContainsString('"@type":"Product"', $html, $slug);
+        }
+        $this->get('/products/unknown-thing')->assertNotFound();
+    }
+
+    public function test_navigation_lists_every_product_from_config(): void
+    {
+        $this->get('/')->assertInertia(fn ($p) => $p->has('site.products', count(Site::slugs()))
+            ->where('site.company.whatsapp', '918755587185'));
+    }
+
+    public function test_sitemap_lists_every_product_and_new_page(): void
+    {
+        $xml = $this->get('/sitemap.xml')->getContent();
+        foreach (['/products', '/pricing', '/industries', ...array_map(fn ($s) => "/products/{$s}", Site::slugs())] as $path) {
+            $this->assertStringContainsString("<loc>https://lalogix.com{$path}</loc>", $xml);
+        }
+    }
 }

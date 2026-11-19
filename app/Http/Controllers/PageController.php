@@ -60,14 +60,36 @@ class PageController extends Controller
         return $this->render('ThankYou', Seo::page('thankYou'));
     }
 
+    /** /products: every product as a card. */
+    public function products(): InertiaResponse
+    {
+        return $this->render('Products/Index', Seo::page('products'), ['products' => Site::cards()]);
+    }
+
+    /** /products/{slug}: one template for every product, driven by config/lalogix.php. */
     public function product(string $slug): InertiaResponse
     {
-        $component = [
-            'school-management' => 'Products/SchoolManagement',
-            'inventory-pos' => 'Products/InventoryPos',
-        ][$slug] ?? abort(404);
+        $product = Site::product($slug) ?? abort(404);
 
-        return $this->render($component, Seo::product($slug));
+        $others = array_values(array_filter(Site::cards(), fn ($p) => $p['slug'] !== $slug && $p['status'] === 'live'));
+
+        return $this->render('Products/Show', Seo::product($slug), [
+            'product' => $product,
+            'related' => array_slice($others, 0, 3),
+        ]);
+    }
+
+    public function pricing(): InertiaResponse
+    {
+        return $this->render('Pricing', Seo::page('pricing'), ['products' => Site::cards()]);
+    }
+
+    public function industries(): InertiaResponse
+    {
+        return $this->render('Industries', Seo::page('industries'), [
+            'industries' => Site::clean(config('lalogix.industries')),
+            'products' => Site::cards(),
+        ]);
     }
 
     /** Privacy, terms, refund and shipping policies (content/legal/*.md). */
@@ -140,13 +162,17 @@ class PageController extends Controller
 
         $routes = [
             ['', 1, 'weekly'],
-            ['/products/school-management', 0.95, 'monthly'],
-            ['/products/inventory-pos', 0.9, 'monthly'],
+            ['/products', 0.9, 'monthly'],
+            ['/pricing', 0.8, 'monthly'],
+            ['/industries', 0.7, 'monthly'],
             ['/about', 0.7, 'monthly'],
             ['/insights', 0.8, 'weekly'],
             ['/contact', 0.7, 'monthly'],
             ['/book-demo', 0.85, 'monthly'],
         ];
+        foreach (Site::slugs() as $slug) {
+            $routes[] = ["/products/{$slug}", 0.9, 'monthly'];
+        }
         foreach (array_keys(self::LEGAL) as $legal) {
             $routes[] = ["/{$legal}", 0.3, 'yearly'];
         }
