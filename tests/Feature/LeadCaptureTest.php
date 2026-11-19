@@ -220,6 +220,8 @@ class LeadCaptureTest extends TestCase
         $prompt = ChatController::systemPrompt();
         $this->assertStringNotContainsString('TODO', $prompt);
         $this->assertStringContainsString('Multi-dairy accounts', $prompt);
+        $this->assertStringContainsString('Your name is LAL Ji', $prompt);
+        $this->get('/')->assertInertia(fn ($p) => $p->where('site.chatName', 'LAL Ji'));
     }
 
     public function test_admin_can_filter_leads_and_export_csv(): void

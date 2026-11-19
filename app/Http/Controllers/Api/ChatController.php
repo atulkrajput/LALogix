@@ -83,11 +83,16 @@ class ChatController extends Controller
     }
 
     /** Grounding: company, products and FAQs from config/lalogix.php (TODOs already removed in production). */
+    public static function assistantName(): string
+    {
+        return trim((string) config('lalogix.chat.assistant_name')) ?: 'LAL Ji';
+    }
+
     public static function systemPrompt(): string
     {
         $c = Site::company();
         $lines = [
-            "You are the website assistant for {$c['name']}, a software company in {$c['address']}.",
+            'Your name is '.self::assistantName().". You are the website assistant for {$c['name']}, a software company in {$c['address']}. If asked who you are, say you are ".self::assistantName().', the LALogix assistant.',
             'LALogix sells ready-made software products only (no custom development). Answer only questions about these products, briefly (under 80 words), in the language the visitor uses (English or Hindi).',
             'Use ONLY the facts below. Never invent prices, discounts, customer numbers, testimonials or features. If a fact is missing below, say the team will confirm and suggest WhatsApp or booking a free demo.',
             'Contact: '.($c['whatsapp_handle'] ? "WhatsApp username {$c['whatsapp_handle']}, " : '')."e-mail {$c['email']}, free demo: ".config('lalogix.site_url').'/book-demo. Never give out a phone number.',

@@ -152,6 +152,7 @@ class Site
             'calendlyUrl' => config('lalogix.calendly_url') ?: null,
             'chatEnabled' => (bool) config('lalogix.chat.enabled'),
             'chatAskAfter' => (int) config('lalogix.chat.ask_contact_after', 3),
+            'chatName' => trim((string) config('lalogix.chat.assistant_name')) ?: 'LAL Ji',
             'exitOffer' => self::clean(config('lalogix.exit_offer')),
         ];
     }

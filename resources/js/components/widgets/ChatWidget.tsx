@@ -16,11 +16,11 @@ type Msg = { role: 'user' | 'assistant'; content: string };
  * saves a lead with source_widget=chat.
  */
 export default function ChatWidget() {
-  const { chatAskAfter, products } = useSite();
+  const { chatAskAfter, chatName, products } = useSite();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([
-    { role: 'assistant', content: 'Hi! Ask me anything about LALogix products: what they do, who they are for, or how to try them.' },
+    { role: 'assistant', content: `Namaste! I'm ${chatName}. Ask me anything about LALogix products: what they do, who they are for, or how to try them.` },
   ]);
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
@@ -73,7 +73,7 @@ export default function ChatWidget() {
     setLeadState('saving');
     const transcript = messages
       .slice(1)
-      .map((m) => `${m.role === 'user' ? 'Visitor' : 'Bot'}: ${m.content}`)
+      .map((m) => `${m.role === 'user' ? 'Visitor' : chatName}: ${m.content}`)
       .join('\n')
       .slice(-4000);
     const res = await submitLead({
@@ -101,7 +101,7 @@ export default function ChatWidget() {
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         aria-controls="lx-chat"
-        aria-label={open ? 'Close chat' : 'Ask our AI assistant'}
+        aria-label={open ? 'Close chat' : `Chat with ${chatName}, our AI assistant`}
         className="fixed bottom-[5.5rem] right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-neutral-900 text-white shadow-lg transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-900 focus-visible:ring-offset-2"
       >
         <Icon name={open ? 'x' : 'bot'} className="h-7 w-7" />
@@ -111,11 +111,13 @@ export default function ChatWidget() {
         <div
           id="lx-chat"
           role="dialog"
-          aria-label="LALogix assistant"
+          aria-label={`${chatName}, LALogix assistant`}
           className="fixed bottom-40 right-3 z-50 flex max-h-[min(70vh,560px)] w-[calc(100vw-1.5rem)] max-w-sm flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-2xl sm:right-5"
         >
           <div className="flex items-center justify-between bg-neutral-900 px-4 py-3 text-white">
-            <p className="font-semibold text-white">LALogix assistant</p>
+            <p className="font-semibold text-white">
+              {chatName} <span className="text-sm font-normal text-neutral-300">· LALogix assistant</span>
+            </p>
             <button type="button" onClick={() => setOpen(false)} aria-label="Close chat" className="rounded p-1 hover:bg-neutral-800">
               <Icon name="x" className="h-5 w-5" />
             </button>
