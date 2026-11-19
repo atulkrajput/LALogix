@@ -70,11 +70,7 @@ export default function Navbar() {
 
         {/* Desktop contact + CTA */}
         <div className="hidden items-center gap-3 lg:flex">
-          <a href={`tel:${company.tel}`} className="inline-flex items-center gap-1.5 text-sm font-medium text-neutral-700 hover:text-brand-700">
-            <Icon name="phone" className="h-4 w-4" />
-            <span className="hidden xl:inline">{company.phone_display}</span>
-            <span className="sr-only xl:hidden">Call {company.phone_display}</span>
-          </a>
+          {waHref && (
           <a
             href={waHref}
             target="_blank"
@@ -83,9 +79,9 @@ export default function Navbar() {
             className="inline-flex items-center gap-1.5 text-sm font-medium text-[#0f7a40] hover:text-[#0b6233]"
           >
             <WhatsAppIcon className="h-4 w-4" />
-            <span className="hidden xl:inline">{company.whatsapp_display}</span>
-            <span className="sr-only xl:hidden">WhatsApp {company.whatsapp_display}</span>
+            <span>WhatsApp</span>
           </a>
+          )}
           <Link
             href={ctaButton.href}
             className="rounded-lg bg-brand-700 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
@@ -96,9 +92,18 @@ export default function Navbar() {
 
         {/* Mobile: call + menu */}
         <div className="flex items-center gap-1 lg:hidden">
-          <a href={`tel:${company.tel}`} className="rounded-md p-2.5 text-neutral-700 hover:bg-neutral-100" aria-label={`Call ${company.phone_display}`}>
-            <Icon name="phone" className="h-5 w-5" />
-          </a>
+          {waHref && (
+            <a
+              href={waHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => trackEvent('whatsapp_click', { location: 'header_mobile' })}
+              className="rounded-md p-2.5 text-[#0f7a40] hover:bg-neutral-100"
+              aria-label="Chat with LALogix on WhatsApp"
+            >
+              <WhatsAppIcon className="h-5 w-5" />
+            </a>
+          )}
           <button
             ref={hamburgerRef}
             type="button"
@@ -141,6 +146,7 @@ export default function Navbar() {
           <Link href={ctaButton.href} onClick={close} className="rounded-lg bg-brand-700 px-4 py-3 text-center font-semibold text-white hover:bg-brand-800">
             {ctaButton.label}
           </Link>
+          {waHref && (
           <a
             href={waHref}
             target="_blank"
@@ -148,8 +154,9 @@ export default function Navbar() {
             onClick={() => trackEvent('whatsapp_click', { location: 'mobile_menu' })}
             className="inline-flex items-center justify-center gap-2 rounded-lg border border-neutral-300 px-4 py-3 font-medium text-neutral-800"
           >
-            <WhatsAppIcon className="h-5 w-5 text-[#0f7a40]" /> WhatsApp {company.whatsapp_display}
+            <WhatsAppIcon className="h-5 w-5 text-[#0f7a40]" /> Chat on WhatsApp
           </a>
+          )}
         </div>
       </div>
     </header>

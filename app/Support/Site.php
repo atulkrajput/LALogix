@@ -82,31 +82,27 @@ class Site
     public static function company(): array
     {
         $c = config('lalogix.company');
-        $phone = self::isTodo($c['phone']) ? null : $c['phone'];
-        $telDigits = $phone ? preg_replace('/\D/', '', $phone) : $c['whatsapp'];
+        $username = self::whatsappUsername();
+        unset($c['whatsapp_username']);
 
-        return self::clean([
-            ...$c,
+        return [
+            ...self::clean($c),
             'address' => trim(implode(', ', array_filter([
                 self::isTodo($c['street']) ? null : $c['street'],
                 $c['city'], $c['state'], $c['country'],
             ])), ', '),
-            // tel: link and the number shown with it (falls back to the WhatsApp number).
-            'tel' => '+'.ltrim($telDigits, '+'),
-            'phone_display' => self::formatIndian($telDigits),
-            'whatsapp_display' => self::formatIndian($c['whatsapp']),
-        ]);
+            // WhatsApp by username only (no phone number on the site). Null until configured.
+            'whatsapp' => $username,
+            'whatsapp_handle' => $username ? '@'.$username : null,
+        ];
     }
 
-    /** "918755587185" → "+91 87555 87185" */
-    public static function formatIndian(string $digits): string
+    /** The WhatsApp username without "@", or null while it is not set. */
+    public static function whatsappUsername(): ?string
     {
-        $d = preg_replace('/\D/', '', $digits);
-        if (strlen($d) === 12 && str_starts_with($d, '91')) {
-            return '+91 '.substr($d, 2, 5).' '.substr($d, 7);
-        }
+        $u = ltrim(trim((string) config('lalogix.company.whatsapp_username')), '@');
 
-        return $digits;
+        return ($u === '' || self::isTodo($u) || ! preg_match('/^[A-Za-z0-9._]{3,35}$/', $u)) ? null : $u;
     }
 
     /** @return array<string, array> all products keyed by slug, cleaned */
@@ -169,8 +165,10 @@ class Site
         ])), array_values(self::products()));
     }
 
-    public static function whatsappUrl(string $text): string
+    public static function whatsappUrl(string $text): ?string
     {
-        return 'https://wa.me/'.config('lalogix.company.whatsapp').'?text='.rawurlencode($text);
+        $u = self::whatsappUsername();
+
+        return $u ? 'https://wa.me/'.$u.'?text='.rawurlencode($text) : null;
     }
 }

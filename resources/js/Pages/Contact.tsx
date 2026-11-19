@@ -6,16 +6,18 @@ import { trackEvent } from '@/lib/analytics';
 
 export default function ContactPage() {
   const { company } = useSite();
+  const waHref = whatsappUrl(company.whatsapp, "Hi, I'd like to talk to LALogix.");
   const row = 'flex items-start gap-3 rounded-xl border border-neutral-200 bg-white p-4 text-neutral-900 hover:border-brand-600 hover:text-neutral-900';
 
   return (
     <main>
-      <PageHero title="Contact LALogix" subtitle="WhatsApp is the fastest way to reach us. You can also call, e-mail or leave your number below." />
+      <PageHero title="Contact LALogix" subtitle="WhatsApp is the fastest way to reach us. You can also e-mail us or leave your number below and we will message you." />
       <section className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-5 md:py-16">
         <div className="space-y-3 md:col-span-2">
           <h2 className="text-xl font-semibold text-neutral-900">Reach us directly</h2>
+          {waHref && (
           <a
-            href={whatsappUrl(company.whatsapp, "Hi, I'd like to talk to LALogix.")}
+            href={waHref}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => trackEvent('whatsapp_click', { location: 'contact' })}
@@ -24,16 +26,10 @@ export default function ContactPage() {
             <WhatsAppIcon className="mt-0.5 h-5 w-5 text-[#0f7a40]" />
             <span>
               <span className="block font-semibold">WhatsApp</span>
-              <span className="text-neutral-700">{company.whatsapp_display}</span>
+              <span className="text-neutral-700">{company.whatsapp_handle}</span>
             </span>
           </a>
-          <a href={`tel:${company.tel}`} className={row}>
-            <Icon name="phone" className="mt-0.5 h-5 w-5 text-brand-700" />
-            <span>
-              <span className="block font-semibold">Phone</span>
-              <span className="text-neutral-700">{company.phone_display}</span>
-            </span>
-          </a>
+          )}
           <a href={`mailto:${company.email}`} className={row}>
             <Icon name="mail" className="mt-0.5 h-5 w-5 text-brand-700" />
             <span>

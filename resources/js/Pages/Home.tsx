@@ -170,7 +170,7 @@ export default function Home({ home, products, quiz }: Props) {
               <p className="text-lg font-semibold text-white">Rather just message us?</p>
               <p className="mt-2 text-neutral-300">Talk to the team on WhatsApp.</p>
               <div className="mt-5">
-                <WhatsAppButton text="Hi, I'd like to see my business on LALogix." label={`WhatsApp ${company.whatsapp_display}`} location="home_final_cta" />
+                <WhatsAppButton text="Hi, I'd like to see my business on LALogix." label="Chat on WhatsApp" location="home_final_cta" />
               </div>
             </div>
           </div>

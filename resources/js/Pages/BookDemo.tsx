@@ -7,6 +7,7 @@ import { trackEvent } from '@/lib/analytics';
 /** /book-demo: every "Book a Free Demo" button lands here. */
 export default function BookDemoPage() {
   const { company, calendlyUrl } = useSite();
+  const waHref = whatsappUrl(company.whatsapp, "Hi, I'd like to book a free demo of a LALogix product.");
 
   return (
     <main>
@@ -24,19 +25,22 @@ export default function BookDemoPage() {
           <ShortDemoForm />
         </div>
         <aside className="space-y-4 md:col-span-2">
+          {waHref && (
           <div className="rounded-2xl border border-neutral-200 bg-white p-6">
             <h2 className="text-lg font-semibold text-neutral-900">Prefer WhatsApp?</h2>
             <p className="mt-2 text-sm text-neutral-700">Message us and we will set up the demo there.</p>
             <a
-              href={whatsappUrl(company.whatsapp, "Hi, I'd like to book a free demo of a LALogix product.")}
+              href={waHref}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => trackEvent('whatsapp_click', { location: 'book_demo' })}
               className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#0f7a40] px-4 py-3 font-semibold text-white hover:bg-[#0b6233] hover:text-white"
             >
-              <WhatsAppIcon className="h-5 w-5" /> WhatsApp {company.whatsapp_display}
+              <WhatsAppIcon className="h-5 w-5" /> Chat on WhatsApp
             </a>
+            {company.whatsapp_handle && <p className="mt-2 text-center text-sm text-neutral-600">Username: {company.whatsapp_handle}</p>}
           </div>
+          )}
         </aside>
       </section>
 

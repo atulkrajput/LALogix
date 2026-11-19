@@ -19,7 +19,6 @@
 | `php artisan optimize`) so a cached config is refreshed.
 */
 
-$wa = '918755587185';
 
 // Product screenshots: public/images/products/{slug}-{1..4}.webp, 1200×750.
 // TODO: these are generated placeholders; replace them with real screenshots (same file names).
@@ -82,9 +81,9 @@ return [
         'country' => 'India',
         'street' => 'TODO: street address',
         'email' => 'info@lalogix.com',
-        // Voice number. Until it is filled in, call links use the WhatsApp number below.
-        'phone' => 'TODO: phone number',
-        'whatsapp' => $wa,
+        // WhatsApp username (without @). Links are https://wa.me/{username}; no phone
+        // number is shown anywhere on the site. Override with WHATSAPP_USERNAME in .env.
+        'whatsapp_username' => env('WHATSAPP_USERNAME') ?: 'lalogixenterprises',
         'gstin' => 'TODO: GSTIN',
         'trust_line' => 'GST & MSME registered · Built in Dehradun · 15+ years building software',
         // Hours within which we reply on WhatsApp on working days.

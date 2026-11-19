@@ -63,9 +63,11 @@ export function TryDemoButton({ product, className = btn.secondary }: { product:
 
 export function WhatsAppButton({ text, label, location, className = btn.whatsapp }: { text: string; label?: string; location: string; className?: string }) {
   const { company } = useSite();
+  const href = whatsappUrl(company.whatsapp, text);
+  if (!href) return null;
   return (
     <a
-      href={whatsappUrl(company.whatsapp, text)}
+      href={href}
       target="_blank"
       rel="noopener noreferrer"
       className={className}

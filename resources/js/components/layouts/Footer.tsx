@@ -9,6 +9,7 @@ const linkClass = 'text-sm text-neutral-300 transition-colors hover:text-white f
 export default function Footer() {
   const { company, products } = useSite();
   const year = new Date().getFullYear();
+  const waHref = whatsappUrl(company.whatsapp, "Hi, I'm interested in LALogix products.");
 
   return (
     <footer className="bg-neutral-950 text-neutral-300">
@@ -23,18 +24,17 @@ export default function Footer() {
               Ready-to-use cloud software for Indian schools, dairies and shops. All products are built, run and billed by {company.name}.
             </p>
             <address className="mt-6 space-y-3 text-sm not-italic">
-              <a href={`tel:${company.tel}`} className={`${linkClass} flex items-center gap-2`}>
-                <Icon name="phone" className="h-4 w-4 text-brand-400" /> {company.phone_display}
-              </a>
+              {waHref && (
               <a
-                href={whatsappUrl(company.whatsapp, "Hi, I'm interested in LALogix products.")}
+                href={waHref}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => trackEvent('whatsapp_click', { location: 'footer' })}
                 className={`${linkClass} flex items-center gap-2`}
               >
-                <WhatsAppIcon className="h-4 w-4 text-[#25D366]" /> WhatsApp {company.whatsapp_display}
+                <WhatsAppIcon className="h-4 w-4 text-[#25D366]" /> WhatsApp {company.whatsapp_handle}
               </a>
+              )}
               <a href={`mailto:${company.email}`} className={`${linkClass} flex items-center gap-2`}>
                 <Icon name="mail" className="h-4 w-4 text-brand-400" /> {company.email}
               </a>

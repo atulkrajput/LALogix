@@ -162,8 +162,38 @@ class WebsiteTest extends TestCase
 
     public function test_navigation_lists_every_product_from_config(): void
     {
-        $this->get('/')->assertInertia(fn ($p) => $p->has('site.products', count(Site::slugs()))
-            ->where('site.company.whatsapp', '918755587185'));
+        $this->get('/')->assertInertia(fn ($p) => $p->has('site.products', count(Site::slugs())));
+    }
+
+    public function test_whatsapp_uses_the_username_and_no_phone_number_is_published(): void
+    {
+        config(['lalogix.company.whatsapp_username' => '@lalogix']);
+
+        $this->get('/')->assertInertia(fn ($p) => $p->where('site.company.whatsapp', 'lalogix')
+            ->where('site.company.whatsapp_handle', '@lalogix')
+            ->missing('site.company.tel')
+            ->missing('site.company.phone'));
+        $this->assertSame('https://wa.me/lalogix?text=Hi', Site::whatsappUrl('Hi'));
+
+        foreach (['/', '/contact', '/book-demo', '/products/amritix', '/privacy-policy', '/refund-policy', '/terms-and-conditions', '/shipping-policy'] as $url) {
+            $html = $this->get($url)->assertOk()->getContent();
+            $this->assertStringNotContainsString('tel:', $html, $url);
+            $this->assertStringNotContainsString('87555', $html, $url);
+            $this->assertStringNotContainsString('"telephone"', $html, $url);
+        }
+        $this->assertStringContainsString('@lalogix', PageController::legalHtml('refund-policy'));
+    }
+
+    public function test_whatsapp_is_hidden_until_a_username_is_set(): void
+    {
+        config(['lalogix.company.whatsapp_username' => 'TODO: WhatsApp username', 'lalogix.show_todos' => false]);
+
+        $this->get('/')->assertInertia(fn ($p) => $p->where('site.company.whatsapp', null));
+        $this->assertNull(Site::whatsappUrl('Hi'));
+
+        $refund = PageController::legalHtml('refund-policy');
+        $this->assertStringNotContainsString('TODO', $refund);
+        $this->assertStringContainsString('You can cancel at any time', $refund);
     }
 
     public function test_sitemap_lists_every_product_and_new_page(): void

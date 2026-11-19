@@ -31,6 +31,8 @@ otherwise a cached config keeps the old values.
 SHOW_TODOS=false
 # Where new-lead alerts are e-mailed (default info@lalogix.com).
 LEAD_ALERT_EMAIL=info@lalogix.com
+# WhatsApp username, without @. Buttons link to https://wa.me/{username}; no phone number is shown.
+WHATSAPP_USERNAME=lalogixenterprises
 
 # AI chat widget (proxies to the VIVK API; the key stays on the server).
 CHAT_WIDGET_ENABLED=false
