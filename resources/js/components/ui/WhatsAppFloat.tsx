@@ -33,7 +33,7 @@ export default function WhatsAppFloat() {
       rel="noopener noreferrer"
       onClick={onClick}
       aria-label={product ? `Ask about ${product.name} on WhatsApp` : 'Chat with LALogix on WhatsApp'}
-      className="fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[#128C4B] text-white shadow-lg transition-transform hover:scale-105 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#128C4B] focus-visible:ring-offset-2"
+      className="fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[#0f7a40] text-white shadow-lg transition-transform hover:scale-105 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0f7a40] focus-visible:ring-offset-2"
     >
       <WhatsAppIcon className="h-7 w-7" />
     </a>

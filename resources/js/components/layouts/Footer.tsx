@@ -82,7 +82,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-10 flex flex-col gap-3 border-t border-neutral-800 pt-6 text-sm text-neutral-400 sm:flex-row sm:items-center sm:justify-between">
-          <p>
+          <p className="text-sm text-neutral-400">
             &copy; {year} {company.name}. {company.legal_form ? `${company.legal_form}, ` : ''}
             {company.city}, {company.state}.
           </p>

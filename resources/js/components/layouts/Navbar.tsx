@@ -80,7 +80,7 @@ export default function Navbar() {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => trackEvent('whatsapp_click', { location: 'header' })}
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-[#128C4B] hover:text-[#0b6b38]"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-[#0f7a40] hover:text-[#0b6233]"
           >
             <WhatsAppIcon className="h-4 w-4" />
             <span className="hidden xl:inline">{company.whatsapp_display}</span>
@@ -148,7 +148,7 @@ export default function Navbar() {
             onClick={() => trackEvent('whatsapp_click', { location: 'mobile_menu' })}
             className="inline-flex items-center justify-center gap-2 rounded-lg border border-neutral-300 px-4 py-3 font-medium text-neutral-800"
           >
-            <WhatsAppIcon className="h-5 w-5 text-[#128C4B]" /> WhatsApp {company.whatsapp_display}
+            <WhatsAppIcon className="h-5 w-5 text-[#0f7a40]" /> WhatsApp {company.whatsapp_display}
           </a>
         </div>
       </div>

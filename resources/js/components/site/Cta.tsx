@@ -10,7 +10,7 @@ export const btn = {
   primary: `${base} bg-brand-700 text-white hover:bg-brand-800 hover:text-white focus-visible:ring-brand-600`,
   secondary: `${base} border border-neutral-300 bg-white text-neutral-900 hover:border-neutral-400 hover:bg-neutral-50 hover:text-neutral-900 focus-visible:ring-brand-600`,
   dark: `${base} bg-neutral-900 text-white hover:bg-neutral-800 hover:text-white focus-visible:ring-neutral-900`,
-  whatsapp: `${base} bg-[#128C4B] text-white hover:bg-[#0b6b38] hover:text-white focus-visible:ring-[#128C4B]`,
+  whatsapp: `${base} bg-[#0f7a40] text-white hover:bg-[#0b6233] hover:text-white focus-visible:ring-[#0f7a40]`,
 };
 
 /** Book-demo link, pre-selecting the product on the form. */

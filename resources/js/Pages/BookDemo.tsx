@@ -32,7 +32,7 @@ export default function BookDemoPage() {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => trackEvent('whatsapp_click', { location: 'book_demo' })}
-              className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#128C4B] px-4 py-3 font-semibold text-white hover:bg-[#0b6b38] hover:text-white"
+              className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-[#0f7a40] px-4 py-3 font-semibold text-white hover:bg-[#0b6233] hover:text-white"
             >
               <WhatsAppIcon className="h-5 w-5" /> WhatsApp {company.whatsapp_display}
             </a>

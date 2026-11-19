@@ -21,7 +21,7 @@ export default function ContactPage() {
             onClick={() => trackEvent('whatsapp_click', { location: 'contact' })}
             className={row}
           >
-            <WhatsAppIcon className="mt-0.5 h-5 w-5 text-[#128C4B]" />
+            <WhatsAppIcon className="mt-0.5 h-5 w-5 text-[#0f7a40]" />
             <span>
               <span className="block font-semibold">WhatsApp</span>
               <span className="text-neutral-700">{company.whatsapp_display}</span>

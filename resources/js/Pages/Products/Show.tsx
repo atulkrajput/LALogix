@@ -130,17 +130,17 @@ export default function ProductShow({ product, related }: { product: Product; re
         {product.features.length > 0 && (
           <div className="lg:col-span-2">
             <h2 className="text-3xl font-bold text-neutral-900">Features</h2>
-            <dl className="mt-6 grid gap-5 sm:grid-cols-2">
+            <ul className="mt-6 grid gap-5 sm:grid-cols-2" role="list">
               {product.features.map((f) => (
-                <div key={f.title} className="flex gap-3">
-                  <Icon name="check" className="mt-1 h-5 w-5 flex-shrink-0 text-[#128C4B]" />
+                <li key={f.title} className="flex gap-3">
+                  <Icon name="check" className="mt-1 h-5 w-5 flex-shrink-0 text-[#0f7a40]" />
                   <div>
-                    <dt className="font-semibold text-neutral-900">{f.title}</dt>
-                    {f.text && <dd className="mt-1 text-neutral-700">{f.text}</dd>}
+                    <h3 className="text-base font-semibold text-neutral-900">{f.title}</h3>
+                    {f.text && <p className="mt-1 text-neutral-700">{f.text}</p>}
                   </div>
-                </div>
+                </li>
               ))}
-            </dl>
+            </ul>
           </div>
         )}
         {product.who_for.length > 0 && (

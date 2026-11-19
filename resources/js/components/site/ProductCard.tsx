@@ -27,7 +27,7 @@ export default function ProductCard({ product, headingLevel = 'h3' }: { product:
         <ul className="mt-4 space-y-2" role="list">
           {product.bullets.map((b) => (
             <li key={b} className="flex items-start gap-2 text-sm text-neutral-700">
-              <Icon name="check" className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#128C4B]" />
+              <Icon name="check" className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#0f7a40]" />
               {b}
             </li>
           ))}
