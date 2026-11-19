@@ -173,4 +173,40 @@ class WebsiteTest extends TestCase
             $this->assertStringContainsString("<loc>https://lalogix.com{$path}</loc>", $xml);
         }
     }
+
+    public function test_homepage_has_the_new_sections_and_faq_schema(): void
+    {
+        $html = $this->get('/')
+            ->assertOk()
+            ->assertInertia(fn ($p) => $p->component('Home')
+                ->where('home.hero.title', 'Ready-to-use software for schools, dairies and shops. Live today, not someday.')
+                ->has('products', count(Site::slugs()))
+                ->has('quiz.rules')
+                ->has('home.faq', 5))
+            ->getContent();
+        $this->assertStringContainsString('"@type":"FAQPage"', $html);
+        $this->assertStringContainsString('"@type":"Organization"', $html);
+    }
+
+    public function test_removed_claims_and_generic_links_are_gone(): void
+    {
+        $files = array_merge(glob(resource_path('js/Pages/*.tsx')), glob(resource_path('js/Pages/*/*.tsx')), glob(resource_path('js/components/*/*.tsx')));
+        foreach ($files as $file) {
+            $src = file_get_contents($file);
+            $this->assertStringNotContainsString('Join hundreds', $src, $file);
+            $this->assertStringNotContainsString('Learn more', $src, $file);
+            $this->assertStringNotContainsString('custom-automation', $src, $file);
+        }
+        $this->assertStringNotContainsString('hundreds', json_encode(config('lalogix')));
+    }
+
+    public function test_amritix_lists_only_real_features(): void
+    {
+        $text = strtolower(json_encode(config('lalogix.products.amritix')));
+        foreach (['cattle', 'quality testing', 'fat/snf', 'breeding'] as $banned) {
+            $this->assertStringNotContainsString($banned, $text);
+        }
+        $titles = array_column(config('lalogix.products.amritix.features'), 'title');
+        $this->assertSame(['Multi-dairy accounts', 'Vendors', 'Milk purchase and sale', 'Inventory', 'Income and expense', 'Android app'], $titles);
+    }
 }

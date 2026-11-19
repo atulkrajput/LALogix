@@ -37,7 +37,11 @@ class PageController extends Controller
 
     public function home(): InertiaResponse
     {
-        return $this->render('Home', Seo::page('home'));
+        return $this->render('Home', Seo::page('home'), [
+            'home' => Site::clean(config('lalogix.home')),
+            'products' => Site::cards(),
+            'quiz' => config('lalogix.quiz'),
+        ]);
     }
 
     public function about(): InertiaResponse

@@ -94,6 +94,12 @@ class Seo
         $jsonLd = $key === 'home'
             ? [self::organization(), self::website()]
             : [self::breadcrumb([['Home', $site], [$label, $url]])];
+        if ($key === 'home') {
+            $faq = array_values(array_filter(Site::clean(config('lalogix.home.faq')), fn ($f) => ! empty($f['q']) && ! empty($f['a'])));
+            if ($faq) {
+                $jsonLd[] = self::faqPage($faq);
+            }
+        }
         if ($key === 'about') {
             array_unshift($jsonLd, self::organization());
         }

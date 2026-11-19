@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import DemoForm from '@/components/forms/DemoForm';
+import ShortDemoForm from '@/components/forms/ShortDemoForm';
 import { useSite, whatsappUrl } from '@/lib/site';
 import { WhatsAppIcon } from '@/components/ui/Icon';
 import { trackEvent } from '@/lib/analytics';
@@ -21,7 +21,7 @@ export default function BookDemoPage() {
 
       <section className="mx-auto grid max-w-5xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-5 md:py-16">
         <div className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm md:col-span-3">
-          <DemoForm />
+          <ShortDemoForm />
         </div>
         <aside className="space-y-4 md:col-span-2">
           <div className="rounded-2xl border border-neutral-200 bg-white p-6">

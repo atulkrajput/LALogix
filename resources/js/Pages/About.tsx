@@ -1,104 +1,74 @@
-import FeatureGrid from '@/components/sections/FeatureGrid';
-import FounderSection from '@/components/sections/FounderSection';
-import CTASection from '@/components/sections/CTASection';
-import PageLayout from '@/components/layouts/PageLayout';
-import SectionWrapper from '@/components/ui/SectionWrapper';
-import Card from '@/components/ui/Card';
-import AnimatedSection from '@/components/ui/AnimatedSection';
-import { mission, vision, history, values, team, ctaContent } from '@/data/about';
+import Icon from '@/components/ui/Icon';
+import Link from '@/components/ui/Link';
+import PageHero from '@/components/site/PageHero';
+import { BookDemoButton, WhatsAppButton } from '@/components/site/Cta';
+import { intro, story, milestones, principles } from '@/data/about';
+import { useSite } from '@/lib/site';
 
 export default function AboutPage() {
+  const { company, products } = useSite();
 
   return (
-    <PageLayout>
-      <main>
-        {/* Mission & Vision */}
-        <AnimatedSection variant="fade-in-up">
-          <SectionWrapper className="bg-gradient-to-br from-brand-50 via-white to-brand-100">
-            <div className="mx-auto max-w-3xl text-center">
-              <h1 className="text-4xl font-bold tracking-tight text-neutral-900 sm:text-5xl">
-                About LALogix
-              </h1>
-              <p className="mt-6 text-lg leading-relaxed text-neutral-600">
-                {mission.description}
-              </p>
-            </div>
-          </SectionWrapper>
-        </AnimatedSection>
+    <main>
+      <PageHero title="About LALogix" subtitle={intro} />
 
-        <AnimatedSection variant="fade-in-up" delay={0.1}>
-          <SectionWrapper>
-            <div className="grid gap-8 md:grid-cols-2">
-              <Card className="text-center">
-                <h2 className="text-2xl font-bold text-neutral-900">{mission.title}</h2>
-                <p className="mt-4 text-neutral-600">{mission.description}</p>
-              </Card>
-              <Card className="text-center">
-                <h2 className="text-2xl font-bold text-neutral-900">{vision.title}</h2>
-                <p className="mt-4 text-neutral-600">{vision.description}</p>
-              </Card>
-            </div>
-          </SectionWrapper>
-        </AnimatedSection>
+      <section className="mx-auto max-w-3xl px-4 py-14 sm:px-6">
+        <h2 className="text-3xl font-bold text-neutral-900">Our story</h2>
+        <p className="mt-4 text-lg leading-relaxed text-neutral-700">{story}</p>
+        <ol className="mt-8 space-y-4">
+          {milestones.map((m) => (
+            <li key={m.year} className="flex items-start gap-4">
+              <span className="shrink-0 rounded-full bg-brand-700 px-3 py-1 text-sm font-bold text-white">{m.year}</span>
+              <span className="text-neutral-800">{m.event}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
 
-        {/* History & Milestones */}
-        <AnimatedSection variant="fade-in-up">
-          <SectionWrapper className="bg-neutral-50">
-            <div className="mx-auto max-w-3xl">
-              <h2 className="text-center text-3xl font-bold tracking-tight text-neutral-900 sm:text-4xl">
-                {history.title}
-              </h2>
-              <p className="mt-6 text-center text-lg leading-relaxed text-neutral-600">
-                {history.description}
-              </p>
-              <div className="mt-12 space-y-6">
-                {history.milestones.map((milestone) => (
-                  <div key={milestone.year} className="flex items-start gap-4">
-                    <span className="shrink-0 rounded-full bg-brand-600 px-4 py-1 text-sm font-bold text-white">
-                      {milestone.year}
-                    </span>
-                    <p className="text-neutral-700">{milestone.event}</p>
-                  </div>
-                ))}
+      <section className="bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+          <h2 className="text-center text-3xl font-bold text-neutral-900">How we work</h2>
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {principles.map((p) => (
+              <div key={p.title} className="rounded-2xl border border-neutral-200 p-6">
+                <Icon name={p.icon} className="h-7 w-7 text-brand-700" />
+                <h3 className="mt-4 text-lg font-semibold text-neutral-900">{p.title}</h3>
+                <p className="mt-2 text-neutral-700">{p.text}</p>
               </div>
-            </div>
-          </SectionWrapper>
-        </AnimatedSection>
+            ))}
+          </div>
+        </div>
+      </section>
 
-        {/* Founder & Team - hidden for now */}
-        {/* <FounderSection
-          name={team.founder.name}
-          title={team.founder.title}
-          description={team.founder.description}
-          image={team.founder.image}
-        /> */}
+      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+        <h2 className="text-3xl font-bold text-neutral-900">Our products</h2>
+        <ul className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3" role="list">
+          {products.map((p) => (
+            <li key={p.slug}>
+              <Link href={`/products/${p.slug}`} className="flex items-center gap-3 rounded-xl border border-neutral-200 bg-white p-4 hover:border-brand-600">
+                <Icon name={p.icon} className="h-6 w-6 text-brand-700" />
+                <span>
+                  <span className="block font-semibold text-neutral-900">Explore {p.name}</span>
+                  {p.category && <span className="block text-sm text-neutral-600">{p.category}</span>}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
 
-        <AnimatedSection variant="fade-in">
-          <SectionWrapper>
-            <p className="mx-auto max-w-3xl text-center text-lg leading-relaxed text-neutral-600">
-              {team.description}
-            </p>
-          </SectionWrapper>
-        </AnimatedSection>
-
-        {/* Values */}
-        <AnimatedSection variant="fade-in-up">
-          <FeatureGrid
-            features={values}
-            columns={4}
-            title="Our Values"
-            subtitle="The principles that guide everything we do."
-          />
-        </AnimatedSection>
-
-        {/* CTA Section */}
-        <CTASection
-          headline={ctaContent.headline}
-          subheadline={ctaContent.subheadline}
-          ctaButton={ctaContent.ctaButton}
-          variant="gradient"
-        />
-      </main>
-    </PageLayout>
+      <section className="bg-neutral-900">
+        <div className="mx-auto flex max-w-4xl flex-col items-center gap-4 px-4 py-14 text-center sm:px-6">
+          <h2 className="text-3xl font-bold text-white">Talk to the team</h2>
+          <p className="text-neutral-300">
+            {company.name} · {company.legal_form} · {company.address}
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            <BookDemoButton />
+            <WhatsAppButton text="Hi, I'd like to know more about LALogix." location="about" />
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }

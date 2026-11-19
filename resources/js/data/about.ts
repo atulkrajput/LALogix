@@ -1,67 +1,22 @@
-import type { Feature } from '@/types';
+/** About page copy. Company and contact details come from config/lalogix.php. */
 
-export const mission = {
-  title: 'Our Mission',
-  description:
-    'To empower businesses of all sizes with affordable, industry-specific automation software that simplifies operations, reduces costs, and drives growth.',
-};
+export const intro =
+  'LALogix Enterprises builds and runs ready-to-use cloud software for Indian businesses. We do not take custom projects: every product is already built, running and improving, so you can try it today and switch it on in a day.';
 
-export const vision = {
-  title: 'Our Vision',
-  description:
-    'To become India\'s most trusted automation software partner, enabling every school, retailer, and farm to operate at peak efficiency through technology.',
-};
+export const story =
+  'LALogix started in Dehradun more than 15 years ago, building software for local schools. Over the years that work turned into a set of products for schools, shops and dairies, and newer products such as the VIVK AI assistant. Each one is owned, run and supported by the same small team, and billed by LALogix Enterprises.';
 
-export const history = {
-  title: 'Our Story',
-  description:
-    'LALogix was founded over 15 years ago in Dehradun, India, with a clear purpose — to bridge the technology gap for businesses that needed powerful automation but lacked access to enterprise-grade solutions. What started as custom software projects for local schools has grown into a full product suite serving education, retail, and agriculture sectors. Over the years, we have built deep domain expertise, refined our platforms through real-world feedback, and earned the trust of hundreds of organizations across India.',
-  milestones: [
-    { year: '2008', event: 'Founded in Dehradun with a focus on school automation' },
-    { year: '2012', event: 'Launched the first version of School Management System' },
-    { year: '2016', event: 'Expanded into retail with Inventory POS System' },
-    { year: '2013', event: 'Introduced Dairy Management System for agriculture sector' },
-    { year: '2025', event: 'Serving 50+ organizations across India' },
-  ],
-};
-
-export const values: Feature[] = [
-  {
-    icon: '💡',
-    title: 'Innovation',
-    description: 'We continuously improve our platforms with the latest technology to deliver better solutions.',
-  },
-  {
-    icon: '🤝',
-    title: 'Trust',
-    description: 'We build long-term relationships with our clients based on transparency, reliability, and results.',
-  },
-  {
-    icon: '🎯',
-    title: 'Simplicity',
-    description: 'We design software that is powerful yet easy to use, so teams can adopt it without friction.',
-  },
-  {
-    icon: '🌱',
-    title: 'Impact',
-    description: 'We measure success by the real-world impact our software has on our clients\' operations and growth.',
-  },
+// TODO: confirm these dates with the owner.
+export const milestones = [
+  { year: '2008', event: 'Founded in Dehradun with a focus on school software' },
+  { year: '2012', event: 'First version of the school management system' },
+  { year: '2013', event: 'Dairy management software for the agriculture sector' },
+  { year: '2016', event: 'Inventory and POS software for retail' },
 ];
 
-export const team = {
-  founder: {
-    name: 'Founder Name',
-    title: 'Founder & CEO',
-    description:
-      'A seasoned software engineer and entrepreneur with 15+ years of experience in building automation platforms. Passionate about using technology to solve real business problems.',
-    image: '/images/team/founder.png',
-  },
-  description:
-    'Our team combines deep technical expertise with industry knowledge. From developers and designers to support specialists, every member of the LALogix team is committed to delivering exceptional software and service.',
-};
-
-export const ctaContent = {
-  headline: 'Want to Learn More?',
-  subheadline: 'Get in touch with our team or explore our solutions to see how LALogix can help your organization.',
-  ctaButton: { label: 'Contact Us', href: '/contact' },
-};
+export const principles = [
+  { icon: 'package-check', title: 'Products, not projects', text: 'We build products once and keep improving them, instead of one-off custom builds.' },
+  { icon: 'indian-rupee', title: 'Priced for India', text: 'Rupee pricing, GST invoices and plans small businesses can afford.' },
+  { icon: 'message-square-reply', title: 'Support on WhatsApp', text: 'Talk to the people who build the software, on the app you already use.' },
+  { icon: 'smartphone', title: 'Works on your phone', text: 'Everything runs in the browser, with Android apps where they help.' },
+];
