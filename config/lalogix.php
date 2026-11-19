@@ -125,8 +125,15 @@ return [
             'demo' => ['label' => 'Try VIVK free', 'url' => 'https://vivk.in'],
             'site_url' => 'https://vivk.in',
             'play_store_url' => null,
-            // Real screenshots (2026-11-20). TODO: add a chat screen with a question and answer.
-            'screenshots' => $shots('vivk', 'VIVK', ['create your account and see what VIVK does', 'sign in on your phone', 'plans and prices']),
+            // Real screenshots (2026-11-20); account e-mail masked or cropped out.
+            'screenshots' => $shots('vivk', 'VIVK', [
+                'a detailed answer in the chat',
+                'your dashboard: ask, create content, analyze, code',
+                'create your account and see what VIVK does',
+                'what the Pro plan includes',
+                'plans and prices',
+                'sign in on your phone',
+            ]),
             'outcomes' => [
                 ['title' => 'Content in minutes', 'text' => 'Draft blog posts, e-mails and social media posts in minutes.'],
                 ['title' => 'Less routine work', 'text' => 'Get help with contracts, reports and presentations.'],
@@ -136,6 +143,8 @@ return [
                 ['title' => 'Create content in minutes', 'text' => 'Blog posts, e-mails and social media posts.'],
                 ['title' => 'Automate business tasks', 'text' => 'Contracts, reports and presentations.'],
                 ['title' => 'Coding assistance', 'text' => 'Debug, explain and write code.'],
+                ['title' => 'Analyze', 'text' => 'Get insights from your questions and data.'],
+                ['title' => 'Pro plan', 'text' => 'Unlimited messages and chat history, priority support and conversation export.'],
                 ['title' => 'Built for India', 'text' => 'Understands Indian context, culture and languages.'],
                 ['title' => 'Works in the browser', 'text' => 'Sign up with your e-mail and use it on phone or computer, nothing to install.'],
                 ['title' => 'Private conversations', 'text' => 'Conversations are encrypted, and you can delete them at any time.'],
@@ -143,6 +152,7 @@ return [
             'who_for' => ['Indian businesses that write a lot of content and documents', 'Individuals who want a writing and coding assistant', 'Teams that want to save time on routine work'],
             'faq' => [
                 ['q' => 'Is VIVK free?', 'a' => 'Yes, there is a free plan. Pro costs ₹999/month and Business ₹4,999/month, including taxes. New Pro subscribers may get a 7-day free trial.'],
+                ['q' => 'What do I get with Pro?', 'a' => 'Unlimited messages, unlimited chat history, priority support and the option to export your conversations, on the Claude Sonnet AI model.'],
                 ['q' => 'Can I cancel any time?', 'a' => 'Yes. Your plan stays active until the end of the period you paid for, then moves to the free plan.'],
                 ['q' => 'Do I need to install anything?', 'a' => 'No. VIVK works in your web browser.'],
                 ['q' => 'Who bills VIVK?', 'a' => 'VIVK subscriptions are billed by LALogix Enterprises, with a GST invoice.'],
