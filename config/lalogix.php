@@ -59,6 +59,8 @@ return [
     // AI chat widget (proxied to the VIVK API by POST /api/chat; the key never reaches the browser).
     'chat' => [
         'enabled' => (bool) env('CHAT_WIDGET_ENABLED', false),
+        // Name the assistant uses on the site and in its replies (e.g. "LAL Ji" or "Mr. LAL").
+        'assistant_name' => 'LAL Ji',
         'api_url' => env('VIVK_API_URL'),
         'api_key' => env('VIVK_API_KEY'),
         'model' => env('VIVK_API_MODEL', ''),

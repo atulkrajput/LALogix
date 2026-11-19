@@ -41,6 +41,7 @@ export interface SiteProps {
   calendlyUrl: string | null;
   chatEnabled: boolean;
   chatAskAfter: number;
+  chatName: string;
   exitOffer: { title: string | null; text: string | null };
 }
 
@@ -113,6 +114,7 @@ const FALLBACK: SiteProps = {
   calendlyUrl: null,
   chatEnabled: false,
   chatAskAfter: 3,
+  chatName: 'LAL Ji',
   exitOffer: { title: null, text: null },
 };
 
