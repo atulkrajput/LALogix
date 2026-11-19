@@ -82,8 +82,8 @@ return [
         'street' => 'TODO: street address',
         'email' => 'info@lalogix.com',
         // WhatsApp username (without @). Links are https://wa.me/{username}; no phone
-        // number is shown anywhere on the site. Until it is set, WhatsApp buttons are hidden.
-        'whatsapp_username' => env('WHATSAPP_USERNAME', 'TODO: WhatsApp username'),
+        // number is shown anywhere on the site. Override with WHATSAPP_USERNAME in .env.
+        'whatsapp_username' => env('WHATSAPP_USERNAME') ?: 'lalogixenterprises',
         'gstin' => 'TODO: GSTIN',
         'trust_line' => 'GST & MSME registered · Built in Dehradun · 15+ years building software',
         // Hours within which we reply on WhatsApp on working days.
