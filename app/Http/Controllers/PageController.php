@@ -121,7 +121,7 @@ class PageController extends Controller
             '{{legal_form}}' => strtolower($c['legal_form']),
             '{{address}}' => $c['address'],
             '{{email}}' => $c['email'],
-            '{{phone}}' => $c['phone_display'],
+            '{{whatsapp}}' => $c['whatsapp_handle'] ?? 'TODO: WhatsApp username',
             '{{site}}' => preg_replace('#^https?://#', '', Seo::siteUrl()),
             '{{products}}' => $list,
         ]);

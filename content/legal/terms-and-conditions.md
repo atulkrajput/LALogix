@@ -68,4 +68,5 @@ These Terms are governed by the laws of India. Courts in Dehradun, Uttarakhand h
 ## 13. Contact
 
 {{company}}, {{address}}
-E-mail: [{{email}}](mailto:{{email}}) · Phone / WhatsApp: {{phone}}
+E-mail: [{{email}}](mailto:{{email}})
+WhatsApp: {{whatsapp}}

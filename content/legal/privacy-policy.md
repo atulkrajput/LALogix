@@ -72,7 +72,7 @@ In line with the Information Technology Act, 2000 and its rules, you can contact
 
 - Name: TODO: grievance officer name
 - E-mail: [{{email}}](mailto:{{email}})
-- Phone: {{phone}}
+- WhatsApp: {{whatsapp}}
 - Address: {{address}}
 
 ## 11. Changes to this policy

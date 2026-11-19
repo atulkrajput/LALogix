@@ -26,9 +26,12 @@ export default function WhatsAppFloat() {
     logLeadEvent('whatsapp_click', { product: product?.lead_key, location: 'floating' });
   };
 
+  const href = whatsappUrl(company.whatsapp, message);
+  if (!href) return null;
+
   return (
     <a
-      href={whatsappUrl(company.whatsapp, message)}
+      href={href}
       target="_blank"
       rel="noopener noreferrer"
       onClick={onClick}

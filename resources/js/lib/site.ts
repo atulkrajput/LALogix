@@ -15,11 +15,9 @@ export interface Company {
   country: string;
   address: string;
   email: string;
-  phone: string | null;
-  tel: string;
-  phone_display: string;
-  whatsapp: string;
-  whatsapp_display: string;
+  /** WhatsApp username (no "@"), or null while it is not configured. No phone number is ever shared. */
+  whatsapp: string | null;
+  whatsapp_handle: string | null;
   trust_line: string;
   reply_hours: string | null;
   working_days: string | null;
@@ -103,11 +101,8 @@ const FALLBACK: SiteProps = {
     country: 'India',
     address: 'Dehradun, Uttarakhand, India',
     email: 'info@lalogix.com',
-    phone: null,
-    tel: '+918755587185',
-    phone_display: '+91 87555 87185',
-    whatsapp: '918755587185',
-    whatsapp_display: '+91 87555 87185',
+    whatsapp: null,
+    whatsapp_handle: null,
     trust_line: '',
     reply_hours: null,
     working_days: null,
@@ -126,8 +121,9 @@ export function useSite(): SiteProps {
   return site ?? FALLBACK;
 }
 
-export function whatsappUrl(number: string, text: string): string {
-  return `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
+/** wa.me link for the WhatsApp username; null (hide the button) while no username is set. */
+export function whatsappUrl(username: string | null, text: string): string | null {
+  return username ? `https://wa.me/${username}?text=${encodeURIComponent(text)}` : null;
 }
 
 /** Indian mobile: optional +91 / 91 / 0, then 10 digits starting 6–9. */

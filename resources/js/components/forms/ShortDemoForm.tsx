@@ -81,7 +81,7 @@ export default function ShortDemoForm({ product, submitLabel = 'Book my free dem
         <p className="text-lg font-semibold text-green-900">
           Thanks! We'll WhatsApp you{company.reply_hours ? ` within ${company.reply_hours} hours` : ' soon'}.
         </p>
-        <p className="mt-1 text-green-800">Save {company.whatsapp_display} so you see our message.</p>
+        {company.whatsapp_handle && <p className="mt-1 text-green-800">Our WhatsApp username is {company.whatsapp_handle}.</p>}
       </div>
     );
   }

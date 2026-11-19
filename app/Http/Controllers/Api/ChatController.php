@@ -31,8 +31,10 @@ class ChatController extends Controller
             'messages.*.content' => ['required', 'string', 'max:1000'],
         ]);
 
-        $fallback = 'Sorry, I cannot answer right now. Please message us on WhatsApp at '
-            .Site::company()['whatsapp_display'].' or book a free demo at '.config('lalogix.site_url').'/book-demo.';
+        $handle = Site::company()['whatsapp_handle'];
+        $fallback = 'Sorry, I cannot answer right now. Please '
+            .($handle ? "message us on WhatsApp ({$handle}) or " : '')
+            .'book a free demo at '.config('lalogix.site_url').'/book-demo.';
 
         $url = config('lalogix.chat.api_url');
         if (! $url) {
@@ -88,7 +90,7 @@ class ChatController extends Controller
             "You are the website assistant for {$c['name']}, a software company in {$c['address']}.",
             'LALogix sells ready-made software products only (no custom development). Answer only questions about these products, briefly (under 80 words), in the language the visitor uses (English or Hindi).',
             'Use ONLY the facts below. Never invent prices, discounts, customer numbers, testimonials or features. If a fact is missing below, say the team will confirm and suggest WhatsApp or booking a free demo.',
-            "Contact: WhatsApp {$c['whatsapp_display']}, e-mail {$c['email']}, free demo: ".config('lalogix.site_url').'/book-demo.',
+            'Contact: '.($c['whatsapp_handle'] ? "WhatsApp username {$c['whatsapp_handle']}, " : '')."e-mail {$c['email']}, free demo: ".config('lalogix.site_url').'/book-demo. Never give out a phone number.',
             '',
             'PRODUCTS:',
         ];

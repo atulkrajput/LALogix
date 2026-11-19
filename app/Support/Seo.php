@@ -125,7 +125,6 @@ class Seo
             'url' => $site,
             'logo' => "{$site}/logo.png",
             'email' => $c['email'],
-            'telephone' => $c['tel'],
             'description' => 'LALogix Enterprises builds ready-to-use cloud software for Indian schools, dairies and shops.',
             'address' => [
                 '@type' => 'PostalAddress',
@@ -136,7 +135,6 @@ class Seo
             'contactPoint' => [
                 '@type' => 'ContactPoint',
                 'email' => $c['email'],
-                'telephone' => $c['tel'],
                 'contactType' => 'sales',
                 'areaServed' => 'IN',
                 'availableLanguage' => ['en', 'hi'],

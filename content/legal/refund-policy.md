@@ -8,7 +8,8 @@ Where a product offers a free trial or live demo, please use it to check the pro
 
 ## 2. Cancelling a subscription
 
-- You can cancel at any time by writing to [{{email}}](mailto:{{email}}) or messaging us on WhatsApp at {{phone}}.
+- You can cancel at any time by writing to [{{email}}](mailto:{{email}}).
+- You can also message us on WhatsApp: {{whatsapp}}
 - Your subscription stays active until the end of the period you have already paid for. It will not renew after that.
 - Cancelling does not by itself create a refund for the current period, except in the cases below.
 
@@ -34,4 +35,5 @@ Approved refunds are paid to the original payment method (card, UPI, net banking
 ## 6. Contact
 
 {{company}}, {{address}}
-E-mail: [{{email}}](mailto:{{email}}) · Phone / WhatsApp: {{phone}}
+E-mail: [{{email}}](mailto:{{email}})
+WhatsApp: {{whatsapp}}

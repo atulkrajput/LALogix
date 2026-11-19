@@ -14,7 +14,9 @@ For products that need your data loaded (for example a school's student list), w
 
 ## 3. If you have not received access
 
-If you have paid but not received your login details within 24 working hours, write to [{{email}}](mailto:{{email}}) or WhatsApp {{phone}} with your payment details and we will sort it out.
+If you have paid but not received your login details within 24 working hours, write to [{{email}}](mailto:{{email}}) with your payment details and we will sort it out.
+
+You can also message us on WhatsApp: {{whatsapp}}
 
 ## 4. Invoices
 
@@ -23,4 +25,5 @@ A GST invoice for every payment is sent to your e-mail address or WhatsApp.
 ## 5. Contact
 
 {{company}}, {{address}}
-E-mail: [{{email}}](mailto:{{email}}) · Phone / WhatsApp: {{phone}}
+E-mail: [{{email}}](mailto:{{email}})
+WhatsApp: {{whatsapp}}
