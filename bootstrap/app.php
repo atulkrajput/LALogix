@@ -25,6 +25,12 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // www → bare domain before anything else runs.
+        $middleware->prepend(\App\Http\Middleware\CanonicalHost::class);
+
+        // Set by the browser (first-visit UTM tags, popup shown), so they are not encrypted.
+        $middleware->encryptCookies(except: ['lx_utm', 'lx_exit']);
+
         $middleware->web(append: [
             HandleInertiaRequests::class,
             \App\Http\Middleware\SecurityHeaders::class,
@@ -77,7 +83,7 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($response->getStatusCode() === 404 && ! $request->is('api/*') && ! $request->expectsJson()) {
                 $meta = Seo::resolve(Seo::page('notFound'));
 
-                return Inertia::render('NotFound', ['meta' => ['title' => $meta['title']]])
+                return Inertia::render('NotFound', ['meta' => ['title' => $meta['title']], 'site' => \App\Support\Site::shared()])
                     ->withViewData(['seo' => $meta])
                     ->toResponse($request)
                     ->setStatusCode(404);

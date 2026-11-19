@@ -76,7 +76,7 @@ export default function ThankYouPage() {
 
             {/* Explore products */}
             <div className="mt-12 text-center">
-              <h2 className="text-xl font-bold text-neutral-900">While You Wait, Explore Our Solutions</h2>
+              <h2 className="text-xl font-bold text-neutral-900">While You Wait, Explore Our Products</h2>
               <div className="mt-6 flex flex-wrap justify-center gap-4">
                 <Button href="/products/school-management" variant="outline" size="sm">
                   School Management
@@ -84,7 +84,7 @@ export default function ThankYouPage() {
                 <Button href="/products/inventory-pos" variant="outline" size="sm">
                   Inventory POS
                 </Button>
-                <Button href="/products/dairy-management" variant="outline" size="sm">
+                <Button href="/products/amritix" variant="outline" size="sm">
                   Dairy Management
                 </Button>
               </div>

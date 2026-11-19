@@ -1,93 +1,97 @@
 import Link from '@/components/ui/Link';
-import Image from '@/components/ui/Image';
-import {
-  logo,
-  footerLinkGroups,
-  socialLinks,
-  contactInfo,
-} from '@/data/navigation';
+import Icon, { WhatsAppIcon } from '@/components/ui/Icon';
+import { logo, companyLinks, legalLinks } from '@/data/navigation';
+import { useSite, whatsappUrl } from '@/lib/site';
+import { trackEvent } from '@/lib/analytics';
+
+const linkClass = 'text-sm text-neutral-300 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-400';
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
+  const { company, products } = useSite();
+  const year = new Date().getFullYear();
 
   return (
-    <footer className="relative bg-gradient-to-b from-neutral-900 to-neutral-950" role="contentinfo">
-      {/* Gradient top separator */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand-500 to-transparent" />
+    <footer className="bg-neutral-950 text-neutral-300">
       <div className="mx-auto max-w-8xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-5">
-          {/* Company info */}
-          <div className="lg:col-span-2">
-            <Link href="/" aria-label="LALogix Home">
-              <Image
-                src={logo.src}
-                alt={logo.alt}
-                width={2172}
-                height={724}
-                sizes="162px"
-                className="h-[54px] w-auto brightness-0 invert"
-                loading="lazy"
-              />
+        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-12">
+          {/* Company + contact */}
+          <div className="lg:col-span-4">
+            <Link href="/" aria-label="LALogix home">
+              <img src={logo.src} alt={logo.alt} width={logo.width} height={logo.height} loading="lazy" className="h-11 w-auto brightness-0 invert" />
             </Link>
-            <p className="mt-4 max-w-sm text-body-sm text-neutral-400">
-              LALogix builds automation platforms for schools, retail
-              businesses, and dairy farms. 15+ years of expertise in
-              industry-specific software solutions.
+            <p className="mt-4 max-w-sm text-sm text-neutral-300">
+              Ready-to-use cloud software for Indian schools, dairies and shops. All products are built, run and billed by {company.name}.
             </p>
-
-            {/* Social links */}
-            <div className="mt-6 flex gap-3">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.platform}
-                  href={social.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-neutral-800 text-neutral-400 transition-all duration-200 hover:scale-110 hover:-translate-y-0.5 hover:text-brand-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 focus-visible:ring-offset-neutral-900"
-                  aria-label={`Follow LALogix on ${social.platform}`}
-                >
-                  <SocialIcon name={social.icon} />
-                </a>
-              ))}
-            </div>
+            <address className="mt-6 space-y-3 text-sm not-italic">
+              <a href={`tel:${company.tel}`} className={`${linkClass} flex items-center gap-2`}>
+                <Icon name="phone" className="h-4 w-4 text-brand-400" /> {company.phone_display}
+              </a>
+              <a
+                href={whatsappUrl(company.whatsapp, "Hi, I'm interested in LALogix products.")}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackEvent('whatsapp_click', { location: 'footer' })}
+                className={`${linkClass} flex items-center gap-2`}
+              >
+                <WhatsAppIcon className="h-4 w-4 text-[#25D366]" /> WhatsApp {company.whatsapp_display}
+              </a>
+              <a href={`mailto:${company.email}`} className={`${linkClass} flex items-center gap-2`}>
+                <Icon name="mail" className="h-4 w-4 text-brand-400" /> {company.email}
+              </a>
+              <p className="flex items-start gap-2 text-neutral-300">
+                <Icon name="map-pin" className="mt-0.5 h-4 w-4 flex-shrink-0 text-brand-400" />
+                <span>
+                  {company.name}
+                  <br />
+                  {company.address}
+                </span>
+              </p>
+            </address>
           </div>
 
-          {/* Link groups */}
-          {footerLinkGroups.map((group) => (
-            <div key={group.title}>
-              <h3 className="text-body-sm font-semibold text-neutral-200">
-                {group.title}
-              </h3>
-              <ul className="mt-3 space-y-2" role="list">
-                {group.links.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="relative text-body-sm text-neutral-400 transition-colors hover:text-brand-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-brand-400 after:transition-all after:duration-200 hover:after:w-full"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          <FooterGroup title="Products" className="lg:col-span-3">
+            {products.map((p) => (
+              <li key={p.slug}>
+                <Link href={`/products/${p.slug}`} className={linkClass}>
+                  {p.name}
+                  {p.category ? ` · ${p.category}` : ''}
+                </Link>
+              </li>
+            ))}
+          </FooterGroup>
+
+          <FooterGroup title="Company" className="lg:col-span-2">
+            {companyLinks.map((l) => (
+              <li key={l.href}>
+                <Link href={l.href} className={linkClass}>
+                  {l.label}
+                </Link>
+              </li>
+            ))}
+          </FooterGroup>
+
+          <FooterGroup title="Policies" className="lg:col-span-3">
+            {legalLinks.map((l) => (
+              <li key={l.href}>
+                <Link href={l.href} className={linkClass}>
+                  {l.label}
+                </Link>
+              </li>
+            ))}
+          </FooterGroup>
         </div>
 
-        {/* Contact info + copyright */}
-        <div className="mt-10 border-t border-neutral-800 pt-8">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex flex-wrap gap-x-6 gap-y-2 text-body-sm text-neutral-400">
-              <a
-                href={`mailto:${contactInfo.email}`}
-                className="relative transition-colors hover:text-brand-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 after:absolute after:bottom-0 after:left-0 after:h-px after:w-0 after:bg-brand-400 after:transition-all after:duration-200 hover:after:w-full"
-              >
-                {contactInfo.email}
+        <div className="mt-10 flex flex-col gap-3 border-t border-neutral-800 pt-6 text-sm text-neutral-400 sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            &copy; {year} {company.name}. {company.legal_form ? `${company.legal_form}, ` : ''}
+            {company.city}, {company.state}.
+          </p>
+          <div className="flex gap-4">
+            {Object.entries(company.social).map(([name, url]) => (
+              <a key={name} href={url} target="_blank" rel="noopener noreferrer" className={linkClass}>
+                {name}
               </a>
-            </div>
-            <p className="text-body-sm text-neutral-500">
-              &copy; {currentYear} LALogix. All rights reserved.
-            </p>
+            ))}
           </div>
         </div>
       </div>
@@ -95,29 +99,13 @@ export default function Footer() {
   );
 }
 
-
-/* Simple inline SVG social icons */
-function SocialIcon({ name }: { name: string }) {
-  switch (name) {
-    case 'linkedin':
-      return (
-        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-        </svg>
-      );
-    case 'twitter':
-      return (
-        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-        </svg>
-      );
-    case 'facebook':
-      return (
-        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-        </svg>
-      );
-    default:
-      return null;
-  }
+function FooterGroup({ title, className = '', children }: { title: string; className?: string; children: React.ReactNode }) {
+  return (
+    <div className={className}>
+      <h2 className="text-sm font-semibold uppercase tracking-wide text-white">{title}</h2>
+      <ul className="mt-4 space-y-2.5" role="list">
+        {children}
+      </ul>
+    </div>
+  );
 }
