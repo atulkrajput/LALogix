@@ -143,7 +143,7 @@ export default function ShortDemoForm({ product, submitLabel = 'Book my free dem
         </label>
         <select id={`${id}-product`} value={values.product} onChange={set('product')} className={field}>
           <option value="">Not sure yet</option>
-          {products.map((p) => (
+          {products.filter((p) => !p.in_house).map((p) => (
             <option key={p.slug} value={p.lead_key}>
               {p.name}
               {p.category ? ` (${p.category})` : ''}

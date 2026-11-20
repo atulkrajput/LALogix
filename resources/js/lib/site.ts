@@ -30,6 +30,8 @@ export interface ProductSummary {
   category: string | null;
   icon: string;
   status: 'live' | 'coming_soon';
+  /** LALogix's own app (e.g. AISHO), not a product sold to businesses. */
+  in_house: boolean;
   lead_key: string;
   whatsapp_text: string;
 }
@@ -87,6 +89,7 @@ export interface Faq {
 
 /** Full product (product page). */
 export interface Product extends ProductCard {
+  in_house?: boolean;
   outcomes: { title: string; text: string | null }[];
   features: { title: string; text: string | null }[];
   who_for: string[];

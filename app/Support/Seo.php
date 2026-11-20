@@ -36,7 +36,7 @@ class Seo
                 'Cloud apps Indian businesses switch on in a day: VIVK AI chat, AMRITIX dairy accounts, school management and billing with stock. Try any LALogix product free.',
                 '/images/og/home.jpg'],
             'products' => ['/products', 'All LALogix Products: School, Dairy, POS and AI Chat',
-                'Compare every LALogix product: VIVK AI chat, AMRITIX dairy app, School Automation, Inventory & POS, AISHO and DoonPortal. Try a live demo or book a free demo.',
+                'Compare every LALogix business product: VIVK AI chat, AMRITIX dairy app, School Automation, Inventory & POS and DoonPortal. Try a live demo or book a free demo.',
                 '/images/og/products.jpg'],
             'pricing' => ['/pricing', 'Pricing for LALogix Products in Indian Rupees',
                 'Simple rupee pricing for every LALogix product, with GST invoices and one bill from LALogix Enterprises. See plans for VIVK, AMRITIX, school and POS software.',
