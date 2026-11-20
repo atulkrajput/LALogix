@@ -131,6 +131,7 @@ export default function Navbar() {
             <Icon name={p.icon} className="h-5 w-5 text-brand-700" />
             <span className="font-medium">{p.name}</span>
             {p.category && <span className="text-sm text-neutral-500">{p.category}</span>}
+            {p.in_house && <span className="rounded bg-brand-50 px-1.5 py-0.5 text-xs font-medium text-brand-800">In-house</span>}
           </Link>
         ))}
         <Link href="/products" onClick={close} className="block rounded-md px-3 py-2.5 text-sm font-medium text-brand-700 hover:bg-neutral-100">
@@ -225,6 +226,7 @@ function ProductsMenu({ products }: { products: ProductSummary[] }) {
               <span className="block text-sm font-semibold text-neutral-900">
                 {p.name}
                 {p.status === 'coming_soon' && <span className="ml-2 rounded bg-neutral-100 px-1.5 py-0.5 text-xs font-medium text-neutral-600">Coming soon</span>}
+                {p.in_house && <span className="ml-2 rounded bg-brand-50 px-1.5 py-0.5 text-xs font-medium text-brand-800">In-house app</span>}
               </span>
               {p.category && <span className="block text-xs text-neutral-600">{p.category}</span>}
             </span>

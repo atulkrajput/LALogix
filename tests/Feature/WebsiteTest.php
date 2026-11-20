@@ -142,8 +142,8 @@ class WebsiteTest extends TestCase
 
     public function test_products_pricing_and_industries_pages_render(): void
     {
-        $this->get('/products')->assertOk()->assertInertia(fn ($p) => $p->component('Products/Index')->has('products', count(Site::slugs())));
-        $this->get('/pricing')->assertOk()->assertInertia(fn ($p) => $p->component('Pricing')->has('products', count(Site::slugs())));
+        $this->get('/products')->assertOk()->assertInertia(fn ($p) => $p->component('Products/Index')->has('products', count(Site::cards())));
+        $this->get('/pricing')->assertOk()->assertInertia(fn ($p) => $p->component('Pricing')->has('products', count(Site::cards())));
         $this->get('/industries')->assertOk()->assertInertia(fn ($p) => $p->component('Industries')->has('industries'));
     }
 
@@ -210,7 +210,7 @@ class WebsiteTest extends TestCase
             ->assertOk()
             ->assertInertia(fn ($p) => $p->component('Home')
                 ->where('home.hero.title', 'Ready-to-use software for schools, dairies and shops. Live today, not someday.')
-                ->has('products', count(Site::slugs()))
+                ->has('products', count(Site::cards()))
                 ->has('quiz.rules')
                 ->has('home.faq', 5))
             ->getContent();
@@ -238,5 +238,36 @@ class WebsiteTest extends TestCase
         }
         $titles = array_column(config('lalogix.products.amritix.features'), 'title');
         $this->assertSame(['Multi-dairy accounts', 'Vendors', 'Milk purchase and sale', 'Inventory', 'Income and expense', 'Financial reports', 'Ledger and accounts', 'Android app'], $titles);
+    }
+
+    public function test_aisho_is_an_in_house_app_and_not_in_the_product_comparison(): void
+    {
+        $compare = array_column(Site::cards(), 'slug');
+        $this->assertNotContains('aisho', $compare);
+        $this->assertContains('vivk', $compare);
+
+        foreach (['/products', '/pricing', '/'] as $url) {
+            $this->get($url)->assertInertia(fn ($p) => $p->where('products', fn ($list) => ! collect($list)->contains('slug', 'aisho')));
+        }
+
+        // Still has its own page and stays in the menu, marked in-house.
+        $this->get('/products/aisho')->assertOk()->assertInertia(fn ($p) => $p->where('product.in_house', true));
+        $this->get('/')->assertInertia(fn ($p) => $p->where('site.products', fn ($list) => collect($list)->firstWhere('slug', 'aisho')['in_house'] === true));
+    }
+
+    public function test_htaccess_redirects_use_the_original_request_path(): void
+    {
+        // Behind the root .htaccess, REQUEST_URI inside public/.htaccess already starts with
+        // /public/, so redirects built from it sent visitors to /public/... (live bug, Nov 2026).
+        $public = file_get_contents(public_path('.htaccess'));
+        $rules = preg_replace('/^\s*#.*$/m', '', $public);
+        $this->assertStringNotContainsString('%{REQUEST_URI}', $rules);
+        $this->assertStringContainsString('RewriteCond %{THE_REQUEST}', $rules);
+
+        // The www redirect lives in the root .htaccess, before the rewrite into public/.
+        $root = file_get_contents(base_path('.htaccess'));
+        $www = strpos($root, 'RewriteCond %{HTTP_HOST} ^www');
+        $this->assertNotFalse($www);
+        $this->assertLessThan(strpos($root, 'RewriteRule ^(.*)$ public/$1'), $www);
     }
 }

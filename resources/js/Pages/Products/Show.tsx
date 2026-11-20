@@ -37,6 +37,7 @@ export default function ProductShow({ product, related }: { product: Product; re
                 {product.category && <p className="text-base font-medium text-neutral-700">{product.category}</p>}
               </div>
               {comingSoon && <span className="rounded-full bg-amber-100 px-3 py-1 text-sm font-semibold text-amber-900">Coming soon</span>}
+              {product.in_house && <span className="rounded-full bg-white px-3 py-1 text-sm font-semibold text-brand-800 shadow-sm">In-house app by LALogix</span>}
             </div>
             {product.promise && <p className="mt-6 text-2xl font-semibold leading-snug text-neutral-900 md:text-3xl">{product.promise}</p>}
             {product.bullets.length > 0 && (
@@ -166,11 +167,17 @@ export default function ProductShow({ product, related }: { product: Product; re
               <h2 className="text-xl font-bold text-neutral-900">Pricing</h2>
               <p className="mt-1 text-2xl font-bold text-neutral-900">{product.price_hint}</p>
               {product.trial && <p className="mt-1 text-neutral-700">{product.trial}</p>}
-              {product.billed && <p className="mt-1 text-sm text-neutral-600">Billed by LALogix Enterprises with a GST invoice.</p>}
+              {product.in_house ? (
+                <p className="mt-1 text-sm text-neutral-600">In-app plans, run by LALogix Enterprises.</p>
+              ) : (
+                product.billed && <p className="mt-1 text-sm text-neutral-600">Billed by LALogix Enterprises with a GST invoice.</p>
+              )}
             </div>
-            <Link href="/pricing" className={btn.secondary}>
-              Compare pricing for all products
-            </Link>
+            {!product.in_house && (
+              <Link href="/pricing" className={btn.secondary}>
+                Compare pricing for all products
+              </Link>
+            )}
           </div>
         </section>
       )}
@@ -205,7 +212,7 @@ export default function ProductShow({ product, related }: { product: Product; re
       {related.length > 0 && (
         <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8" aria-labelledby="related-title">
           <h2 id="related-title" className="text-2xl font-bold text-neutral-900">
-            Other LALogix products
+            {product.in_house ? 'LALogix software for businesses' : 'Other LALogix products'}
           </h2>
           <div className="mt-6 grid gap-6 md:grid-cols-3">
             {related.map((p) => (

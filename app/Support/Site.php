@@ -141,6 +141,7 @@ class Site
             'category' => $p['category'],
             'icon' => $p['icon'],
             'status' => $p['status'],
+            'in_house' => ! empty($p['in_house']),
             'lead_key' => $p['lead_key'],
             'whatsapp_text' => $p['whatsapp_text'],
         ], array_values(self::products()));
@@ -158,12 +159,19 @@ class Site
     }
 
     /** Card data for product grids (home, /products, /pricing). */
+    /**
+     * Card data for the business products (home grid, /products, /pricing, related).
+     * In-house apps (in_house => true, e.g. AISHO) are not offered to businesses, so they
+     * are left out of these comparisons; they keep their own product page.
+     */
     public static function cards(): array
     {
+        $business = array_filter(self::products(), fn ($p) => empty($p['in_house']));
+
         return array_map(fn ($p) => array_intersect_key($p, array_flip([
             'slug', 'name', 'brand', 'category', 'icon', 'status', 'lead_key', 'promise', 'bullets',
             'price_hint', 'trial', 'demo', 'site_url', 'play_store_url', 'billed', 'screenshots', 'book_demo',
-        ])), array_values(self::products()));
+        ])), array_values($business));
     }
 
     public static function whatsappUrl(string $text): ?string

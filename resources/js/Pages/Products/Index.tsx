@@ -1,10 +1,12 @@
 import PageHero from '@/components/site/PageHero';
 import ProductCard from '@/components/site/ProductCard';
 import { BookDemoButton, WhatsAppButton } from '@/components/site/Cta';
-import type { ProductCard as Card } from '@/lib/site';
+import Link from '@/components/ui/Link';
+import { useSite, type ProductCard as Card } from '@/lib/site';
 
 /** /products: all products. */
 export default function ProductsIndex({ products }: { products: Card[] }) {
+  const inHouse = useSite().products.filter((p) => p.in_house);
   return (
     <main>
       <PageHero
@@ -18,6 +20,21 @@ export default function ProductsIndex({ products }: { products: Card[] }) {
             <ProductCard key={p.slug} product={p} />
           ))}
         </div>
+        {inHouse.length > 0 && (
+          <p className="mt-10 text-center text-neutral-700">
+            Also built and run by LALogix:{' '}
+            {inHouse.map((p, i) => (
+              <span key={p.slug}>
+                {i > 0 && ', '}
+                <Link href={`/products/${p.slug}`} className="font-semibold text-brand-700 hover:text-brand-800">
+                  {p.name}
+                </Link>
+                {p.category ? ` (${p.category.toLowerCase()})` : ''}
+              </span>
+            ))}
+            , our own in-house app.
+          </p>
+        )}
       </section>
       <section className="bg-neutral-900">
         <div className="mx-auto flex max-w-4xl flex-col items-center gap-4 px-4 py-12 text-center sm:px-6">

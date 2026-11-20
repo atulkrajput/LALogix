@@ -326,7 +326,10 @@ return [
         'aisho' => [
             'name' => 'AISHO',
             'brand' => 'Aishō',
-            // Consumer app: no "Book a demo" button.
+            // LALogix's own in-house consumer app, not a product sold to businesses:
+            // shown on its own page and in the menu, left out of the product/pricing comparison,
+            // and no "Book a demo" button.
+            'in_house' => true,
             'book_demo' => false,
             'category' => 'Dating app',
             'icon' => 'heart',
@@ -369,7 +372,7 @@ return [
                 ['q' => 'How much does Premium cost?', 'a' => 'Premium is ₹599 a month: unlimited swipes and games, a weekly 15-minute boost and chat with people who like you. You can cancel any time.'],
                 ['q' => 'What are Beans?', 'a' => 'Beans are Aishō Wallet credits. A recharge starts at ₹199 for 2,000 Beans; an extra swipe costs 9 Beans and a game 100 Beans. Purchased Beans never expire.'],
                 ['q' => 'Who can join?', 'a' => 'Aishō is for adults 18 and over in India.'],
-                ['q' => 'Who runs Aishō?', 'a' => 'Aishō is owned and operated by LALogix Enterprises, Dehradun.'],
+                ['q' => 'Is Aishō a LALogix product for businesses?', 'a' => "No. Aishō is LALogix's own in-house app, built and run by LALogix Enterprises in Dehradun for people looking to date. It is not sold to businesses."],
             ],
             'whatsapp_text' => "Hi, I'd like to know more about Aishō.",
             'seo' => [

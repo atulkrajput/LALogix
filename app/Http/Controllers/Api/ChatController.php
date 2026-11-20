@@ -102,7 +102,7 @@ class ChatController extends Controller
 
         foreach (Site::products() as $p) {
             $features = implode('; ', array_filter(array_map(fn ($f) => $f['title'].($f['text'] ? ": {$f['text']}" : ''), $p['features'] ?? [])));
-            $lines[] = "- {$p['name']}".($p['category'] ? " ({$p['category']})" : '').($p['status'] === 'coming_soon' ? ' [coming soon]' : '');
+            $lines[] = "- {$p['name']}".($p['category'] ? " ({$p['category']})" : '').($p['status'] === 'coming_soon' ? ' [coming soon]' : '').(! empty($p['in_house']) ? ' [LALogix in-house consumer app, not sold to businesses; no demo calls]' : '');
             foreach ([
                 'Promise' => $p['promise'] ?? null,
                 'Highlights' => implode(', ', $p['bullets'] ?? []),
