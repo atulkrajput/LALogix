@@ -237,6 +237,6 @@ class WebsiteTest extends TestCase
             $this->assertStringNotContainsString($banned, $text);
         }
         $titles = array_column(config('lalogix.products.amritix.features'), 'title');
-        $this->assertSame(['Multi-dairy accounts', 'Vendors', 'Milk purchase and sale', 'Inventory', 'Income and expense', 'Android app'], $titles);
+        $this->assertSame(['Multi-dairy accounts', 'Vendors', 'Milk purchase and sale', 'Inventory', 'Income and expense', 'Financial reports', 'Ledger and accounts', 'Android app'], $titles);
     }
 }
