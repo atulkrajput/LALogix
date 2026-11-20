@@ -162,7 +162,7 @@ class Site
     {
         return array_map(fn ($p) => array_intersect_key($p, array_flip([
             'slug', 'name', 'brand', 'category', 'icon', 'status', 'lead_key', 'promise', 'bullets',
-            'price_hint', 'trial', 'demo', 'site_url', 'play_store_url', 'billed', 'screenshots',
+            'price_hint', 'trial', 'demo', 'site_url', 'play_store_url', 'billed', 'screenshots', 'book_demo',
         ])), array_values(self::products()));
     }
 

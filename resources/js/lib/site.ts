@@ -68,6 +68,8 @@ export interface ProductCard {
   site_url: string | null;
   play_store_url: string | null;
   billed: boolean;
+  /** false hides the Book Demo button (consumer apps). */
+  book_demo?: boolean;
   screenshots: Screenshot[];
 }
 
