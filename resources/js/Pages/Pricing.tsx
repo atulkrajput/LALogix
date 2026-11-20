@@ -38,7 +38,7 @@ export default function Pricing({ products }: { products: ProductCard[] }) {
                 ) : (
                   <>
                     <TryDemoButton product={p} className={btn.secondary} />
-                    {p.billed && <BookDemoButton product={p.slug} label="Ask for a quote" />}
+                    {p.billed && p.book_demo !== false && <BookDemoButton product={p.slug} label="Ask for a quote" />}
                   </>
                 )}
               </div>

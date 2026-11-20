@@ -45,7 +45,7 @@ export default function ProductCard({ product, headingLevel = 'h3' }: { product:
           ) : (
             <>
               <TryDemoButton product={product} className={btn.primary} />
-              {product.billed && <BookDemoButton product={product.slug} className={btn.secondary} label="Book Demo" />}
+              {product.billed && product.book_demo !== false && <BookDemoButton product={product.slug} className={btn.secondary} label="Book Demo" />}
             </>
           )}
           <PlayStoreLink url={product.play_store_url} product={product.name} />

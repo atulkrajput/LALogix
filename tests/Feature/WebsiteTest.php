@@ -33,7 +33,7 @@ class WebsiteTest extends TestCase
     public function test_policies_cover_every_billed_product(): void
     {
         $html = PageController::legalHtml('terms-and-conditions');
-        foreach (['VIVK.in', 'AMRITIX', 'AISHO.live', 'School Automation', 'Inventory &amp; POS'] as $product) {
+        foreach (['VIVK.in', 'AMRITIX', 'Aishō', 'School Automation', 'LALogix Billing'] as $product) {
             $this->assertStringContainsString($product, $html);
         }
     }

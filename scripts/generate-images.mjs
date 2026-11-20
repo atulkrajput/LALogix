@@ -21,8 +21,8 @@ const products = {
   vivk: ['VIVK', 'AI chat', 'Your AI assistant: ask anything, get answers in seconds.'],
   amritix: ['AMRITIX', 'Dairy management', 'Your whole dairy hisab on your phone.'],
   'school-management': ['School Automation', 'School management', 'Run admissions, attendance and fees without registers.'],
-  'inventory-pos': ['Inventory & POS', 'Billing and stock', 'Billing and stock that stay in sync.'],
-  aisho: ['AISHO', 'aisho.live', 'A live product from LALogix Enterprises.'],
+  'inventory-pos': ['Inventory & POS', 'GST billing and stock', 'Billing and stock that stay in sync.'],
+  aisho: ['AISHO', 'Game-based dating app · 18+', 'Play a quick game, then decide whether to match.'],
   ayurvedadhara: ['AyurvedaDhara', 'Ayurveda store · Coming soon', "Authentic Ayurvedic products, with a doctor's guidance."],
   doonportal: ['DoonPortal', 'Dehradun directory', "Dehradun's local directory: find or list a business free."],
 };
